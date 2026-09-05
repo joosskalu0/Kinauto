@@ -1,0 +1,6 @@
+{
+  "name": "AutoConcession - Stock Auto & Vitrine",
+  "description": "Plateforme professionnelle pour concessionnaires automobiles : vitrine publique, gestion de stock, simulateur de financement et assistant IA de rédaction d'annonces.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,60 @@
+{
+  "entities": {
+    "Vehicle": {
+      "collectionName": "vehicles",
+      "fields": {
+        "id": { "type": "string", "required": true },
+        "marque": { "type": "string", "required": true },
+        "modele": { "type": "string", "required": true },
+        "finition": { "type": "string", "required": true },
+        "annee": { "type": "number", "required": true },
+        "prix": { "type": "number", "required": true },
+        "kilometrage": { "type": "number", "required": true },
+        "carburant": { "type": "string", "required": true },
+        "transmission": { "type": "string", "required": true },
+        "categorie": { "type": "string", "required": true },
+        "etat": { "type": "string", "required": true },
+        "status": { "type": "string", "required": true },
+        "puissanceCh": { "type": "number", "required": true },
+        "puissanceFiscale": { "type": "number", "required": true },
+        "couleur": { "type": "string", "required": true },
+        "portes": { "type": "number", "required": true },
+        "places": { "type": "number", "required": true },
+        "co2Gkm": { "type": "number", "required": true },
+        "garantieMois": { "type": "number", "required": true },
+        "vin": { "type": "string", "required": true },
+        "images": { "type": "array", "required": true },
+        "description": { "type": "string", "required": true },
+        "equipements": { "type": "array", "required": true },
+        "dateAjout": { "type": "string", "required": true },
+        "enVedette": { "type": "boolean", "required": true }
+      }
+    },
+    "Lead": {
+      "collectionName": "leads",
+      "fields": {
+        "id": { "type": "string", "required": true },
+        "vehicleId": { "type": "string", "required": true },
+        "vehicleTitle": { "type": "string", "required": true },
+        "vehiclePrice": { "type": "number", "required": true },
+        "nomClient": { "type": "string", "required": true },
+        "email": { "type": "string", "required": true },
+        "telephone": { "type": "string", "required": true },
+        "typeDemande": { "type": "string", "required": true },
+        "dateDemande": { "type": "string", "required": true },
+        "statut": { "type": "string", "required": true }
+      }
+    },
+    "DealershipAccount": {
+      "collectionName": "accounts",
+      "fields": {
+        "id": { "type": "string", "required": true },
+        "nomResponsable": { "type": "string", "required": true },
+        "emailResponsable": { "type": "string", "required": true },
+        "telephoneResponsable": { "type": "string", "required": true },
+        "offraAbonnement": { "type": "string", "required": true },
+        "statutAbonnement": { "type": "string", "required": true }
+      }
+    }
+  }
+}
