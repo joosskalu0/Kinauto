@@ -23,7 +23,7 @@ export const SocialShareButtons: React.FC<SocialShareButtonsProps> = ({
   const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://autoconcessions.fr';
   const shareUrl = vehicle 
     ? `${currentOrigin}?vehicleId=${vehicle.id}`
-    : `${currentOrigin}?dealershipId=${dealership.id}`;
+    : `${currentOrigin}?dealershipId=${dealership.id || 'dealership-1'}`;
 
   const title = vehicle
     ? `${vehicle.marque} ${vehicle.modele} ${vehicle.finition || ''} (${vehicle.annee}) - ${vehicle.prix.toLocaleString('fr-FR')} €`

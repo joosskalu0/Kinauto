@@ -228,7 +228,7 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
                 <Zap className="w-3.5 h-3.5 text-violet-600 shrink-0" />
                 <div>
                   <p className="text-[9px] text-slate-500 uppercase font-semibold">Boîte / Puissance</p>
-                  <p className="font-bold text-slate-900">{vehicle.boite} ({vehicle.puissanceCh}ch)</p>
+                  <p className="font-bold text-slate-900">{vehicle.transmission} ({vehicle.puissanceCh}ch)</p>
                 </div>
               </div>
             </div>
@@ -448,7 +448,7 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
             <Zap className="w-3.5 h-3.5 text-violet-600 shrink-0" />
             <div>
               <p className="text-[9px] text-slate-500 uppercase font-semibold">Boîte</p>
-              <p className="font-bold text-slate-900">{vehicle.boite}</p>
+              <p className="font-bold text-slate-900">{vehicle.transmission}</p>
             </div>
           </div>
         </div>

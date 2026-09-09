@@ -36,7 +36,7 @@ export const SocialShareModal: React.FC<SocialShareModalProps> = ({
   const currentOrigin = typeof window !== 'undefined' ? window.location.origin : 'https://autoconcessions.fr';
   const shareUrl = vehicle 
     ? `${currentOrigin}?vehicleId=${vehicle.id}`
-    : `${currentOrigin}?dealershipId=${dealership.id}`;
+    : `${currentOrigin}?dealershipId=${dealership.id || 'dealership-1'}`;
 
   const isVehicleShare = Boolean(vehicle);
 
@@ -48,7 +48,7 @@ export const SocialShareModal: React.FC<SocialShareModalProps> = ({
     ? `🚗 ${vehicle.marque} ${vehicle.modele} ${vehicle.finition || ''}
 💰 Prix : ${vehicle.prix.toLocaleString('fr-FR')} €
 📅 Année : ${vehicle.annee} | ⚡ ${vehicle.puissanceCh} ch
-⛽ ${vehicle.carburant} | 🕹️ ${vehicle.boiteVitesse} | 🛣️ ${vehicle.kilometrage.toLocaleString('fr-FR')} km
+⛽ ${vehicle.carburant} | 🕹️ ${vehicle.transmission} | 🛣️ ${vehicle.kilometrage.toLocaleString('fr-FR')} km
 📍 Disponible chez ${dealership.nom} (${dealership.ville})
 📞 Contact : ${dealership.telephone}`
     : `🏢 Retrouvez tout le stock de véhicules chez ${dealership.nom} à ${dealership.ville} !
@@ -65,7 +65,7 @@ export const SocialShareModal: React.FC<SocialShareModalProps> = ({
 📋 CARACTÉRISTIQUES PRINCIPALES :
 • Kilométrage : ${vehicle.kilometrage.toLocaleString('fr-FR')} km
 • Motorisation : ${vehicle.carburant} (${vehicle.puissanceCh} ch)
-• Boîte de vitesse : ${vehicle.boiteVitesse}
+• Boîte de vitesse : ${vehicle.transmission}
 • Énergie : ${vehicle.consommation || 'Faible conso'}
 • État : ${vehicle.etat === 'neuf' ? 'Neuf 0 km' : 'Occasion certifiée'}
 

@@ -67,37 +67,65 @@ export default function App() {
 
   // Currency & Rate Configuration ($ USD / FC Franc Congolais)
   const [currency, setCurrency] = useState<'USD' | 'FC'>(() => {
-    return (localStorage.getItem('autoconcession_currency') as 'USD' | 'FC') || 'USD';
+    try {
+      return (localStorage.getItem('autoconcession_currency') as 'USD' | 'FC') || 'USD';
+    } catch {
+      return 'USD';
+    }
   });
   const [usdToFcRate] = useState<number>(2850);
 
   // Layout View Mode (Grid vs List)
   const [layoutMode, setLayoutMode] = useState<'grid' | 'list'>(() => {
-    return (localStorage.getItem('autoconcession_layout') as 'grid' | 'list') || 'grid';
+    try {
+      return (localStorage.getItem('autoconcession_layout') as 'grid' | 'list') || 'grid';
+    } catch {
+      return 'grid';
+    }
   });
 
   useEffect(() => {
-    localStorage.setItem('autoconcession_currency', currency);
+    try {
+      localStorage.setItem('autoconcession_currency', currency);
+    } catch (e) {
+      console.warn(e);
+    }
   }, [currency]);
 
   useEffect(() => {
-    localStorage.setItem('autoconcession_layout', layoutMode);
+    try {
+      localStorage.setItem('autoconcession_layout', layoutMode);
+    } catch (e) {
+      console.warn(e);
+    }
   }, [layoutMode]);
 
   // Multi-Tenant Dealership Accounts state
   const [dealershipAccounts, setDealershipAccounts] = useState<DealershipAccount[]>(() => {
-    const saved = localStorage.getItem('autoconcession_accounts');
-    return saved ? JSON.parse(saved) : INITIAL_DEALERSHIP_ACCOUNTS;
+    try {
+      const saved = localStorage.getItem('autoconcession_accounts');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+    return INITIAL_DEALERSHIP_ACCOUNTS;
   });
 
   const [currentAccountId, setCurrentAccountId] = useState<string>(() => {
-    const saved = localStorage.getItem('autoconcession_current_account_id');
-    return saved || 'dealership-1';
+    try {
+      const saved = localStorage.getItem('autoconcession_current_account_id');
+      return saved || 'dealership-1';
+    } catch {
+      return 'dealership-1';
+    }
   });
 
   // Current active account & dealership info
-  const currentAccount = dealershipAccounts.find((a) => a.id === currentAccountId) || dealershipAccounts[0];
-  const dealership = currentAccount ? currentAccount.info : DEFAULT_DEALERSHIP_INFO;
+  const currentAccount = dealershipAccounts.find((a) => a.id === currentAccountId) || dealershipAccounts[0] || INITIAL_DEALERSHIP_ACCOUNTS[0];
+  const dealership = currentAccount?.info || DEFAULT_DEALERSHIP_INFO;
 
   // Real-Time Vehicles, Leads & Accounts from Firestore
   const [vehicles, setVehicles] = useState<Vehicle[]>(() => {
@@ -116,13 +144,29 @@ export default function App() {
   });
 
   const [leads, setLeads] = useState<Lead[]>(() => {
-    const saved = localStorage.getItem('autoconcession_leads');
-    return saved ? JSON.parse(saved) : INITIAL_LEADS;
+    try {
+      const saved = localStorage.getItem('autoconcession_leads');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+    return INITIAL_LEADS;
   });
 
   const [favoriteIds, setFavoriteIds] = useState<string[]>(() => {
-    const saved = localStorage.getItem('autoconcession_favorites');
-    return saved ? JSON.parse(saved) : ['car-1', 'car-3'];
+    try {
+      const saved = localStorage.getItem('autoconcession_favorites');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {
+      console.warn(e);
+    }
+    return ['car-1', 'car-3'];
   });
 
   // Kinshasa Garages & Breakdown Requests State
@@ -1458,30 +1502,32 @@ export default function App() {
             {/* Active Filter Chips for Immediate Clarity */}
             <ActiveFilterChips
               filterBrand={filterBrand}
+              setFilterBrand={setFilterBrand}
               filterCategory={filterCategory}
+              setFilterCategory={setFilterCategory}
               filterFuel={filterFuel}
+              setFilterFuel={setFilterFuel}
               filterTransmission={filterTransmission}
+              setFilterTransmission={setFilterTransmission}
               filterCondition={filterCondition}
+              setFilterCondition={setFilterCondition}
               filterPromo={filterPromo}
+              setFilterPromo={setFilterPromo}
               filterDealership={filterDealership}
+              setFilterDealership={setFilterDealership}
               searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
               priceMax={priceMax}
+              setPriceMax={setPriceMax}
               kmMax={kmMax}
+              setKmMax={setKmMax}
               onlyFavorites={onlyFavorites}
+              setOnlyFavorites={setOnlyFavorites}
               dealershipAccounts={dealershipAccounts}
-              onClearBrand={() => setFilterBrand('ALL')}
-              onClearCategory={() => setFilterCategory('ALL')}
-              onClearFuel={() => setFilterFuel('ALL')}
-              onClearTransmission={() => setFilterTransmission('ALL')}
-              onClearCondition={() => setFilterCondition('ALL')}
-              onClearPromo={() => setFilterPromo('ALL')}
-              onClearDealership={() => setFilterDealership('ALL')}
-              onClearSearch={() => setSearchQuery('')}
-              onClearPrice={() => setPriceMax(350000)}
-              onClearKm={() => setKmMax(250000)}
-              onClearFavorites={() => setOnlyFavorites(false)}
               onResetAll={resetFilterOptions}
               totalResults={publicFilteredVehicles.length}
+              currency={currency}
+              usdToFcRate={usdToFcRate}
             />
 
             {/* Results Counter Bar */}

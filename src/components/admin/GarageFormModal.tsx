@@ -129,7 +129,12 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
       setPhotos(garageToEdit.photos || []);
 
       // SaaS fields
-      setPlanId(garageToEdit.planId || 'garage_pro');
+      const normalizedPlanId: GaragePlanId = 
+        garageToEdit.planId === 'starter' ? 'garage_starter' :
+        garageToEdit.planId === 'pro' ? 'garage_pro' :
+        garageToEdit.planId === 'enterprise' ? 'garage_enterprise' :
+        (garageToEdit.planId as GaragePlanId) || 'garage_pro';
+      setPlanId(normalizedPlanId);
       setStatutAbonnement(garageToEdit.statutAbonnement || 'essai_gratuit');
       setPrixFactureMensuel(garageToEdit.prixFactureMensuel ?? 185000);
       setFinEssaiGratuit(garageToEdit.finEssaiGratuit || new Date(Date.now() + 14 * 86400000).toISOString().split('T')[0]);

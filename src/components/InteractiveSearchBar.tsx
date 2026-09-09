@@ -54,7 +54,7 @@ export const InteractiveSearchBar: React.FC<InteractiveSearchBarProps> = ({
           v.categorie.toLowerCase().includes(query) ||
           v.carburant.toLowerCase().includes(query) ||
           v.annee.toString().includes(query) ||
-          (v.version && v.version.toLowerCase().includes(query))
+          (v.finition && v.finition.toLowerCase().includes(query))
         );
       })
       .slice(0, 4);
@@ -193,7 +193,7 @@ export const InteractiveSearchBar: React.FC<InteractiveSearchBarProps> = ({
                               {v.marque} {v.modele} <span className="text-[10px] text-slate-500 font-normal">({v.annee})</span>
                             </p>
                             <div className="flex items-center gap-2 text-[10px] text-slate-500">
-                              <span>{v.boite}</span>
+                              <span>{v.transmission}</span>
                               <span>•</span>
                               <span>{v.carburant}</span>
                               <span>•</span>

@@ -1901,12 +1901,18 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
             <DealershipGTM
               dealership={{
                 nom: siteAdminInfo.nomPlateforme || 'Portail Réseau Concessions',
+                slogan: siteAdminInfo.slogan || '',
                 adresse: siteAdminInfo.adresse,
+                ville: 'Kinshasa',
+                codePostal: '99000',
                 telephone: siteAdminInfo.telephone,
                 email: siteAdminInfo?.email || 'admin@autoconcession.com',
-                siret: '89210928300012',
                 horaires: 'Super-Admin 24/7',
-                logo: '',
+                siteWeb: '',
+                logoUrl: '',
+                bannerUrl: '',
+                sippCode: '',
+                siret: '89210928300012',
                 googleTagManagerId: adminGtmId,
                 googleTagManagerEnabled: adminGaEnabled,
                 metaPixelId: adminMetaPixelId,
@@ -1917,7 +1923,7 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
                 googleAdsConversionLabel: adminGoogleAdsConversionLabel,
                 googleAdsEnabled: adminGoogleAdsEnabled
               }}
-              vehicles={dealershipAccounts[0]?.vehicles || []}
+              vehicles={[]}
               leads={[]}
               onSaveDealership={(updatedDealer) => {
                 if (onUpdateSiteAdminInfo) {
@@ -2208,7 +2214,9 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
                                     <div className="flex items-center gap-1.5">
                                       <span className="font-black text-white text-xs">{garage.nom}</span>
                                       {garage.estCertifie && (
-                                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" title="Atelier Certifié" />
+                                        <span title="Atelier Certifié">
+                                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                                        </span>
                                       )}
                                     </div>
                                     <p className="text-[11px] text-slate-400">{garage.responsable} ({garage.titreResponsable || 'Chef d’Atelier'})</p>

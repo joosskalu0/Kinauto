@@ -38,6 +38,10 @@ export interface Vehicle {
   equipements: string[];
   dateAjout: string;
   enVedette?: boolean;
+  version?: string;
+  boite?: TransmissionType;
+  boiteVitesse?: TransmissionType;
+  consommation?: string;
 }
 
 export interface VehicleFilterState {
@@ -76,6 +80,7 @@ export interface Lead {
 }
 
 export interface DealershipInfo {
+  id?: string;
   nom: string;
   slogan: string;
   adresse: string;
@@ -86,6 +91,7 @@ export interface DealershipInfo {
   horaires: string;
   siteWeb: string;
   logoUrl: string;
+  logo?: string;
   bannerUrl: string;
   sippCode: string;
   siret: string;
@@ -158,6 +164,7 @@ export interface DealershipAccount {
   nbVehiculesActifs: number;
   estMasque?: boolean;
   invoices: Invoice[];
+  vehicles?: Vehicle[];
 }
 
 export interface FinancingParams {
