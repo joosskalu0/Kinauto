@@ -60,6 +60,16 @@ import {
   initTikTokPixel, 
   initGoogleAds 
 } from './lib/pixels';
+import {
+  safeGetStorage,
+  safeSetStorage,
+  safeGetString,
+  safeSetString,
+  safeRemoveStorage,
+  safeGetSession,
+  safeSetSession,
+  safeRemoveSession,
+} from './lib/storage';
 
 export default function App() {
   // Database Connection Status
@@ -67,60 +77,32 @@ export default function App() {
 
   // Currency & Rate Configuration ($ USD / FC Franc Congolais)
   const [currency, setCurrency] = useState<'USD' | 'FC'>(() => {
-    try {
-      return (localStorage.getItem('autoconcession_currency') as 'USD' | 'FC') || 'USD';
-    } catch {
-      return 'USD';
-    }
+    return safeGetString('autoconcession_currency', 'USD') as 'USD' | 'FC';
   });
   const [usdToFcRate] = useState<number>(2850);
 
   // Layout View Mode (Grid vs List)
   const [layoutMode, setLayoutMode] = useState<'grid' | 'list'>(() => {
-    try {
-      return (localStorage.getItem('autoconcession_layout') as 'grid' | 'list') || 'grid';
-    } catch {
-      return 'grid';
-    }
+    return safeGetString('autoconcession_layout', 'grid') as 'grid' | 'list';
   });
 
   useEffect(() => {
-    try {
-      localStorage.setItem('autoconcession_currency', currency);
-    } catch (e) {
-      console.warn(e);
-    }
+    safeSetString('autoconcession_currency', currency);
   }, [currency]);
 
   useEffect(() => {
-    try {
-      localStorage.setItem('autoconcession_layout', layoutMode);
-    } catch (e) {
-      console.warn(e);
-    }
+    safeSetString('autoconcession_layout', layoutMode);
   }, [layoutMode]);
 
   // Multi-Tenant Dealership Accounts state
   const [dealershipAccounts, setDealershipAccounts] = useState<DealershipAccount[]>(() => {
-    try {
-      const saved = localStorage.getItem('autoconcession_accounts');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-    } catch (e) {
-      console.warn(e);
-    }
+    const saved = safeGetStorage<DealershipAccount[]>('autoconcession_accounts', []);
+    if (Array.isArray(saved) && saved.length > 0) return saved;
     return INITIAL_DEALERSHIP_ACCOUNTS;
   });
 
   const [currentAccountId, setCurrentAccountId] = useState<string>(() => {
-    try {
-      const saved = localStorage.getItem('autoconcession_current_account_id');
-      return saved || 'dealership-1';
-    } catch {
-      return 'dealership-1';
-    }
+    return safeGetString('autoconcession_current_account_id', 'dealership-1');
   });
 
   // Current active account & dealership info
@@ -129,80 +111,48 @@ export default function App() {
 
   // Real-Time Vehicles, Leads & Accounts from Firestore
   const [vehicles, setVehicles] = useState<Vehicle[]>(() => {
-    const saved = localStorage.getItem('autoconcession_vehicles');
-    if (saved) {
-      try {
-        const parsed: Vehicle[] = JSON.parse(saved);
-        const parsedIds = new Set(parsed.map((p) => p.id));
-        const missing = INITIAL_VEHICLES.filter((iv) => !parsedIds.has(iv.id));
-        return [...parsed, ...missing];
-      } catch (e) {
-        console.error(e);
-      }
+    const saved = safeGetStorage<Vehicle[]>('autoconcession_vehicles', []);
+    if (Array.isArray(saved) && saved.length > 0) {
+      const parsedIds = new Set(saved.map((p) => p.id));
+      const missing = INITIAL_VEHICLES.filter((iv) => !parsedIds.has(iv.id));
+      return [...saved, ...missing];
     }
     return INITIAL_VEHICLES;
   });
 
   const [leads, setLeads] = useState<Lead[]>(() => {
-    try {
-      const saved = localStorage.getItem('autoconcession_leads');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
-      }
-    } catch (e) {
-      console.warn(e);
-    }
+    const saved = safeGetStorage<Lead[]>('autoconcession_leads', []);
+    if (Array.isArray(saved) && saved.length > 0) return saved;
     return INITIAL_LEADS;
   });
 
   const [favoriteIds, setFavoriteIds] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('autoconcession_favorites');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
-      }
-    } catch (e) {
-      console.warn(e);
-    }
+    const saved = safeGetStorage<string[]>('autoconcession_favorites', []);
+    if (Array.isArray(saved) && saved.length > 0) return saved;
     return ['car-1', 'car-3'];
   });
 
   // Kinshasa Garages & Breakdown Requests State
   const [garages, setGarages] = useState<GarageProfile[]>(() => {
-    const saved = localStorage.getItem('autoconcession_garages');
-    if (saved) {
-      try {
-        const parsed: GarageProfile[] = JSON.parse(saved);
-        const parsedIds = new Set(parsed.map(g => g.id));
-        const missing = INITIAL_GARAGES.filter(ig => !parsedIds.has(ig.id));
-        return [...parsed, ...missing];
-      } catch (e) {
-        console.error(e);
-      }
+    const saved = safeGetStorage<GarageProfile[]>('autoconcession_garages', []);
+    if (Array.isArray(saved) && saved.length > 0) {
+      const parsedIds = new Set(saved.map(g => g.id));
+      const missing = INITIAL_GARAGES.filter(ig => !parsedIds.has(ig.id));
+      return [...saved, ...missing];
     }
     return INITIAL_GARAGES;
   });
 
   const [breakdownRequests, setBreakdownRequests] = useState<BreakdownRequest[]>(() => {
-    const saved = localStorage.getItem('autoconcession_breakdown_requests');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    return [];
+    return safeGetStorage<BreakdownRequest[]>('autoconcession_breakdown_requests', []);
   });
 
   useEffect(() => {
-    localStorage.setItem('autoconcession_garages', JSON.stringify(garages));
+    safeSetStorage('autoconcession_garages', garages);
   }, [garages]);
 
   useEffect(() => {
-    localStorage.setItem('autoconcession_breakdown_requests', JSON.stringify(breakdownRequests));
+    safeSetStorage('autoconcession_breakdown_requests', breakdownRequests);
   }, [breakdownRequests]);
 
   const handleAddGarage = (newGarage: GarageProfile) => {
@@ -272,17 +222,17 @@ export default function App() {
 
   // Super Admin Security & PIN Authentication State
   const [isSuperAdminAuthenticated, setIsSuperAdminAuthenticated] = useState<boolean>(() => {
-    return sessionStorage.getItem('autoconcession_superadmin_auth') === 'true';
+    return safeGetSession('autoconcession_superadmin_auth', 'false') === 'true';
   });
   const [superAdminPin, setSuperAdminPin] = useState<string>(() => {
-    return localStorage.getItem('autoconcession_superadmin_pin') || '2026';
+    return safeGetString('autoconcession_superadmin_pin', '2026');
   });
   const [isSuperAdminAuthModalOpen, setIsSuperAdminAuthModalOpen] = useState(false);
 
   const handleAuthenticateSuperAdmin = (pinEntered: string): boolean => {
     if (pinEntered === superAdminPin) {
       setIsSuperAdminAuthenticated(true);
-      sessionStorage.setItem('autoconcession_superadmin_auth', 'true');
+      safeSetSession('autoconcession_superadmin_auth', 'true');
       setIsSuperAdminAuthModalOpen(false);
       setCurrentView('super-admin');
       setIsAdmin(true);
@@ -293,7 +243,7 @@ export default function App() {
 
   const handleLogoutSuperAdmin = () => {
     setIsSuperAdminAuthenticated(false);
-    sessionStorage.removeItem('autoconcession_superadmin_auth');
+    safeRemoveSession('autoconcession_superadmin_auth');
     if (currentView === 'super-admin') {
       setCurrentView('admin-dashboard');
     }
@@ -301,58 +251,40 @@ export default function App() {
 
   const handleUpdateSuperAdminPin = (newPin: string) => {
     setSuperAdminPin(newPin);
-    localStorage.setItem('autoconcession_superadmin_pin', newPin);
+    safeSetString('autoconcession_superadmin_pin', newPin);
   };
 
   // SaaS Subscription Plans state (Concessions)
   const [subscriptionPlans, setSubscriptionPlans] = useState<SubscriptionPlan[]>(() => {
-    const saved = localStorage.getItem('autoconcession_subscription_plans');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error("Failed to parse saved subscription plans", e);
-      }
-    }
+    const saved = safeGetStorage<SubscriptionPlan[]>('autoconcession_subscription_plans', []);
+    if (Array.isArray(saved) && saved.length > 0) return saved;
     return SUBSCRIPTION_PLANS;
   });
 
   // SaaS Subscription Plans state (Garages)
   const [garagePlans, setGaragePlans] = useState<GarageSubscriptionPlan[]>(() => {
-    const saved = localStorage.getItem('autoconcession_garage_subscription_plans');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error("Failed to parse saved garage subscription plans", e);
-      }
-    }
+    const saved = safeGetStorage<GarageSubscriptionPlan[]>('autoconcession_garage_subscription_plans', []);
+    if (Array.isArray(saved) && saved.length > 0) return saved;
     return GARAGE_SUBSCRIPTION_PLANS;
   });
 
   useEffect(() => {
-    localStorage.setItem('autoconcession_garage_subscription_plans', JSON.stringify(garagePlans));
+    safeSetStorage('autoconcession_garage_subscription_plans', garagePlans);
   }, [garagePlans]);
 
   // Site Administrator Official Information State
   const [siteAdminInfo, setSiteAdminInfo] = useState<SiteAdminInfo>(() => {
-    const saved = localStorage.getItem('autoconcession_site_admin_info');
-    if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error("Failed to parse saved site admin info", e);
-      }
-    }
+    const saved = safeGetStorage<SiteAdminInfo | null>('autoconcession_site_admin_info', null);
+    if (saved && typeof saved === 'object') return saved;
     return DEFAULT_SITE_ADMIN_INFO;
   });
 
   useEffect(() => {
-    localStorage.setItem('autoconcession_site_admin_info', JSON.stringify(siteAdminInfo));
+    safeSetStorage('autoconcession_site_admin_info', siteAdminInfo);
   }, [siteAdminInfo]);
 
   useEffect(() => {
-    localStorage.setItem('autoconcession_subscription_plans', JSON.stringify(subscriptionPlans));
+    safeSetStorage('autoconcession_subscription_plans', subscriptionPlans);
   }, [subscriptionPlans]);
 
   // Initialize Google Tag Manager, Meta Pixel, TikTok Pixel & Google Ads
@@ -469,20 +401,20 @@ export default function App() {
   // Dealership Auth & Login State
   const [isDealershipAuthModalOpen, setIsDealershipAuthModalOpen] = useState(false);
   const [isDealershipLoggedIn, setIsDealershipLoggedIn] = useState<boolean>(() => {
-    return localStorage.getItem('autoconcession_dealership_auth') === 'true';
+    return safeGetString('autoconcession_dealership_auth', 'false') === 'true';
   });
 
   const handleLoginDealershipSuccess = (account: DealershipAccount) => {
     setCurrentAccountId(account.id);
     setIsDealershipLoggedIn(true);
-    localStorage.setItem('autoconcession_dealership_auth', 'true');
+    safeSetString('autoconcession_dealership_auth', 'true');
     setIsAdmin(true);
     setCurrentView('admin-dashboard');
   };
 
   const handleLogoutDealership = () => {
     setIsDealershipLoggedIn(false);
-    localStorage.removeItem('autoconcession_dealership_auth');
+    safeRemoveStorage('autoconcession_dealership_auth');
     setIsAdmin(false);
     setCurrentView('public');
   };
@@ -520,23 +452,23 @@ export default function App() {
 
   // LocalStorage Sync
   useEffect(() => {
-    localStorage.setItem('autoconcession_accounts', JSON.stringify(dealershipAccounts));
+    safeSetStorage('autoconcession_accounts', dealershipAccounts);
   }, [dealershipAccounts]);
 
   useEffect(() => {
-    localStorage.setItem('autoconcession_current_account_id', currentAccountId);
+    safeSetString('autoconcession_current_account_id', currentAccountId);
   }, [currentAccountId]);
 
   useEffect(() => {
-    localStorage.setItem('autoconcession_vehicles', JSON.stringify(vehicles));
+    safeSetStorage('autoconcession_vehicles', vehicles);
   }, [vehicles]);
 
   useEffect(() => {
-    localStorage.setItem('autoconcession_leads', JSON.stringify(leads));
+    safeSetStorage('autoconcession_leads', leads);
   }, [leads]);
 
   useEffect(() => {
-    localStorage.setItem('autoconcession_favorites', JSON.stringify(favoriteIds));
+    safeSetStorage('autoconcession_favorites', favoriteIds);
   }, [favoriteIds]);
 
   // Global Quick Navigation & Page Closing Handlers

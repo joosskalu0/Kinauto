@@ -276,9 +276,13 @@ export const getDeletedDealershipIds = (): Set<string> => {
 };
 
 export const markDealershipAsDeleted = (id: string) => {
-  const ids = getDeletedDealershipIds();
-  ids.add(id);
-  localStorage.setItem('autoconcession_deleted_dealership_ids', JSON.stringify(Array.from(ids)));
+  try {
+    const ids = getDeletedDealershipIds();
+    ids.add(id);
+    localStorage.setItem('autoconcession_deleted_dealership_ids', JSON.stringify(Array.from(ids)));
+  } catch (e) {
+    console.warn(e);
+  }
 };
 
 // --------------------------------------------------------
