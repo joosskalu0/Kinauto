@@ -2,7 +2,7 @@ export type VehicleStatus = 'disponible' | 'reserve' | 'vendu';
 export type CarCondition = 'neuf' | 'occasion';
 export type FuelType = 'Essence' | 'Diesel' | 'Hybride' | 'Électrique' | 'GPL';
 export type TransmissionType = 'Automatique' | 'Manuelle';
-export type BodyType = 'SUV' | 'Berline' | 'Citadine' | 'Coupé' | 'Cabriolet' | 'Break' | 'Utilitaire';
+export type BodyType = 'SUV' | 'Berline' | 'Citadine' | 'Coupé' | 'Cabriolet' | 'Break' | 'Utilitaire' | 'Monospace';
 
 export interface Vehicle {
   id: string;
