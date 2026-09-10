@@ -118,13 +118,13 @@ export const MotorsHeroSearch: React.FC<MotorsHeroSearchProps> = ({
       <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-900/80 to-slate-950/90"></div>
 
       <div className="relative z-10 max-w-4xl mx-auto w-full space-y-6 text-center">
-        {/* Main Heading from MOTORS theme */}
+        {/* Main Heading - Clean Automotive Portal Branding */}
         <div className="space-y-2 text-left sm:text-center">
           <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight drop-shadow-sm">
-            Welcome to MOTORS!
+            Trouvez Votre Prochain Véhicule
           </h1>
-          <p className="text-sm sm:lg text-slate-200 font-normal">
-            The World's Largest Used & New Car Dealership
+          <p className="text-sm sm:text-lg text-slate-200 font-normal">
+            Le 1er Réseau Multi-Concessions & SOS Dépannage à Kinshasa
           </p>
         </div>
 

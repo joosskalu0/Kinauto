@@ -6,43 +6,47 @@ interface MotorsLogoProps {
 }
 
 export const MotorsLogo: React.FC<MotorsLogoProps> = ({ className = '', size = 'md' }) => {
-  const height = size === 'sm' ? 28 : size === 'lg' ? 44 : 36;
-  return (
-    <div className={`flex items-center select-none cursor-pointer group ${className}`}>
-      {/* SVG recreation of the official MOTORS stylemix theme logo */}
-      <svg 
-        height={height} 
-        viewBox="0 0 160 48" 
-        fill="none" 
-        xmlns="http://www.w3.org/2000/svg"
-        className="transition-transform duration-200 group-hover:scale-105"
-      >
-        {/* Dynamic Curved Red & Dark Slate Car Swoop / Wing Silhouette */}
-        <path 
-          d="M6 18 C18 6, 42 3, 62 10 C46 12, 28 17, 16 23 Z" 
-          fill="#e11d48" 
-        />
-        <path 
-          d="M14 23 C30 16, 52 14, 76 18 C58 20, 36 24, 20 30 Z" 
-          fill="#1e293b" 
-        />
-        <circle cx="28" cy="27" r="3" fill="#e11d48" />
-        <circle cx="56" cy="25" r="3" fill="#1e293b" />
+  const iconSize = size === 'sm' ? 30 : size === 'lg' ? 44 : 38;
 
-        {/* Brand Text 'motors' in bold lowercase italic stylized typeface */}
-        <text
-          x="34"
-          y="42"
-          fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
-          fontWeight="900"
-          fontSize="30"
-          letterSpacing="-1.5"
-          fill="#0f172a"
-          fontStyle="italic"
+  return (
+    <div className={`flex items-center gap-2.5 select-none cursor-pointer group ${className}`}>
+      {/* Sleek Custom Automotive Emblem (Original shield & speed-wing geometry) */}
+      <div 
+        style={{ width: iconSize, height: iconSize }}
+        className="relative flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-950 to-blue-700 rounded-xl shadow-md transition-transform duration-200 group-hover:scale-105 border border-blue-400/20"
+      >
+        <svg 
+          viewBox="0 0 40 40" 
+          fill="none" 
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-4/5 h-4/5"
         >
-          motors
-        </text>
-      </svg>
+          {/* Aerodynamic car silhouette & speed curves */}
+          <path 
+            d="M8 24 C12 16, 20 12, 32 14 C26 18, 18 20, 10 26 Z" 
+            fill="#38bdf8" 
+          />
+          <path 
+            d="M12 28 C18 22, 26 19, 36 21 C30 25, 20 27, 14 31 Z" 
+            fill="#ffffff" 
+          />
+          {/* Subtle central emblem dot */}
+          <circle cx="20" cy="20" r="2.5" fill="#60a5fa" />
+        </svg>
+      </div>
+
+      {/* Brand Text: AutoConcession */}
+      <div className="flex flex-col leading-none">
+        <div className="flex items-center">
+          <span className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
+            Auto<span className="text-blue-600">Concession</span>
+          </span>
+        </div>
+        <span className="text-[10px] font-extrabold text-slate-400 tracking-wider uppercase">
+          Réseau Kinshasa
+        </span>
+      </div>
     </div>
   );
 };
+

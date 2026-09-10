@@ -81,7 +81,7 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
     if (navigator.share) {
       navigator.share({
         title: `${vehicle.marque} ${vehicle.modele}`,
-        text: `Découvrez cette ${vehicle.marque} ${vehicle.modele} sur MOTORS`,
+        text: `Découvrez cette ${vehicle.marque} ${vehicle.modele} sur AutoConcession Kinshasa`,
         url: window.location.href,
       }).catch(() => {});
     } else {
@@ -103,7 +103,7 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
         vehicleTitle: `${vehicle.marque} ${vehicle.modele}`,
         vehiclePrice: vehicle.prix,
         nomClient: dealerMsgName,
-        email: dealerMsgEmail || 'client@motors.com',
+        email: dealerMsgEmail || 'contact@autoconcession.cd',
         telephone: dealerMsgPhone,
         typeDemande: 'information',
         message: dealerMsgText,

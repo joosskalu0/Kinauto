@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
-    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs && node -e \"const fs=require('fs'); if(fs.existsSync('dist/index.html')) { fs.copyFileSync('dist/index.html', 'dist/404.html'); fs.cpSync('dist', 'docs', {recursive: true}); fs.writeFileSync('dist/.nojekyll', ''); fs.writeFileSync('docs/.nojekyll', ''); }\"",
+    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs && node -e \"const fs=require('fs'); if(fs.existsSync('dist/index.html')) { fs.copyFileSync('dist/index.html', 'dist/404.html'); fs.cpSync('dist', 'docs', {recursive: true}); fs.writeFileSync('dist/.nojekyll', ''); fs.writeFileSync('docs/.nojekyll', ''); if(fs.existsSync('dist/assets')) { fs.cpSync('dist/assets', 'assets', {recursive: true}); } }\"",
     "start": "node dist/server.cjs",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",

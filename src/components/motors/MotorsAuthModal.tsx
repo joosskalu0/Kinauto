@@ -98,7 +98,7 @@ export const MotorsAuthModal: React.FC<MotorsAuthModalProps> = ({
         
         {/* Modal Top Bar */}
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-          <span className="text-xs font-bold uppercase tracking-widest text-blue-600">MOTORS Authentication</span>
+          <span className="text-xs font-bold uppercase tracking-widest text-blue-600">AutoConcession • Authentification</span>
           <div className="flex items-center gap-2">
             {onGoHome && (
               <button
@@ -396,10 +396,10 @@ export const MotorsAuthModal: React.FC<MotorsAuthModalProps> = ({
             </form>
           </div>
 
-          {/* Footer note matching video */}
+          {/* Footer note */}
           <div className="pt-4 border-t border-slate-100 text-center text-xs text-slate-400 space-y-1">
-            <p>Created by MOTORS 2025. All rights reserved.</p>
-            <p className="font-semibold text-slate-500">Dealer Profile | Seller Profile</p>
+            <p>© 2025 AutoConcession Kinshasa. Tous droits réservés.</p>
+            <p className="font-semibold text-slate-500">Espace Concessionnaire & Vendeur Partenaire</p>
           </div>
         </div>
       </div>

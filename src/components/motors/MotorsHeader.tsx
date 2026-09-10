@@ -350,7 +350,7 @@ export const MotorsHeader: React.FC<MotorsHeaderProps> = ({
             </div>
 
             <div className="pt-6 border-t border-slate-100 text-center text-xs text-slate-400">
-              <p>Created by MOTORS 2025. All rights reserved.</p>
+              <p>© 2025 AutoConcession Kinshasa. Tous droits réservés.</p>
             </div>
           </div>
         </div>
