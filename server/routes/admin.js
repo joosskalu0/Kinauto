@@ -16,8 +16,4 @@ router.get('/users', adminController.getAllUsers);
 router.put('/users/:id/role', adminController.updateUserRole);
 router.delete('/users/:id', adminController.deleteUser);
 
-// Modération et mise en avant
-router.put('/properties/:id/featured', adminController.togglePropertyFeatured);
-router.put('/agencies/:id/verify', adminController.toggleAgencyVerified);
-
 module.exports = router;

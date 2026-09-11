@@ -407,24 +407,56 @@ export default function App() {
     );
   };
 
-  // Dealership Auth & Login State
+  // Dealership & User Auth (Node.js + MySQL) State
   const [isDealershipAuthModalOpen, setIsDealershipAuthModalOpen] = useState(false);
-  const [isDealershipLoggedIn, setIsDealershipLoggedIn] = useState<boolean>(() => {
-    return safeGetString('autoconcession_dealership_auth', 'false') === 'true';
+  const [authUser, setAuthUser] = useState<any>(() => {
+    try {
+      const raw = localStorage.getItem('congocar_user');
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
   });
 
-  const handleLoginDealershipSuccess = (account: DealershipAccount) => {
+  const [isDealershipLoggedIn, setIsDealershipLoggedIn] = useState<boolean>(() => {
+    return safeGetString('autoconcession_dealership_auth', 'false') === 'true' || Boolean(localStorage.getItem('congocar_token'));
+  });
+
+  const handleLoginDealershipSuccess = (account: DealershipAccount, userProfile?: any) => {
+    if (userProfile) {
+      setAuthUser(userProfile);
+      localStorage.setItem('congocar_user', JSON.stringify(userProfile));
+    }
     setCurrentAccountId(account.id);
     setIsDealershipLoggedIn(true);
     safeSetString('autoconcession_dealership_auth', 'true');
-    setIsAdmin(true);
-    setCurrentView('admin-dashboard');
+
+    // Navigation adaptative selon le rôle CONGOCAR
+    const userRole = userProfile?.role || (account as any).role || 'dealer';
+    if (userRole === 'admin') {
+      setIsAdmin(true);
+      setIsSuperAdminAuthenticated(true);
+      setCurrentView('super-admin');
+    } else if (userRole === 'dealer' || userRole === 'seller') {
+      setIsAdmin(true);
+      setCurrentView('admin-dashboard');
+    } else if (userRole === 'garage') {
+      setIsAdmin(false);
+      setCurrentView('garages');
+    } else {
+      setIsAdmin(false);
+      setCurrentView('public');
+    }
   };
 
   const handleLogoutDealership = () => {
     setIsDealershipLoggedIn(false);
+    setAuthUser(null);
     safeRemoveStorage('autoconcession_dealership_auth');
+    localStorage.removeItem('congocar_token');
+    localStorage.removeItem('congocar_user');
     setIsAdmin(false);
+    setIsSuperAdminAuthenticated(false);
     setCurrentView('public');
   };
 
@@ -1799,6 +1831,8 @@ export default function App() {
           handleRegisterDealership(accData);
         }}
         isLoggedIn={isDealershipLoggedIn}
+        currentUser={authUser}
+        onLogout={handleLogoutDealership}
         onGoHome={() => {
           setIsDealershipAuthModalOpen(false);
           setCurrentView('public');

@@ -12,7 +12,6 @@ CREATE DATABASE IF NOT EXISTS `congocar_db`
 
 USE `congocar_db`;
 
--- Désactivation temporaire des contraintes de clés pour la création propre des tables
 SET FOREIGN_KEY_CHECKS = 0;
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -98,7 +97,7 @@ CREATE TABLE `subscription_plans` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ====================================================================
--- 3. TABLE : DEALERS (Concessionnaires Automobiles & Showrooms en RDC)
+-- 3. TABLE : DEALERS (Concessions Automobiles & Showrooms en RDC)
 -- ====================================================================
 DROP TABLE IF EXISTS `dealers`;
 CREATE TABLE `dealers` (
@@ -581,20 +580,10 @@ CREATE TABLE `audit_logs` (
 -- ====================================================================
 -- VUES DE RÉTROCOMPATIBILITÉ ET OPTIMISATION (HIGH PERFORMANCE VIEWS)
 -- ====================================================================
+CREATE OR REPLACE VIEW `dealerships` AS SELECT * FROM `dealers`;
+CREATE OR REPLACE VIEW `vehicle_favorites` AS SELECT * FROM `favorites`;
+CREATE OR REPLACE VIEW `leads` AS SELECT * FROM `contact_requests`;
 
--- 1. Vue de compatibilité dealerships -> dealers
-CREATE OR REPLACE VIEW `dealerships` AS
-SELECT * FROM `dealers`;
-
--- 2. Vue de compatibilité vehicle_favorites -> favorites
-CREATE OR REPLACE VIEW `vehicle_favorites` AS
-SELECT * FROM `favorites`;
-
--- 3. Vue de compatibilité leads -> contact_requests
-CREATE OR REPLACE VIEW `leads` AS
-SELECT * FROM `contact_requests`;
-
--- 4. Vue Catalogue Ultra-Rapide : Véhicules Disponibles avec Photo Principale & Concession
 CREATE OR REPLACE VIEW `v_active_vehicles` AS
 SELECT 
   v.id,
@@ -643,26 +632,22 @@ LEFT JOIN `dealers` d ON v.dealership_id = d.id
 WHERE v.status = 'disponible' AND v.deleted_at IS NULL;
 
 -- ====================================================================
--- DÉCLENCHEURS (TRIGGERS) D'INTÉGRITÉ & DE COMPTEURS
+-- DÉCLENCHEURS (TRIGGERS)
 -- ====================================================================
-
 DELIMITER $$
 
--- 1. Incrémenter le compteur de favoris lors d'un ajout
 CREATE TRIGGER `trg_favorite_added` AFTER INSERT ON `favorites`
 FOR EACH ROW
 BEGIN
   UPDATE `vehicles` SET `favorites_count` = `favorites_count` + 1 WHERE `id` = NEW.vehicle_id;
 END$$
 
--- 2. Décrémenter le compteur de favoris lors d'une suppression
 CREATE TRIGGER `trg_favorite_removed` AFTER DELETE ON `favorites`
 FOR EACH ROW
 BEGIN
   UPDATE `vehicles` SET `favorites_count` = GREATEST(0, `favorites_count` - 1) WHERE `id` = OLD.vehicle_id;
 END$$
 
--- 3. Incrémenter le compteur de leads / demandes lors d'une soumission
 CREATE TRIGGER `trg_lead_added` AFTER INSERT ON `contact_requests`
 FOR EACH ROW
 BEGIN
@@ -673,124 +658,4 @@ END$$
 
 DELIMITER ;
 
--- ====================================================================
--- DONNÉES INITIALES RÉALISTES POUR CONGOCAR (KINSHASA & RDC)
--- Mot de passe par défaut pour tous les comptes : Admin1234!
--- (Hachage bcrypt : $2a$10$w090b8f1kQzN4oW4v95DqeuH3s8.lPZp9oQ7/2ZzSg2kYQ/YcW4eC)
--- ====================================================================
-
--- 1. Utilisateurs Principaux (Admin, Concessionnaires, Acheteurs)
-INSERT INTO `users` (`id`, `uuid`, `first_name`, `last_name`, `name`, `email`, `phone`, `password`, `role`, `status`, `avatar`, `created_at`) VALUES
-(1, 'usr-uuid-admin-001', 'Admin', 'CONGOCAR', 'Administrateur CONGOCAR', 'admin@congocar.cd', '+243 810 000 001', '$2a$10$w090b8f1kQzN4oW4v95DqeuH3s8.lPZp9oQ7/2ZzSg2kYQ/YcW4eC', 'superadmin', 'active', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80', NOW()),
-(2, 'usr-uuid-dealer-001', 'Christian', 'Kalonji', 'Christian Kalonji', 'direction@prestigeauto-kin.cd', '+243 898 001 002', '$2a$10$w090b8f1kQzN4oW4v95DqeuH3s8.lPZp9oQ7/2ZzSg2kYQ/YcW4eC', 'dealer', 'active', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80', NOW()),
-(3, 'usr-uuid-dealer-002', 'Patrick', 'Muteba', 'Patrick Muteba', 'ventes@joossmotors.cd', '+243 822 111 222', '$2a$10$w090b8f1kQzN4oW4v95DqeuH3s8.lPZp9oQ7/2ZzSg2kYQ/YcW4eC', 'dealer', 'active', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80', NOW()),
-(4, 'usr-uuid-garage-001', 'Jean-Paul', 'Mbayo', 'Jean-Paul Mbayo', 'atelier@autoclinique-kin.cd', '+243 812 345 678', '$2a$10$w090b8f1kQzN4oW4v95DqeuH3s8.lPZp9oQ7/2ZzSg2kYQ/YcW4eC', 'garage', 'active', 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=400&q=80', NOW()),
-(5, 'usr-uuid-client-001', 'Alain', 'Kalala', 'Alain Kalala', 'client.kalala@gmail.com', '+243 811 999 888', '$2a$10$w090b8f1kQzN4oW4v95DqeuH3s8.lPZp9oQ7/2ZzSg2kYQ/YcW4eC', 'client', 'active', NULL, NOW());
-
--- 2. Plans d'Abonnement SaaS
-INSERT INTO `subscription_plans` (`id`, `code`, `name`, `target_type`, `price_usd`, `price_cdf`, `billing_cycle`, `trial_days`, `max_vehicles`, `max_featured_vehicles`, `has_crm_leads`, `has_whatsapp_direct`, `has_analytics`, `has_verified_badge`, `display_order`) VALUES
-(1, 'starter', 'Formule Starter Découverte', 'dealer', 0.00, 0.00, 'monthly', 14, 5, 1, 1, 1, 0, 0, 1),
-(2, 'pro', 'Formule Pro Concessionnaire', 'dealer', 79.00, 225150.00, 'monthly', 14, 25, 5, 1, 1, 1, 1, 2),
-(3, 'enterprise', 'Formule Élite Multi-Concessions', 'dealer', 199.00, 567150.00, 'monthly', 0, 100, 20, 1, 1, 1, 1, 3),
-(4, 'garage_pro', 'Partenaire Garage & SOS Dépannage', 'garage', 49.00, 139650.00, 'monthly', 14, 0, 0, 1, 1, 1, 1, 4);
-
--- 3. Concessionnaires Partenaires (Kinshasa)
-INSERT INTO `dealers` (`id`, `uuid`, `user_id`, `nom`, `slug`, `dealership_type`, `slogan`, `description`, `rccm`, `id_nat`, `email`, `telephone`, `whatsapp`, `site_web`, `adresse`, `commune`, `ville`, `horaires`, `logo_url`, `banner_url`, `verified`, `statut_abonnement`, `plan_id`) VALUES
-(1, 'dlr-uuid-001', 2, 'Prestige Auto Kinshasa', 'prestige-auto-kinshasa', 'franchise_officielle', 'Concessionnaire Agréé Véhicules Premium & 4x4 Tout-Terrain', 'Leader de la vente de véhicules de prestige neufs et occasions certifiées à Kinshasa.', 'CD/KIN/RCCM/19-B-01452', '01-83-N48201A', 'contact@prestigeauto-kin.cd', '+243 898 001 002', '+243 898 001 002', 'https://prestigeauto-kin.cd', 'Boulevard du 30 Juin, En face Batetela', 'Gombe', 'Kinshasa', 'Lun - Sam : 08h00 - 18h30', 'https://images.unsplash.com/photo-1599305445671-ac291c95aaa9?auto=format&fit=crop&w=200&q=80', 'https://images.unsplash.com/photo-1562141961-b5d1855d7f37?auto=format&fit=crop&w=1200&q=80', 1, 'actif', 'pro'),
-(2, 'dlr-uuid-002', 3, 'Jooss Motors Kinshasa', 'jooss-motors-kinshasa', 'importateur', 'Spécialiste Importation Véhicules Japon & Dubaï Décrochés', 'Showroom spécialisé en Toyota Land Cruiser, Hilux et berlines japonaises.', 'CD/KIN/RCCM/21-A-09321', '01-84-M91024B', 'contact@joossmotors.cd', '+243 822 111 222', '+243 822 111 222', 'https://joossmotors.cd', '12ème Rue Limete, Voie Principale', 'Limete', 'Kinshasa', 'Lun - Sam : 08h30 - 18h00', 'https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?auto=format&fit=crop&w=200&q=80', 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80', 1, 'actif', 'enterprise');
-
--- 4. Garages & Centres SOS Dépannage 24/7 (Kinshasa)
-INSERT INTO `garages` (`id`, `uuid`, `user_id`, `nom`, `slug`, `commune`, `ville`, `adresse`, `telephone`, `whatsapp`, `email`, `horaires`, `is_open_24h`, `has_towing_truck`, `has_mobile_mechanic`, `specialties`, `photo_url`, `rating`, `total_reviews`, `verified`) VALUES
-(1, 'grg-uuid-001', 4, 'AutoClinique Kinshasa Limete', 'autoclinique-kinshasa-limete', 'Limete', 'Kinshasa', '1ère Rue Résidentiel, N°14', '+243 812 345 678', '+243 812 345 678', 'contact@autoclinique-kin.cd', '24h/24 - 7j/7 Intervention immédiate', 1, 1, 1, '["Mecanique_Generale", "Diagnostic_Electronique", "Depannage_Urgence_24h", "Boite_Automatique", "Electricite_Auto"]', 'https://images.unsplash.com/photo-1613214149922-f1809c99b414?auto=format&fit=crop&w=800&q=80', 4.90, 48, 1),
-(2, 'grg-uuid-002', 1, 'Gombe Bosch Service Express', 'gombe-bosch-service-express', 'Gombe', 'Kinshasa', 'Avenue du Port, En face Gare Centrale', '+243 899 112 233', '+243 899 112 233', 'gombe-service@bosch.cd', 'Lun - Sam : 07h30 - 18h00', 0, 0, 1, '["Diagnostic_Electronique", "Climatisation", "Injecteurs_Diesel", "Freinage_ABS"]', 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=800&q=80', 4.85, 36, 1),
-(3, 'grg-uuid-003', 1, 'SOS Remorquage 24/7 Kinshasa', 'sos-remorquage-24-7-kinshasa', 'Ngaliema', 'Kinshasa', 'Route de Matadi, Arrêt Kintambo Magasin', '+243 820 999 888', '+243 820 999 888', 'urgence@soskinshasa.cd', '24h/24 - 7j/7', 1, 1, 1, '["Remorquage_Depanneuse", "Depannage_Urgence_24h", "Batterie_Demarrage", "Pneumatiques"]', 'https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=800&q=80', 4.95, 62, 1);
-
--- 5. Marques Automobiles
-INSERT INTO `brands` (`id`, `name`, `slug`, `logo_url`, `country_origin`, `is_popular`, `display_order`, `vehicles_count`) VALUES
-(1, 'Toyota', 'toyota', 'https://www.carlogos.org/car-logos/toyota-logo.png', 'Japon', 1, 1, 12),
-(2, 'Mercedes-Benz', 'mercedes-benz', 'https://www.carlogos.org/car-logos/mercedes-benz-logo.png', 'Allemagne', 1, 2, 8),
-(3, 'BMW', 'bmw', 'https://www.carlogos.org/car-logos/bmw-logo.png', 'Allemagne', 1, 3, 6),
-(4, 'Hyundai', 'hyundai', 'https://www.carlogos.org/car-logos/hyundai-logo.png', 'Corée du Sud', 1, 4, 5),
-(5, 'Nissan', 'nissan', 'https://www.carlogos.org/car-logos/nissan-logo.png', 'Japon', 1, 5, 4),
-(6, 'Land Rover', 'land-rover', 'https://www.carlogos.org/car-logos/land-rover-logo.png', 'Royaume-Uni', 1, 6, 4),
-(7, 'Lexus', 'lexus', 'https://www.carlogos.org/car-logos/lexus-logo.png', 'Japon', 1, 7, 3),
-(8, 'Ford', 'ford', 'https://www.carlogos.org/car-logos/ford-logo.png', 'USA', 1, 8, 3),
-(9, 'Kia', 'kia', 'https://www.carlogos.org/car-logos/kia-logo.png', 'Corée du Sud', 1, 9, 3),
-(10, 'Porsche', 'porsche', 'https://www.carlogos.org/car-logos/porsche-logo.png', 'Allemagne', 0, 10, 2);
-
--- 6. Modèles Populaires
-INSERT INTO `models` (`id`, `brand_id`, `name`, `slug`, `default_body_type`) VALUES
-(1, 1, 'Land Cruiser Prado VXR', 'land-cruiser-prado-vxr', 'SUV'),
-(2, 1, 'Land Cruiser 300 ZX', 'land-cruiser-300-zx', 'SUV'),
-(3, 1, 'Hilux Double Cabine', 'hilux-double-cabine', 'Pick-up'),
-(4, 1, 'RAV4 Hybride', 'rav4-hybride', 'SUV'),
-(5, 2, 'Classe G 63 AMG', 'classe-g-63-amg', 'SUV'),
-(6, 2, 'GLE 450 4MATIC', 'gle-450-4matic', 'SUV'),
-(7, 2, 'Classe C 300', 'classe-c-300', 'Berline'),
-(8, 3, 'X5 xDrive40i', 'x5-xdrive40i', 'SUV'),
-(9, 3, 'Série 3 330i', 'serie-3-330i', 'Berline'),
-(10, 4, 'Tucson N Line', 'tucson-n-line', 'SUV'),
-(11, 6, 'Range Rover Sport', 'range-rover-sport', 'SUV');
-
--- 7. Véhicules en Stock CONGOCAR
-INSERT INTO `vehicles` (`id`, `uuid`, `dealership_id`, `user_id`, `brand_id`, `model_id`, `marque`, `modele`, `finition`, `annee`, `prix`, `currency`, `msrp`, `remise_instantanee`, `ancien_prix`, `en_promo`, `kilometrage`, `carburant`, `transmission`, `motrice`, `categorie`, `etat`, `status`, `puissance_ch`, `puissance_fiscale`, `couleur`, `couleur_interieure`, `moteur`, `portes`, `places`, `garantie_mois`, `vin`, `description`, `equipements`, `en_vedette`, `views_count`, `created_at`) VALUES
-(1, 'veh-uuid-001', 1, 2, 1, 1, 'Toyota', 'Land Cruiser Prado VXR', 'Executive 4x4 Pack Luxe', 2023, 79500.00, 'USD', 84000.00, 4500.00, 84000.00, 1, 14500, 'Diesel', 'Automatique', '4x4 Permanent', 'SUV', 'occasion_kinshasa', 'disponible', 204, 11, 'Blanc Nacré', 'Cuir Noir', '2.8L D-4D Turbo', 5, 7, 24, 'JTEBU5JR8K5019284', 'Superbe Toyota Land Cruiser Prado en parfait état, révision complète effectuée à Kinshasa. Climatisation tri-zone tropicalisée, toit ouvrant, caméras 360°, suspension adaptative.', '["Toit ouvrant", "Sellerie cuir", "GPS Grand Écran", "Caméra 360", "Attelage", "Bluetooth", "Régulateur adaptatif", "Jantes alliage 19 pouces"]', 1, 420, NOW()),
-(2, 'veh-uuid-002', 1, 2, 2, 5, 'Mercedes-Benz', 'Classe G 63 AMG', 'BiTurbo 4MATIC Édition Spéciale', 2024, 215000.00, 'USD', 220000.00, 5000.00, 220000.00, 0, 4200, 'Essence', 'Automatique', '4x4 Permanent', 'SUV', 'occasion_importee', 'disponible', 585, 48, 'Noir Obsidienne', 'Cuir Nappa Rouge', '4.0L V8 Biturbo', 5, 5, 36, 'WDB4632761X891024', 'Icône absolue du prestige et de la puissance. Échappement sport AMG commutable, sonorisation Burmester Surround, pack carbone intérieur, véhicule dédouané à Kinshasa.', '["Pack AMG Performance", "Système Audio Burmester", "Affichage tête haute", "Suspension pilotée AMG Ride Control", "Éclairage d\'ambiance 64 couleurs"]', 1, 680, NOW()),
-(3, 'veh-uuid-003', 2, 3, 4, 10, 'Hyundai', 'Tucson N Line', 'Hybride Rechargeable HTRAC', 2024, 38900.00, 'USD', 42000.00, 3100.00, 42000.00, 1, 0, 'Hybride', 'Automatique', 'AWD', 'SUV', 'neuf', 'disponible', 265, 9, 'Gris Shadow', 'Alcantara N Line', '1.6 T-GDi PHEV', 5, 5, 60, 'KMHJ881CBRU391022', 'Véhicule neuf zéro kilomètre disponible immédiatement dans notre showroom de Limete. Garantie constructeur 5 ans, autonomie 100% électrique de 62 km.', '["Compteurs digitaux 10.25 pouces", "Aide au maintien dans la voie", "Chargeur smartphone sans fil", "Hayon électrique mains libres"]', 1, 290, NOW()),
-(4, 'veh-uuid-004', 2, 3, 3, 9, 'BMW', 'Série 3 330i xDrive', 'Pack M Sport', 2022, 44500.00, 'USD', 47000.00, 2500.00, 47000.00, 0, 31000, 'Essence', 'Automatique', 'AWD', 'Berline', 'occasion_importee', 'disponible', 258, 15, 'Bleu Portimao', 'Sensatec Cognac', '2.0L TwinPower Turbo', 4, 5, 12, 'WBA5R7103NCK91823', 'Berline sportive avec le pack aérodynamique M, feux Shadow Line laser, sièges chauffants et jantes bicolores 19 pouces.', '["Pack M Sport", "Projecteurs BMW Laser", "Park Assist", "Apple CarPlay / Android Auto sans fil"]', 0, 195, NOW());
-
--- 8. Photos des Véhicules
-INSERT INTO `vehicle_images` (`vehicle_id`, `image_url`, `is_primary`, `display_order`) VALUES
-(1, 'https://images.unsplash.com/photo-1594502184342-2e12f877aa73?auto=format&fit=crop&w=1200&q=80', 1, 0),
-(1, 'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1200&q=80', 0, 1),
-(2, 'https://images.unsplash.com/photo-1520031441872-265e4ff70366?auto=format&fit=crop&w=1200&q=80', 1, 0),
-(3, 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1200&q=80', 1, 0),
-(4, 'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1200&q=80', 1, 0);
-
--- 9. Favoris Exemples
-INSERT INTO `favorites` (`user_id`, `vehicle_id`, `created_at`) VALUES
-(5, 1, NOW()),
-(5, 2, NOW());
-
--- 10. Messages Inter-Utilisateurs
-INSERT INTO `messages` (`conversation_id`, `sender_id`, `receiver_id`, `vehicle_id`, `message_text`, `is_read`, `created_at`) VALUES
-('conv-prado-kalala-001', 5, 2, 1, 'Bonjour Monsieur Kalonji, ce Prado 2023 est-il disponible pour une visite demain après-midi au showroom ?', 1, DATE_SUB(NOW(), INTERVAL 2 HOUR)),
-('conv-prado-kalala-001', 2, 5, 1, 'Bonjour Alain, oui tout à fait ! Il est exposé dans notre showroom de Gombe. Je vous réserve un essai à 15h.', 0, DATE_SUB(NOW(), INTERVAL 1 HOUR));
-
--- 11. Demandes Clients (Contact Requests / Leads)
-INSERT INTO `contact_requests` (`uuid`, `dealership_id`, `vehicle_id`, `user_id`, `vehicle_title`, `vehicle_price`, `nom_client`, `email`, `telephone`, `type_demande`, `date_souhaitee`, `horaire_souhaite`, `message`, `offre_prix_proposee`, `statut`) VALUES
-('lead-uuid-001', 1, 1, 5, 'Toyota Land Cruiser Prado VXR 2023', 79500.00, 'Alain Kalala', 'client.kalala@gmail.com', '+243 811 999 888', 'essai', CURDATE(), '15h00', 'Demande d\'essai routier pour le Land Cruiser Prado VXR.', NULL, 'rdv_fixe'),
-('lead-uuid-002', 1, 2, NULL, 'Mercedes-Benz Classe G 63 AMG 2024', 215000.00, 'Cabinet Serge Mobutu', 'contact@sm-law.cd', '+243 899 777 666', 'offre_prix', NULL, NULL, 'Proposition de rachat ferme comptant avec immatriculation Kinshasa.', 205000.00, 'contacte');
-
--- 12. Signalements (Reports)
-INSERT INTO `reports` (`uuid`, `reporter_user_id`, `reported_vehicle_id`, `reason`, `description`, `status`) VALUES
-('rep-uuid-001', 5, 4, 'incorrect_price', 'Vérification du prix demandée par l\'acheteur, le prix promotionnel différait de la fiche vitrine.', 'resolved_action_taken');
-
--- 13. Notifications Utilisateurs
-INSERT INTO `notifications` (`user_id`, `type`, `title`, `body`, `action_url`, `is_read`) VALUES
-(2, 'new_lead', 'Nouveau Lead Essai Routier', 'Alain Kalala a sollicité un essai routier pour le Toyota Land Cruiser Prado 2023.', '/admin/leads/1', 0),
-(5, 'price_drop', 'Baisse de Prix sur votre Véhicule Favori', 'Le Prado VXR que vous suivez bénéficie désormais d\'une remise de 4 500 $ !', '/vehicles/1', 0);
-
--- 14. Abonnements Actifs (Subscriptions)
-INSERT INTO `subscriptions` (`uuid`, `plan_id`, `dealer_id`, `status`, `billing_cycle`, `price_usd`, `price_cdf`, `max_vehicles_allowed`, `max_featured_allowed`, `current_period_start`, `current_period_end`, `auto_renew`) VALUES
-('sub-uuid-001', 2, 1, 'active', 'monthly', 79.00, 225150.00, 25, 5, NOW(), DATE_ADD(NOW(), INTERVAL 1 MONTH), 1),
-('sub-uuid-002', 3, 2, 'active', 'monthly', 199.00, 567150.00, 100, 20, NOW(), DATE_ADD(NOW(), INTERVAL 1 MONTH), 1);
-
--- 15. Transactions & Paiements (Payments via Mobile Money RDC)
-INSERT INTO `payments` (`uuid`, `transaction_reference`, `user_id`, `dealer_id`, `subscription_id`, `purpose`, `amount`, `currency`, `exchange_rate`, `payment_method`, `gateway`, `gateway_reference`, `payer_phone`, `payer_name`, `status`, `paid_at`) VALUES
-('pay-uuid-001', 'CC-TX-2026-90124', 2, 1, 1, 'subscription', 79.00, 'USD', 2850.0000, 'mpesa', 'maxicash', 'MPESA-CD-891024810', '+243 898 001 002', 'Christian Kalonji', 'completed', NOW()),
-('pay-uuid-002', 'CC-TX-2026-90125', 3, 2, 2, 'subscription', 199.00, 'USD', 2850.0000, 'orange_money', 'maxicash', 'OM-CD-391029411', '+243 822 111 222', 'Patrick Muteba', 'completed', NOW());
-
--- 16. Avis et Notations Clients
-INSERT INTO `reviews` (`user_id`, `dealer_id`, `rating`, `title`, `comment`, `is_approved`) VALUES
-(5, 1, 5, 'Service exceptionnel à Gombe', 'Accueil très professionnel de l\'équipe Prestige Auto. Démarches d\'immatriculation gérées en moins de 48h !', 1);
-
--- 17. Audit Log
-INSERT INTO `audit_logs` (`user_id`, `action`, `entity_type`, `entity_id`, `ip_address`, `details`) VALUES
-(1, 'DATABASE_INIT', 'SYSTEM', 1, '127.0.0.1', '{"message": "Initialisation de la base de données CONGOCAR version 2.5 réussie"}');
-
 SET FOREIGN_KEY_CHECKS = 1;
-
--- ====================================================================
--- FIN DU SCRIPT MYSQL CONGOCAR - BASE DE DONNÉES PRÊTE À L'EMPLOI
--- ====================================================================

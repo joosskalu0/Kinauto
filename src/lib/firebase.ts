@@ -11,14 +11,6 @@ import {
   getDocFromServer,
   writeBatch
 } from 'firebase/firestore';
-import { 
-  getAuth, 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword, 
-  signOut, 
-  onAuthStateChanged,
-  User
-} from 'firebase/auth';
 
 import firebaseConfig from '../../firebase-applet-config.json';
 import { Vehicle, Lead, DealershipAccount } from '../types';
@@ -44,7 +36,6 @@ try {
 }
 
 export const db = firestoreInstance;
-export const auth = getAuth(app);
 
 // --------------------------------------------------------
 // FIRESTORE ERROR HANDLING (Per skill specifications)
@@ -76,18 +67,21 @@ export interface FirestoreErrorInfo {
 }
 
 export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+  let currentUserInfo: any = null;
+  try {
+    const raw = typeof window !== 'undefined' ? localStorage.getItem('congocar_user') : null;
+    if (raw) currentUserInfo = JSON.parse(raw);
+  } catch (_) {}
+
   const errInfo: FirestoreErrorInfo = {
     error: error instanceof Error ? error.message : String(error),
     authInfo: {
-      userId: auth.currentUser?.uid,
-      email: auth.currentUser?.email,
-      emailVerified: auth.currentUser?.emailVerified,
-      isAnonymous: auth.currentUser?.isAnonymous,
-      tenantId: auth.currentUser?.tenantId,
-      providerInfo: auth.currentUser?.providerData?.map(provider => ({
-        providerId: provider.providerId,
-        email: provider.email,
-      })) || []
+      userId: currentUserInfo?.id ? String(currentUserInfo.id) : undefined,
+      email: currentUserInfo?.email,
+      emailVerified: true,
+      isAnonymous: !currentUserInfo,
+      tenantId: undefined,
+      providerInfo: []
     },
     operationType,
     path
@@ -393,20 +387,50 @@ export const deleteDealershipAndVehicles = async (dealershipId: string, vehicles
 };
 
 // --------------------------------------------------------
-// AUTHENTICATION HELPERS
+// AUTHENTICATION (Migrated from Firebase Auth to Node.js + MySQL + JWT)
 // --------------------------------------------------------
-export const subscribeAuth = (callback: (user: User | null) => void) => {
-  return onAuthStateChanged(auth, callback);
-};
+import { authApi, setAuthToken, removeAuthToken } from '../services/api';
 
 export const loginAdmin = async (email: string, pass: string) => {
-  return signInWithEmailAndPassword(auth, email, pass);
+  const res = await authApi.login({ email, password: pass });
+  if (res.success && res.data?.token) {
+    setAuthToken(res.data.token);
+    localStorage.setItem('congocar_user', JSON.stringify(res.data.user));
+  }
+  return res.data;
 };
 
 export const registerAdmin = async (email: string, pass: string) => {
-  return createUserWithEmailAndPassword(auth, email, pass);
+  const res = await authApi.register({
+    name: email.split('@')[0],
+    email,
+    password: pass,
+    role: 'admin'
+  });
+  if (res.success && res.data?.token) {
+    setAuthToken(res.data.token);
+    localStorage.setItem('congocar_user', JSON.stringify(res.data.user));
+  }
+  return res.data;
 };
 
 export const logoutAdmin = async () => {
-  return signOut(auth);
+  try {
+    await authApi.logout();
+  } catch (_) {}
+  removeAuthToken();
+};
+
+export const subscribeAuth = (callback: (user: any | null) => void) => {
+  const saved = localStorage.getItem('congocar_user');
+  if (saved) {
+    try {
+      callback(JSON.parse(saved));
+    } catch {
+      callback(null);
+    }
+  } else {
+    callback(null);
+  }
+  return () => {};
 };

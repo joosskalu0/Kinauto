@@ -10,13 +10,14 @@ const API_BASE_URL = (import.meta as any).env?.VITE_API_URL || '/api';
  * Récupérer le jeton JWT stocké dans le navigateur
  */
 export const getAuthToken = (): string | null => {
-  return localStorage.getItem('autoconcession_token') || localStorage.getItem('kinimmo_token');
+  return localStorage.getItem('congocar_token') || localStorage.getItem('autoconcession_token');
 };
 
 /**
  * Sauvegarder le jeton JWT
  */
 export const setAuthToken = (token: string): void => {
+  localStorage.setItem('congocar_token', token);
   localStorage.setItem('autoconcession_token', token);
 };
 
@@ -24,10 +25,10 @@ export const setAuthToken = (token: string): void => {
  * Supprimer le jeton JWT (Déconnexion)
  */
 export const removeAuthToken = (): void => {
+  localStorage.removeItem('congocar_token');
+  localStorage.removeItem('congocar_user');
   localStorage.removeItem('autoconcession_token');
   localStorage.removeItem('autoconcession_user');
-  localStorage.removeItem('kinimmo_token');
-  localStorage.removeItem('kinimmo_user');
 };
 
 /**
@@ -60,21 +61,24 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 }
 
 // ====================================================================
-// 1. API AUTHENTIFICATION
+// 1. API AUTHENTIFICATION NODE.JS + MYSQL (CONGOCAR)
 // ====================================================================
 export const authApi = {
+  // Connexion
   login: (credentials: { email: string; password: string }) => 
     request<{ success: boolean; data: { token: string; user: any }; message?: string }>('/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials)
     }),
 
+  // Inscription
   register: (userData: { 
     name: string; 
     email: string; 
     password: string; 
-    role?: 'user' | 'dealer' | 'salesperson' | 'garage'; 
+    role?: 'admin' | 'dealer' | 'seller' | 'garage' | 'user'; 
     phone?: string;
+    city?: string;
     dealershipName?: string;
     garageName?: string;
     commune?: string;
@@ -84,14 +88,51 @@ export const authApi = {
       body: JSON.stringify(userData)
     }),
 
+  // Déconnexion
+  logout: () =>
+    request<{ success: boolean; message: string }>('/auth/logout', {
+      method: 'POST'
+    }),
+
+  // Demande de code/token de réinitialisation de mot de passe
+  forgotPassword: (data: { email: string }) =>
+    request<{ success: boolean; message: string; data?: { email: string; resetCode?: string; resetToken?: string } }>('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    }),
+
+  // Réinitialisation du mot de passe avec code et nouveau mot de passe
+  resetPassword: (data: { email: string; code?: string; token?: string; newPassword: string }) =>
+    request<{ success: boolean; message: string }>('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify(data)
+    }),
+
+  // Obtenir le profil de l'utilisateur connecté via JWT
   getMe: () => 
     request<{ success: boolean; data: any }>('/auth/me'),
 
-  updateProfile: (profileData: { name?: string; phone?: string; avatar?: string; password?: string }) =>
+  // Mettre à jour le profil ou changer le mot de passe
+  updateProfile: (profileData: { name?: string; phone?: string; city?: string; avatar?: string; currentPassword?: string; newPassword?: string }) =>
     request<{ success: boolean; data: any; message?: string }>('/auth/profile', {
       method: 'PUT',
       body: JSON.stringify(profileData)
-    })
+    }),
+
+  // Gestion des rôles (Admin uniquement) : Liste des utilisateurs
+  getUsers: () =>
+    request<{ success: boolean; total: number; data: any[] }>('/auth/users'),
+
+  // Gestion des rôles (Admin uniquement) : Mise à jour du rôle
+  updateUserRole: (userId: number | string, role: 'admin' | 'dealer' | 'seller' | 'garage' | 'user') =>
+    request<{ success: boolean; message: string; data: any }>(`/auth/users/${userId}/role`, {
+      method: 'PUT',
+      body: JSON.stringify({ role })
+    }),
+
+  // Liste des définitions de rôles
+  getRoles: () =>
+    request<{ success: boolean; roles: Array<{ id: string; label: string; description: string }> }>('/auth/roles')
 };
 
 // ====================================================================
@@ -163,8 +204,75 @@ export const dealershipsApi = {
   delete: (id: string | number) => 
     request<{ success: boolean; message: string }>(`/dealerships/${id}`, {
       method: 'DELETE'
+    }),
+
+  // Actions dédiées Concessionnaire Connecté & Gestion Stock/Stats/Leads
+  getProfile: () => 
+    request<{ success: boolean; has_dealership?: boolean; data: any; message?: string }>('/dealers/me'),
+
+  createProfile: (dealershipData: any) =>
+    request<{ success: boolean; data: any; message: string }>('/dealers', {
+      method: 'POST',
+      body: JSON.stringify(dealershipData)
+    }),
+
+  updateProfile: (dealershipData: any) =>
+    request<{ success: boolean; data: any; message: string }>('/dealers/me', {
+      method: 'PUT',
+      body: JSON.stringify(dealershipData)
+    }),
+
+  getStock: (filters: Record<string, any> = {}) => {
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && val !== '') {
+        params.append(key, String(val));
+      }
+    });
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    return request<{ success: boolean; summary: any; count: number; page: number; limit: number; data: any[] }>(`/dealers/me/stock${queryString}`);
+  },
+
+  addVehicle: (vehicleData: any) =>
+    request<{ success: boolean; data: any; message: string }>('/dealers/me/vehicles', {
+      method: 'POST',
+      body: JSON.stringify(vehicleData)
+    }),
+
+  updateStockStatus: (vehicleId: string | number, stockData: { status?: string; prix?: number; en_promo?: boolean; prix_promo?: number; en_vedette?: boolean }) =>
+    request<{ success: boolean; data: any; message: string }>(`/dealers/stock/${vehicleId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(stockData)
+    }),
+
+  getStats: () =>
+    request<{ success: boolean; dealership: any; inventory: any; engagement: any; inquiries: any; top_viewed_vehicles: any[] }>('/dealers/me/stats'),
+
+  getInquiries: (filters: Record<string, any> = {}) => {
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, val]) => {
+      if (val !== undefined && val !== null && val !== '') {
+        params.append(key, String(val));
+      }
+    });
+    const queryString = params.toString() ? `?${params.toString()}` : '';
+    return request<{ success: boolean; count: number; unread_count: number; total: number; page: number; limit: number; data: any[] }>(`/dealers/me/inquiries${queryString}`);
+  },
+
+  updateInquiryStatus: (inquiryId: string | number, data: { statut?: string; notes_internes?: string }) =>
+    request<{ success: boolean; data: any; message: string }>(`/dealers/inquiries/${inquiryId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data)
+    }),
+
+  sendCustomerInquiry: (dealershipId: string | number, inquiryData: any) =>
+    request<{ success: boolean; reference_number: string; data: any; message: string }>(`/dealers/${dealershipId}/inquiries`, {
+      method: 'POST',
+      body: JSON.stringify(inquiryData)
     })
 };
+
+export const dealersApi = dealershipsApi;
 
 // ====================================================================
 // 4. API LEADS & DEMANDES CLIENTS (Essais, Reprises, Financement)
@@ -233,23 +341,83 @@ export const favoritesApi = {
 // 6. API GARAGES & SOS DÉPANNAGE 24/7
 // ====================================================================
 export const garagesApi = {
-  getAll: (filters: { commune?: string; specialty?: string; isOpen24h?: boolean | string; search?: string } = {}) => {
+  getAll: (filters: { commune?: string; ville?: string; specialty?: string; isOpen24h?: boolean | string; search?: string; statut_validation?: string; admin_view?: boolean | string; page?: number; limit?: number } = {}) => {
     const params = new URLSearchParams();
     if (filters.commune) params.append('commune', filters.commune);
+    if (filters.ville) params.append('ville', filters.ville);
     if (filters.specialty) params.append('specialty', filters.specialty);
-    if (filters.isOpen24h) params.append('isOpen24h', String(filters.isOpen24h));
+    if (filters.isOpen24h !== undefined) params.append('isOpen24h', String(filters.isOpen24h));
     if (filters.search) params.append('search', filters.search);
+    if (filters.statut_validation) params.append('statut_validation', filters.statut_validation);
+    if (filters.admin_view !== undefined) params.append('admin_view', String(filters.admin_view));
+    if (filters.page) params.append('page', String(filters.page));
+    if (filters.limit) params.append('limit', String(filters.limit));
     const queryString = params.toString() ? `?${params.toString()}` : '';
-    return request<{ success: boolean; count: number; garages: any[] }>(`/garages${queryString}`);
+    return request<{ success: boolean; total: number; count: number; page: number; totalPages: number; data: any[]; garages: any[] }>(`/garages${queryString}`);
   },
 
   getById: (id: string | number) => 
-    request<{ success: boolean; garage: any }>(`/garages/${id}`),
+    request<{ success: boolean; data: any; garage: any }>(`/garages/${id}`),
 
-  create: (garageData: any) => 
-    request<{ success: boolean; message: string; garageId: number }>('/garages', {
+  getMyProfile: () =>
+    request<{ success: boolean; has_garage: boolean; data: any; message?: string }>('/garages/me'),
+
+  updateMyProfile: (garageData: any) =>
+    request<{ success: boolean; message: string; data: any }>('/garages/me', {
+      method: 'PUT',
+      body: JSON.stringify(garageData)
+    }),
+
+  register: (garageData: any) => 
+    request<{ success: boolean; message: string; data: any; garageId: number }>('/garages/register', {
       method: 'POST',
       body: JSON.stringify(garageData)
+    }),
+
+  create: (garageData: any) => 
+    request<{ success: boolean; message: string; data: any; garageId: number }>('/garages', {
+      method: 'POST',
+      body: JSON.stringify(garageData)
+    }),
+
+  update: (id: string | number, garageData: any) =>
+    request<{ success: boolean; message: string; data: any }>(`/garages/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(garageData)
+    }),
+
+  validate: (id: string | number, validationData: { statut: 'valide' | 'rejete' | 'en_attente'; motif_rejet?: string }) =>
+    request<{ success: boolean; message: string; data: any }>(`/garages/${id}/validate`, {
+      method: 'PATCH',
+      body: JSON.stringify(validationData)
+    }),
+
+  getServices: (garageId: string | number) =>
+    request<{ success: boolean; garage_id: number; count: number; data: any[] }>(`/garages/${garageId}/services`),
+
+  addService: (garageId: string | number, serviceData: { nom: string; description?: string; prix_indicatif?: number; duree_estimee?: string; icone?: string; is_disponible?: boolean }) =>
+    request<{ success: boolean; message: string; data: any }>(`/garages/${garageId}/services`, {
+      method: 'POST',
+      body: JSON.stringify(serviceData)
+    }),
+
+  deleteService: (serviceId: string | number) =>
+    request<{ success: boolean; message: string }>(`/garages/services/${serviceId}`, {
+      method: 'DELETE'
+    }),
+
+  getPhotos: (garageId: string | number) =>
+    request<{ success: boolean; garage_id: number; count: number; data: any[] }>(`/garages/${garageId}/photos`),
+
+  addPhoto: (garageId: string | number, photoData: { image_url: string; titre?: string; is_primary?: boolean; display_order?: number }) =>
+    request<{ success: boolean; message: string; photoId: number; data: any }>(`/garages/${garageId}/photos`, {
+      method: 'POST',
+      body: JSON.stringify(photoData)
+    }),
+
+  deletePhoto: (photoId: string | number) =>
+    request<{ success: boolean; message: string }>(`/garages/photos/${photoId}`, {
+      method: 'DELETE'
     }),
 
   createBreakdownRequest: (requestData: {
@@ -261,13 +429,13 @@ export const garagesApi = {
     issue_description: string;
     emergency_level?: 'normal' | 'urgent' | 'critique_nuit';
   }) => 
-    request<{ success: boolean; message: string; requestId: number }>('/garages/sos-breakdown', {
+    request<{ success: boolean; message: string; requestId: number; data?: any }>('/garages/sos-breakdown', {
       method: 'POST',
       body: JSON.stringify(requestData)
     }),
 
   getBreakdownRequests: () => 
-    request<{ success: boolean; count: number; requests: any[] }>('/garages/sos-breakdown/list'),
+    request<{ success: boolean; count: number; requests: any[]; data?: any[] }>('/garages/sos-breakdown/list'),
 
   updateBreakdownStatus: (id: string | number, status: 'en_attente' | 'pris_en_charge' | 'termine' | 'annule') => 
     request<{ success: boolean; message: string }>(`/garages/sos-breakdown/${id}/status`, {

@@ -3,6 +3,17 @@ import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
+const authRoutes = require("./server/routes/auth.js");
+const userRoutes = require("./server/routes/users.js");
+const dealershipRoutes = require("./server/routes/dealerships.js");
+const vehicleRoutes = require("./server/routes/vehicles.js");
+const leadRoutes = require("./server/routes/leads.js");
+const favoriteRoutes = require("./server/routes/favorites.js");
+const garageRoutes = require("./server/routes/garages.js");
+const adminRoutes = require("./server/routes/admin.js");
 
 dotenv.config();
 
@@ -11,6 +22,7 @@ async function startServer() {
   const PORT = 3000;
 
   app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
 
   // Initialize Gemini AI
   const ai = new GoogleGenAI({
@@ -22,10 +34,22 @@ async function startServer() {
     }
   });
 
-  // API Routes
+  // API Health check
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
   });
+
+  // Mount Node.js + MySQL Authentication & Platform Routes
+  app.use("/api/auth", authRoutes);
+  app.use("/api/users", userRoutes);
+  app.use("/api/dealerships", dealershipRoutes);
+  app.use("/api/dealers", dealershipRoutes);
+  app.use("/api/vehicles", vehicleRoutes);
+  app.use("/api/leads", leadRoutes);
+  app.use("/api/favorites", favoriteRoutes);
+  app.use("/api/garages", garageRoutes);
+  app.use("/api/admin", adminRoutes);
+
 
   // AI Description Generation for Vehicle Listings
   app.post("/api/ai/generate-description", async (req, res) => {

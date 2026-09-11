@@ -25,7 +25,7 @@ const authenticateJWT = (req, res, next) => {
   const token = parts[1];
 
   try {
-    const secret = process.env.JWT_SECRET || 'autoconcession_default_secret_key_jwt_2026';
+    const secret = process.env.JWT_SECRET || 'congocar_secret_jwt_key_kinshasa_2026';
     const decoded = jwt.verify(token, secret);
 
     // Attachement des informations de l'utilisateur à la requête
@@ -58,7 +58,7 @@ const optionalJWT = (req, res, next) => {
   const parts = authHeader.split(' ');
   if (parts.length === 2 && parts[0] === 'Bearer') {
     try {
-      const secret = process.env.JWT_SECRET || 'autoconcession_default_secret_key_jwt_2026';
+      const secret = process.env.JWT_SECRET || 'congocar_secret_jwt_key_kinshasa_2026';
       req.user = jwt.verify(parts[1], secret);
     } catch {
       req.user = null;

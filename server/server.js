@@ -80,6 +80,7 @@ const adminRoutes = require('./routes/admin');
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/dealerships', dealershipRoutes);
+app.use('/api/dealers', dealershipRoutes);
 app.use('/api/vehicles', vehicleRoutes);
 app.use('/api/leads', leadRoutes);
 app.use('/api/favorites', favoriteRoutes);
