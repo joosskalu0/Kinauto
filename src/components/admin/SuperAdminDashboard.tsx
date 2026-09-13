@@ -5,7 +5,7 @@ import {
   ChevronRight, Sparkles, User, ExternalLink, Trash2, Edit3, Eye, EyeOff, KeyRound, Sliders, X,
   Home, ArrowLeft, Phone, Mail, MapPin, Headphones, Globe,
   BarChart3, Activity, Users, MousePointerClick, TrendingUp, Flame, Play, Copy, Check, HelpCircle,
-  Layers, Tag, Wrench, Truck, Star, MessageSquare, Camera
+  Layers, Tag, Wrench, Truck, Star, MessageSquare, Camera, Car
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, 
@@ -22,6 +22,13 @@ import { generateAnalyticsReport, initGoogleAnalytics, trackCustomEvent } from '
 import { DealershipGTM } from './DealershipGTM';
 import { GarageFormModal } from './GarageFormModal';
 import { GarageDetailModal } from '../garages/GarageDetailModal';
+import { AdminStatsTab } from './AdminStatsTab';
+import { AdminUsersTab } from './AdminUsersTab';
+import { AdminVehiclesTab } from './AdminVehiclesTab';
+import { AdminBrandsModelsTab } from './AdminBrandsModelsTab';
+import { AdminReportsTab } from './AdminReportsTab';
+import { AdminSubscriptionsTab } from './AdminSubscriptionsTab';
+import { AdminPaymentsTab } from './AdminPaymentsTab';
 
 interface SuperAdminDashboardProps {
   dealershipAccounts: DealershipAccount[];
@@ -94,7 +101,11 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
   onLogoutSuperAdmin,
   onNavigateHome
 }) => {
-  const [activeTab, setActiveTab] = useState<'concessions' | 'facturation' | 'formules' | 'garages' | 'contact-admin' | 'analytics'>('concessions');
+  const [activeTab, setActiveTab] = useState<
+    'stats' | 'utilisateurs' | 'vehicules' | 'concessions' | 'garages' | 
+    'marques-modeles' | 'signalements' | 'abonnements' | 'facturation' | 
+    'paiements' | 'formules' | 'contact-admin' | 'analytics'
+  >('stats');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>('ALL');
   const [selectedVisibilityFilter, setSelectedVisibilityFilter] = useState<'ALL' | 'VISIBLE' | 'HIDDEN'>('ALL');
@@ -563,29 +574,65 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
       </div>
 
       {/* Navigation Tabs Bar */}
-      <div className="flex items-center gap-2 border-b border-slate-800 pb-3 text-xs font-bold">
+      <div className="flex items-center gap-2 border-b border-slate-800 pb-3 text-xs font-bold overflow-x-auto">
+        <button
+          onClick={() => setActiveTab('stats')}
+          className={`px-3.5 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer whitespace-nowrap ${
+            activeTab === 'stats'
+              ? 'bg-amber-500 text-slate-950 font-black shadow-lg'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+          }`}
+        >
+          <BarChart3 className="w-4 h-4" />
+          <span>Statistiques</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('utilisateurs')}
+          className={`px-3.5 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer whitespace-nowrap ${
+            activeTab === 'utilisateurs'
+              ? 'bg-amber-500 text-slate-950 font-black shadow-lg'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+          }`}
+        >
+          <Users className="w-4 h-4" />
+          <span>Utilisateurs</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('vehicules')}
+          className={`px-3.5 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer whitespace-nowrap ${
+            activeTab === 'vehicules'
+              ? 'bg-amber-500 text-slate-950 font-black shadow-lg'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+          }`}
+        >
+          <Car className="w-4 h-4" />
+          <span>Véhicules & Validation</span>
+        </button>
+
         <button
           onClick={() => setActiveTab('concessions')}
-          className={`px-4 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer ${
+          className={`px-3.5 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer whitespace-nowrap ${
             activeTab === 'concessions'
               ? 'bg-amber-500 text-slate-950 font-black shadow-lg'
               : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
           }`}
         >
           <Building2 className="w-4 h-4" />
-          <span>Liste des Concessions ({dealershipAccounts.length})</span>
+          <span>Concessions ({dealershipAccounts.length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('garages')}
-          className={`px-4 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer ${
+          className={`px-3.5 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer whitespace-nowrap ${
             activeTab === 'garages'
               ? 'bg-amber-500 text-slate-950 font-black shadow-lg'
               : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
           }`}
         >
           <Wrench className="w-4 h-4 text-amber-400" />
-          <span>Garages & SOS Panne ({garages.length})</span>
+          <span>Garages & SOS ({garages.length})</span>
           {breakdownRequests.filter(r => r.statut === 'en_attente').length > 0 && (
             <span className="bg-rose-500 text-white text-[10px] font-black px-1.5 py-0.2 rounded-full animate-pulse">
               {breakdownRequests.filter(r => r.statut === 'en_attente').length} SOS
@@ -594,27 +641,75 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
         </button>
 
         <button
+          onClick={() => setActiveTab('marques-modeles')}
+          className={`px-3.5 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer whitespace-nowrap ${
+            activeTab === 'marques-modeles'
+              ? 'bg-amber-500 text-slate-950 font-black shadow-lg'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+          }`}
+        >
+          <Tag className="w-4 h-4" />
+          <span>Marques & Modèles</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('signalements')}
+          className={`px-3.5 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer whitespace-nowrap ${
+            activeTab === 'signalements'
+              ? 'bg-amber-500 text-slate-950 font-black shadow-lg'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+          }`}
+        >
+          <AlertTriangle className="w-4 h-4" />
+          <span>Signalements</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('abonnements')}
+          className={`px-3.5 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer whitespace-nowrap ${
+            activeTab === 'abonnements'
+              ? 'bg-amber-500 text-slate-950 font-black shadow-lg'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+          }`}
+        >
+          <CreditCard className="w-4 h-4" />
+          <span>Abonnements Pro</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('paiements')}
+          className={`px-3.5 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer whitespace-nowrap ${
+            activeTab === 'paiements'
+              ? 'bg-amber-500 text-slate-950 font-black shadow-lg'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+          }`}
+        >
+          <DollarSign className="w-4 h-4" />
+          <span>Paiements</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('facturation')}
-          className={`px-4 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer ${
+          className={`px-3.5 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer whitespace-nowrap ${
             activeTab === 'facturation'
               ? 'bg-amber-500 text-slate-950 font-black shadow-lg'
               : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
           }`}
         >
           <FileText className="w-4 h-4" />
-          <span>Journal de Facturation ({allInvoices.length})</span>
+          <span>Factures ({allInvoices.length})</span>
         </button>
 
         <button
           onClick={() => setActiveTab('formules')}
-          className={`px-4 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer ${
+          className={`px-3.5 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer whitespace-nowrap ${
             activeTab === 'formules'
               ? 'bg-amber-500 text-slate-950 font-black shadow-lg'
               : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
           }`}
         >
           <Sliders className="w-4 h-4" />
-          <span>Formules SaaS & Tarifs</span>
+          <span>Tarifs SaaS</span>
         </button>
 
         <button
@@ -623,14 +718,14 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
             setAdminForm(siteAdminInfo);
             setAdminSaveSuccess(false);
           }}
-          className={`px-4 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer ${
+          className={`px-3.5 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer whitespace-nowrap ${
             activeTab === 'contact-admin'
               ? 'bg-amber-500 text-slate-950 font-black shadow-lg'
               : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
           }`}
         >
           <Headphones className="w-4 h-4" />
-          <span>Coordonnées Administrateur (Pied de Page)</span>
+          <span>Contact Pied de Page</span>
         </button>
 
         <button
@@ -641,16 +736,51 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
             setAdminGtmId(siteAdminInfo.googleTagManagerId || 'GTM-P8KLM22');
             setGaSaveSuccess(false);
           }}
-          className={`px-4 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer ${
+          className={`px-3.5 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer whitespace-nowrap ${
             activeTab === 'analytics'
               ? 'bg-amber-500 text-slate-950 font-black shadow-lg'
               : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
           }`}
         >
           <Layers className="w-4 h-4 text-indigo-400" />
-          <span>Google Tag Manager & Flux Central</span>
+          <span>GTM & Flux</span>
         </button>
       </div>
+
+      {/* TAB: STATISTIQUES GLOBALES */}
+      {activeTab === 'stats' && (
+        <AdminStatsTab />
+      )}
+
+      {/* TAB: GESTION UTILISATEURS */}
+      {activeTab === 'utilisateurs' && (
+        <AdminUsersTab />
+      )}
+
+      {/* TAB: GESTION VÉHICULES ET VALIDATION ANNONCES */}
+      {activeTab === 'vehicules' && (
+        <AdminVehiclesTab />
+      )}
+
+      {/* TAB: GESTION MARQUES ET MODÈLES */}
+      {activeTab === 'marques-modeles' && (
+        <AdminBrandsModelsTab />
+      )}
+
+      {/* TAB: GESTION SIGNALEMENTS */}
+      {activeTab === 'signalements' && (
+        <AdminReportsTab />
+      )}
+
+      {/* TAB: GESTION ABONNEMENTS */}
+      {activeTab === 'abonnements' && (
+        <AdminSubscriptionsTab />
+      )}
+
+      {/* TAB: GESTION PAIEMENTS */}
+      {activeTab === 'paiements' && (
+        <AdminPaymentsTab />
+      )}
 
       {/* TAB 1: CONCESSIONS MANAGEMENT */}
       {activeTab === 'concessions' && (

@@ -38,7 +38,14 @@ export interface Vehicle {
   equipements: string[];
   dateAjout: string;
   enVedette?: boolean;
+  listingTier?: 'free' | 'premium' | 'featured';
+  visibilityBadge?: 'urgent' | 'promo' | 'top_deal' | 'certifie' | 'garantie_incluse' | 'baisse_prix';
+  boostTopSearch?: boolean;
+  boostHomepage?: boolean;
+  isSponsored?: boolean;
+  sponsorName?: string;
   version?: string;
+  localisation?: string;
   boite?: TransmissionType;
   boiteVitesse?: TransmissionType;
   consommation?: string;
@@ -363,3 +370,88 @@ export interface BreakdownRequest {
   statut: 'en_attente' | 'pris_en_charge' | 'depanneur_en_route' | 'resolu' | 'annule';
   dateDemande: string;
 }
+
+// ==========================================
+// MONETIZATION & ADVERTISING MODELS
+// ==========================================
+export type ListingTierType = 'free' | 'premium' | 'featured';
+
+export interface ListingTierPlan {
+  id: ListingTierType;
+  code: string;
+  nom: string;
+  badge: string;
+  prix_usd: number;
+  prix_fc: number;
+  duree_jours: number;
+  max_photos: number;
+  priorite_tri: number;
+  description: string;
+  caracteristiques: string[];
+  is_popular?: boolean;
+  color: 'slate' | 'amber' | 'purple';
+}
+
+export interface VisibilityOption {
+  id: string;
+  nom: string;
+  type: 'recherche' | 'badge' | 'certification' | 'accueil';
+  prix_usd: number;
+  prix_fc: number;
+  duree_jours: number;
+  icone: string;
+  description: string;
+  benefice: string;
+}
+
+export interface AdCampaign {
+  id: string;
+  titre: string;
+  annonceur: string;
+  tag: string;
+  format: 'banner_leaderboard' | 'banner_inline' | 'sidebar_box' | 'banner_sos';
+  emplacement: string;
+  image_url: string;
+  description: string;
+  cta_text: string;
+  cta_url: string;
+  badge_color: string;
+  impressions: number;
+  clics: number;
+  date_debut: string;
+  date_fin: string;
+  is_active: boolean;
+}
+
+export interface AdPlacement {
+  id: string;
+  format: string;
+  nom: string;
+  dimensions: string;
+  emplacement: string;
+  tarif_mensuel_usd: number;
+  tarif_mensuel_fc: number;
+  description: string;
+  impressions_estimees: string;
+  disponible: boolean;
+}
+
+export interface MonetizationOrder {
+  id: string;
+  type: 'listing_tier' | 'visibility_boost' | 'dealership_subscription' | 'garage_subscription' | 'ad_campaign';
+  item_id: string;
+  item_nom: string;
+  target_vehicle_id?: number | string | null;
+  dealership_id?: number | string | null;
+  garage_id?: number | string | null;
+  client_nom: string;
+  client_phone: string;
+  client_email?: string;
+  montant_usd: number;
+  devise: 'USD' | 'FC';
+  payment_method: 'mpesa' | 'orange_money' | 'airtel_money' | 'virement' | 'carte';
+  payment_reference?: string;
+  status: 'pending' | 'completed' | 'failed';
+  created_at: string | Date;
+}
+

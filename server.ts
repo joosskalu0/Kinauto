@@ -14,6 +14,7 @@ const leadRoutes = require("./server/routes/leads.js");
 const favoriteRoutes = require("./server/routes/favorites.js");
 const garageRoutes = require("./server/routes/garages.js");
 const adminRoutes = require("./server/routes/admin.js");
+const monetizationRoutes = require("./server/routes/monetization.js");
 
 dotenv.config();
 
@@ -49,6 +50,7 @@ async function startServer() {
   app.use("/api/favorites", favoriteRoutes);
   app.use("/api/garages", garageRoutes);
   app.use("/api/admin", adminRoutes);
+  app.use("/api/monetization", monetizationRoutes);
 
 
   // AI Description Generation for Vehicle Listings

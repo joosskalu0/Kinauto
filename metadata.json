@@ -1,6 +1,6 @@
 {
   "name": "AutoConcession - Stock Auto & Vitrine",
-  "description": "Plateforme automobile complète : vitrine publique, gestion de stock concessionnaires, annuaire certifié de garages et assistance mécanique d'urgence.",
+  "description": "Plateforme automobile en RDC : vitrine publique, gestion de stock concessionnaires, annuaire certifié de garages, monétisation (annonces premium, abonnements SaaS, régie publicitaire, options de visibilité).",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

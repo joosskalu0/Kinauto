@@ -57,6 +57,10 @@ import { DealershipAuthModal } from './components/auth/DealershipAuthModal';
 import { InvoiceModal } from './components/admin/InvoiceModal';
 import { QuickNavigation } from './components/QuickNavigation';
 import { ActiveFilterChips } from './components/ActiveFilterChips';
+import { MobileBottomNav } from './components/MobileBottomNav';
+import { MonetizationPage } from './components/monetization/MonetizationPage';
+import { AdBanner } from './components/ads/AdBanner';
+import { AdInquiryModal } from './components/ads/AdInquiryModal';
 import { 
   initGoogleAnalytics, 
   trackPageView, 
@@ -359,6 +363,7 @@ export default function App() {
     const pageTitles: Record<AppViewMode, string> = {
       'public': 'Catalogue Véhicules & Concessions',
       'garages': 'Garages & SOS Dépannage Kinshasa 24/7',
+      'monetization': 'Tarifs & Monétisation Pro (Publicité, Abonnements, Boosts)',
       'admin-dashboard': `Tableau de Bord - ${dealership.nom}`,
       'admin-stock': `Gestion Stock - ${dealership.nom}`,
       'admin-leads': `Demandes & Essais - ${dealership.nom}`,
@@ -492,6 +497,9 @@ export default function App() {
   const [comparedVehicleIds, setComparedVehicleIds] = useState<string[]>([]);
   const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
 
+  // Advertising Inquiry Modal State
+  const [isAdInquiryModalOpen, setIsAdInquiryModalOpen] = useState(false);
+
   // LocalStorage Sync
   useEffect(() => {
     safeSetStorage('autoconcession_accounts', dealershipAccounts);
@@ -525,6 +533,7 @@ export default function App() {
     setSelectedInvoiceForModal(null);
     setIsSuperAdminAuthModalOpen(false);
     setIsDealershipAuthModalOpen(false);
+    setIsAdInquiryModalOpen(false);
   };
 
   const handleNavigateHome = () => {
@@ -543,7 +552,8 @@ export default function App() {
     isRegisterModalOpen ||
     selectedInvoiceForModal ||
     isSuperAdminAuthModalOpen ||
-    isDealershipAuthModalOpen
+    isDealershipAuthModalOpen ||
+    isAdInquiryModalOpen
   );
 
   const handleCloseCurrentPage = () => {
@@ -623,6 +633,18 @@ export default function App() {
       matchesFavorites
     );
   }).sort((a, b) => {
+    // Calcul de visibilité monétisée (Boost recherche, Annonce en vedette, Annonce premium)
+    const getMonetizationRank = (v: Vehicle) => {
+      let rank = 0;
+      if (v.listingTier === 'featured' || v.enVedette) rank += 1000;
+      if (v.boostTopSearch) rank += 500;
+      if (v.listingTier === 'premium') rank += 250;
+      if (v.visibilityBadge === 'urgent') rank += 100;
+      return rank;
+    };
+
+    const rankDiff = getMonetizationRank(b) - getMonetizationRank(a);
+
     if (sortBy === 'prix-asc') return a.prix - b.prix;
     if (sortBy === 'prix-desc') return b.prix - a.prix;
     if (sortBy === 'km-asc') return a.kilometrage - b.kilometrage;
@@ -630,12 +652,15 @@ export default function App() {
 
     // Default sorting guided by Motors tab (Popular, Recent, Featured)
     if (motorsListingTab === 'featured') {
-      if (a.enVedette && !b.enVedette) return -1;
-      if (!a.enVedette && b.enVedette) return 1;
+      if (rankDiff !== 0) return rankDiff;
     } else if (motorsListingTab === 'popular') {
       const aSavings = (a.remiseInstantanee || 0) + ((a.msrp && a.msrp > a.prix) ? a.msrp - a.prix : 0);
       const bSavings = (b.remiseInstantanee || 0) + ((b.msrp && b.msrp > b.prix) ? b.msrp - b.prix : 0);
       if (aSavings !== bSavings) return bSavings - aSavings;
+      if (rankDiff !== 0) return rankDiff;
+    } else {
+      // Recent tab also prioritizes boosted/featured listings
+      if (rankDiff !== 0) return rankDiff;
     }
 
     return new Date(b.dateAjout).getTime() - new Date(a.dateAjout).getTime();
@@ -873,6 +898,18 @@ export default function App() {
         saveVehicleToFirestore(updatedVehicle).catch(console.error);
       }
     } else {
+      // Enforcement de quota pour l'abonnement concessionnaire
+      if (currentAccount && !isSuperAdminAuthenticated) {
+        const currentPlan = subscriptionPlans.find((p) => p.id === currentAccount.planId);
+        const maxAllowed = currentPlan ? currentPlan.maxVehicles : 15;
+        const currentCount = vehicles.filter((v) => v.dealershipId === currentAccount.id).length;
+        if (currentCount >= maxAllowed) {
+          alert(`Limite de véhicules atteinte (${currentCount}/${maxAllowed}) pour votre abonnement "${currentPlan?.nom || 'Standard'}". Veuillez passer à un forfait supérieur dans "Tarifs & Monétisation".`);
+          setCurrentView('monetization');
+          return;
+        }
+      }
+
       const newVehicle: Vehicle = {
         ...data,
         id: `car-${Date.now()}`,
@@ -1005,9 +1042,13 @@ export default function App() {
         setCurrentView={setCurrentView}
         isAdmin={isAdmin}
         isDealershipLoggedIn={isDealershipLoggedIn}
+        openAuthModal={() => setIsDealershipAuthModalOpen(true)}
         onOpenLogin={() => setIsDealershipAuthModalOpen(true)}
         onOpenRegister={() => setIsRegisterModalOpen(true)}
         onLogout={handleLogoutDealership}
+        isSuperAdminAuthenticated={isSuperAdminAuthenticated}
+        openSuperAdminAuthModal={() => setIsSuperAdminAuthModalOpen(true)}
+        onLogoutSuperAdmin={handleLogoutSuperAdmin}
         currency={currency}
         setCurrency={setCurrency}
         searchQuery={searchQuery}
@@ -1030,7 +1071,7 @@ export default function App() {
       />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-28 md:pb-10 space-y-8">
         
         {/* Real Firestore Database Banner Status */}
         {isAdmin && (
@@ -1146,6 +1187,20 @@ export default function App() {
           />
         )}
 
+        {/* TARIFS, ABONNEMENTS ET MONÉTISATION VIEW */}
+        {currentView === 'monetization' && (
+          <MonetizationPage
+            onBackToPublic={() => setCurrentView('public')}
+            onOpenAddVehicleModal={() => {
+              setVehicleToEdit(null);
+              setIsAddVehicleModalOpen(true);
+            }}
+            onOpenAdInquiry={() => setIsAdInquiryModalOpen(true)}
+            currency={currency}
+            usdToFcRate={usdToFcRate}
+          />
+        )}
+
         {/* PUBLIC CATALOGUE VIEW - MOTORS SHOWCASE THEME */}
         {currentView === 'public' && (
           <div className="space-y-10">
@@ -1225,6 +1280,13 @@ export default function App() {
                 <span>→</span>
               </button>
             </div>
+
+            {/* Public Leaderboard Advertisement Slot */}
+            <AdBanner
+              format="banner_leaderboard"
+              onOpenAdInquiry={() => setIsAdInquiryModalOpen(true)}
+              onNavigateToMonetization={() => setCurrentView('monetization')}
+            />
 
             {/* 4. NEW / USED CARS SHOWCASE SECTION */}
             <div id="motors-cars-section" className="space-y-6 pt-2">
@@ -1512,6 +1574,46 @@ export default function App() {
                 usdToFcRate={usdToFcRate}
               />
 
+              {/* Quick Horizontally Scrollable Automotive Filter Pills (Mobile & Tablet optimized) */}
+              <div className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+                <button
+                  onClick={() => { setFilterBrand('ALL'); setFilterCategory('ALL'); }}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition cursor-pointer shrink-0 ${
+                    filterBrand === 'ALL' && filterCategory === 'ALL'
+                      ? 'bg-blue-600 text-white shadow-xs'
+                      : 'bg-white border border-slate-200 text-slate-700 hover:border-blue-400'
+                  }`}
+                >
+                  🚗 Tout le parc ({vehicles.length})
+                </button>
+                {['Toyota', 'Mercedes-Benz', 'Nissan', 'Hyundai', 'Land Rover', 'Mitsubishi'].map((b) => (
+                  <button
+                    key={b}
+                    onClick={() => setFilterBrand(filterBrand === b ? 'ALL' : b)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition cursor-pointer shrink-0 ${
+                      filterBrand === b
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : 'bg-white border border-slate-200 text-slate-700 hover:border-blue-400'
+                    }`}
+                  >
+                    {b}
+                  </button>
+                ))}
+                {['SUV', 'Berline', 'Pick-up'].map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setFilterCategory(filterCategory === cat ? 'ALL' : cat)}
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition cursor-pointer shrink-0 ${
+                      filterCategory === cat
+                        ? 'bg-blue-600 text-white shadow-xs'
+                        : 'bg-white border border-slate-200 text-slate-700 hover:border-blue-400'
+                    }`}
+                  >
+                    🚙 {cat}
+                  </button>
+                ))}
+              </div>
+
               {/* Results Counter & Layout Switcher Bar */}
               <div className="flex flex-wrap items-center justify-between gap-3 text-xs font-semibold text-slate-600">
                 <p>
@@ -1582,54 +1684,74 @@ export default function App() {
                 </div>
               ) : layoutMode === 'list' ? (
                 <div className="flex flex-col space-y-4">
-                  {publicFilteredVehicles.map((vehicle) => {
+                  {publicFilteredVehicles.map((vehicle, idx) => {
                     const ownerAcc = dealershipAccounts.find((a) => a.id === vehicle.dealershipId);
                     return (
-                      <VehicleCard
-                        key={vehicle.id}
-                        vehicle={vehicle}
-                        dealershipName={ownerAcc?.info.nom || (vehicle.dealershipId ? undefined : dealership.nom)}
-                        onSelectVehicle={handleOpenVehicleModal}
-                        onRequestTestDrive={(v) => setSelectedVehicleForTestDrive(v)}
-                        isCompared={comparedVehicleIds.includes(vehicle.id)}
-                        onToggleCompare={handleToggleCompare}
-                        isFavorite={favoriteIds.includes(vehicle.id)}
-                        onToggleFavorite={handleToggleFavorite}
-                        onShareVehicle={(v) => setSelectedVehicleForShare(v)}
-                        isAdmin={isAdmin}
-                        onEditVehicle={(v) => {
-                          setVehicleToEdit(v);
-                          setIsAddVehicleModalOpen(true);
-                        }}
-                        currency={currency}
-                        usdToFcRate={usdToFcRate}
-                        layoutMode="list"
-                      />
+                      <React.Fragment key={vehicle.id}>
+                        {idx === 2 && (
+                          <AdBanner
+                            format="banner_inline"
+                            onOpenAdInquiry={() => setIsAdInquiryModalOpen(true)}
+                            onNavigateToMonetization={() => setCurrentView('monetization')}
+                          />
+                        )}
+                        <VehicleCard
+                          vehicle={vehicle}
+                          dealershipName={ownerAcc?.info.nom || (vehicle.dealershipId ? undefined : dealership.nom)}
+                          onSelectVehicle={handleOpenVehicleModal}
+                          onRequestTestDrive={(v) => setSelectedVehicleForTestDrive(v)}
+                          isCompared={comparedVehicleIds.includes(vehicle.id)}
+                          onToggleCompare={handleToggleCompare}
+                          isFavorite={favoriteIds.includes(vehicle.id)}
+                          onToggleFavorite={handleToggleFavorite}
+                          onShareVehicle={(v) => setSelectedVehicleForShare(v)}
+                          isAdmin={isAdmin}
+                          onEditVehicle={(v) => {
+                            setVehicleToEdit(v);
+                            setIsAddVehicleModalOpen(true);
+                          }}
+                          currency={currency}
+                          usdToFcRate={usdToFcRate}
+                          layoutMode="list"
+                        />
+                      </React.Fragment>
                     );
                   })}
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {publicFilteredVehicles.map((vehicle) => {
+                  {publicFilteredVehicles.map((vehicle, idx) => {
+                    const ownerAcc = dealershipAccounts.find((a) => a.id === vehicle.dealershipId);
                     return (
-                      <MotorsVehicleCard
-                        key={vehicle.id}
-                        vehicle={vehicle}
-                        onSelectVehicle={handleOpenVehicleModal}
-                        onRequestTestDrive={(v) => setSelectedVehicleForTestDrive(v)}
-                        isCompared={comparedVehicleIds.includes(vehicle.id)}
-                        onToggleCompare={handleToggleCompare}
-                        isFavorite={favoriteIds.includes(vehicle.id)}
-                        onToggleFavorite={handleToggleFavorite}
-                        onShareVehicle={(v) => setSelectedVehicleForShare(v)}
-                        isAdmin={isAdmin}
-                        onEditVehicle={(v) => {
-                          setVehicleToEdit(v);
-                          setIsAddVehicleModalOpen(true);
-                        }}
-                        currency={currency}
-                        usdToFcRate={usdToFcRate}
-                      />
+                      <React.Fragment key={vehicle.id}>
+                        {idx === 3 && (
+                          <div className="col-span-1 sm:col-span-2 lg:col-span-3">
+                            <AdBanner
+                              format="banner_inline"
+                              onOpenAdInquiry={() => setIsAdInquiryModalOpen(true)}
+                              onNavigateToMonetization={() => setCurrentView('monetization')}
+                            />
+                          </div>
+                        )}
+                        <MotorsVehicleCard
+                          vehicle={vehicle}
+                          dealershipName={ownerAcc?.info.nom || (vehicle.dealershipId ? undefined : dealership.nom)}
+                          onSelectVehicle={handleOpenVehicleModal}
+                          onRequestTestDrive={(v) => setSelectedVehicleForTestDrive(v)}
+                          isCompared={comparedVehicleIds.includes(vehicle.id)}
+                          onToggleCompare={handleToggleCompare}
+                          isFavorite={favoriteIds.includes(vehicle.id)}
+                          onToggleFavorite={handleToggleFavorite}
+                          onShareVehicle={(v) => setSelectedVehicleForShare(v)}
+                          isAdmin={isAdmin}
+                          onEditVehicle={(v) => {
+                            setVehicleToEdit(v);
+                            setIsAddVehicleModalOpen(true);
+                          }}
+                          currency={currency}
+                          usdToFcRate={usdToFcRate}
+                        />
+                      </React.Fragment>
                     );
                   })}
                 </div>
@@ -1855,6 +1977,37 @@ export default function App() {
           }
         />
       )}
+
+      {/* Advertising Inquiry / Sponsor Partnership Modal */}
+      <AdInquiryModal
+        isOpen={isAdInquiryModalOpen}
+        onClose={() => setIsAdInquiryModalOpen(false)}
+        currency={currency}
+        usdToFcRate={usdToFcRate}
+      />
+
+      {/* Floating Bottom App Navigation for Mobile & Smartphone Users */}
+      <MobileBottomNav
+        currentView={currentView}
+        setCurrentView={setCurrentView}
+        favoriteCount={favoriteIds.length}
+        comparedCount={comparedVehicleIds.length}
+        onOpenFavorites={() => {
+          setOnlyFavorites(true);
+          setCurrentView('public');
+          window.scrollTo({ top: 600, behavior: 'smooth' });
+        }}
+        onOpenSearch={() => {
+          setCurrentView('public');
+          const heroBtn = document.getElementById('motors-hero-search-btn');
+          if (heroBtn) {
+            heroBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else {
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+          }
+        }}
+        onOpenCompare={() => setIsCompareModalOpen(true)}
+      />
 
     </div>
   );

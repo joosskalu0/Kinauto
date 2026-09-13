@@ -98,6 +98,13 @@ export const MotorsHeader: React.FC<MotorsHeaderProps> = ({
               <Wrench className="w-3.5 h-3.5 text-blue-600" />
               <span>SOS Dépannage & Garages</span>
             </button>
+            <button 
+              onClick={() => setCurrentView('monetization')}
+              className={`hover:text-blue-600 transition cursor-pointer flex items-center gap-1.5 ${currentView === 'monetization' ? 'text-blue-600 font-black' : ''}`}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>Tarifs & Monétisation</span>
+            </button>
             {activeLoggedIn && (
               <button 
                 onClick={() => setCurrentView('admin-dashboard')}
@@ -181,7 +188,7 @@ export const MotorsHeader: React.FC<MotorsHeaderProps> = ({
             <button
               id="motors-header-menu-btn"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 text-slate-800 hover:text-blue-600 rounded-xl hover:bg-slate-100 transition cursor-pointer"
+              className="lg:hidden p-2 text-slate-800 hover:text-blue-600 rounded-xl hover:bg-slate-100 transition cursor-pointer"
             >
               {isMobileMenuOpen ? (
                 <X className="w-6 h-6 stroke-[2.5]" />
@@ -266,6 +273,20 @@ export const MotorsHeader: React.FC<MotorsHeaderProps> = ({
 
                 <button
                   onClick={() => {
+                    setCurrentView('monetization');
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="w-full flex items-center justify-between p-3 rounded-xl hover:bg-amber-50 hover:text-amber-600 transition text-left"
+                >
+                  <div className="flex items-center gap-3">
+                    <Sparkles className="w-4 h-4 text-amber-500" />
+                    <span>Tarifs & Monétisation</span>
+                  </div>
+                  <span className="bg-amber-100 text-amber-900 text-[10px] font-black px-2 py-0.5 rounded-full">Pro & Pub</span>
+                </button>
+
+                <button
+                  onClick={() => {
                     openCompareModal();
                     setIsMobileMenuOpen(false);
                   }}
@@ -310,10 +331,10 @@ export const MotorsHeader: React.FC<MotorsHeaderProps> = ({
                 ) : (
                   <button
                     onClick={() => {
-                      openAuthModal();
+                      handleOpenLoginModal();
                       setIsMobileMenuOpen(false);
                     }}
-                    className="w-full p-3 rounded-xl bg-blue-600 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-xs"
+                    className="w-full p-3 rounded-xl bg-blue-600 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-xs cursor-pointer"
                   >
                     <User className="w-4 h-4" />
                     <span>Connexion Concession / Vendeur</span>
@@ -326,7 +347,7 @@ export const MotorsHeader: React.FC<MotorsHeaderProps> = ({
                       setCurrentView('super-admin');
                       setIsMobileMenuOpen(false);
                     }}
-                    className="w-full p-3 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold flex items-center justify-between"
+                    className="w-full p-3 rounded-xl bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold flex items-center justify-between cursor-pointer"
                   >
                     <div className="flex items-center gap-2">
                       <Crown className="w-4 h-4 text-amber-600" />
@@ -337,10 +358,10 @@ export const MotorsHeader: React.FC<MotorsHeaderProps> = ({
                 ) : (
                   <button
                     onClick={() => {
-                      openSuperAdminAuthModal();
+                      openSuperAdminAuthModal?.();
                       setIsMobileMenuOpen(false);
                     }}
-                    className="w-full p-2.5 rounded-xl text-slate-600 hover:text-slate-900 text-xs font-bold flex items-center gap-2"
+                    className="w-full p-2.5 rounded-xl text-slate-600 hover:text-slate-900 text-xs font-bold flex items-center gap-2 cursor-pointer"
                   >
                     <Crown className="w-3.5 h-3.5 text-amber-600" />
                     <span>Accès Super-Admin SaaS</span>

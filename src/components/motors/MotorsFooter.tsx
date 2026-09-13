@@ -4,10 +4,15 @@ import { Wrench, Shield, Car, Heart, Phone, Mail, MapPin } from 'lucide-react';
 
 interface MotorsFooterProps {
   onNavigate: (view: string) => void;
-  openAuthModal: () => void;
+  openAuthModal?: () => void;
 }
 
 export const MotorsFooter: React.FC<MotorsFooterProps> = ({ onNavigate, openAuthModal }) => {
+  const handleAuthClick = () => {
+    if (openAuthModal) {
+      openAuthModal();
+    }
+  };
   return (
     <footer className="bg-slate-900 text-slate-300 border-t border-slate-800 mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -60,17 +65,17 @@ export const MotorsFooter: React.FC<MotorsFooterProps> = ({ onNavigate, openAuth
             <h4 className="text-sm font-bold text-white uppercase tracking-wider">Espace Professionnel</h4>
             <ul className="space-y-2 text-xs font-semibold text-slate-400">
               <li>
-                <button onClick={openAuthModal} className="hover:text-white transition cursor-pointer">
+                <button onClick={handleAuthClick} className="hover:text-white transition cursor-pointer">
                   Dealer Profile (Concessionnaires)
                 </button>
               </li>
               <li>
-                <button onClick={openAuthModal} className="hover:text-white transition cursor-pointer">
+                <button onClick={handleAuthClick} className="hover:text-white transition cursor-pointer">
                   Seller Profile (Vendeurs Agréés)
                 </button>
               </li>
               <li>
-                <button onClick={openAuthModal} className="hover:text-white transition cursor-pointer text-blue-400">
+                <button onClick={handleAuthClick} className="hover:text-white transition cursor-pointer text-blue-400">
                   Créer un compte Concessionnaire
                 </button>
               </li>
@@ -101,11 +106,11 @@ export const MotorsFooter: React.FC<MotorsFooterProps> = ({ onNavigate, openAuth
         <div className="pt-8 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <p>© 2025 AutoConcession Kinshasa. Tous droits réservés.</p>
           <div className="flex items-center gap-4 font-semibold text-slate-400">
-            <button onClick={openAuthModal} className="hover:text-white transition cursor-pointer">
+            <button onClick={handleAuthClick} className="hover:text-white transition cursor-pointer">
               Dealer Profile
             </button>
             <span>|</span>
-            <button onClick={openAuthModal} className="hover:text-white transition cursor-pointer">
+            <button onClick={handleAuthClick} className="hover:text-white transition cursor-pointer">
               Seller Profile
             </button>
           </div>

@@ -300,6 +300,12 @@ const query = async (sql, params = []) => {
     return vehicleQueryResult;
   }
 
+  // --- TABLES MARQUES, MODELES, REPORTS, SUBSCRIPTIONS, PAYMENTS ---
+  const adminQueryResult = handleAdminStoreQuery(normalizedSql, sql, params, memoryStore);
+  if (adminQueryResult !== null) {
+    return adminQueryResult;
+  }
+
   // Par défaut, retourner tableau vide si requête non interceptée
   return [];
 };

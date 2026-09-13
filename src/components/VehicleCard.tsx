@@ -120,6 +120,26 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
                 <Tag className="w-3 h-3 fill-current" /> Promo
               </span>
             )}
+            {(vehicle.listingTier === 'featured' || vehicle.enVedette) && (
+              <span className="bg-purple-600 text-white font-black text-[10px] uppercase px-2 py-0.5 rounded-md flex items-center gap-1 shadow-lg">
+                🔥 À la Une
+              </span>
+            )}
+            {vehicle.listingTier === 'premium' && (
+              <span className="bg-amber-500 text-slate-950 font-black text-[10px] uppercase px-2 py-0.5 rounded-md flex items-center gap-1 shadow-lg">
+                ⭐ Premium
+              </span>
+            )}
+            {vehicle.visibilityBadge === 'urgent' && (
+              <span className="bg-rose-600 text-white font-black text-[10px] uppercase px-2 py-0.5 rounded-md flex items-center gap-1 shadow-md">
+                🚨 Urgent
+              </span>
+            )}
+            {vehicle.visibilityBadge === 'certifie' && (
+              <span className="bg-emerald-600 text-white font-black text-[10px] uppercase px-2 py-0.5 rounded-md flex items-center gap-1 shadow-md">
+                🛡️ Certifié
+              </span>
+            )}
           </div>
 
           {/* Dot previews */}
@@ -318,9 +338,24 @@ export const VehicleCard: React.FC<VehicleCardProps> = ({
                 )}
               </span>
             )}
-            {vehicle.enVedette && !isPromo && (
+            {(vehicle.listingTier === 'featured' || (vehicle.enVedette && !isPromo)) && (
+              <span className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-black text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full shadow">
+                🔥 À la Une
+              </span>
+            )}
+            {vehicle.listingTier === 'premium' && (
               <span className="bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-black text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full shadow">
-                🔥 Coup de Coeur
+                ⭐ Premium
+              </span>
+            )}
+            {vehicle.visibilityBadge === 'urgent' && (
+              <span className="bg-rose-600 text-white font-black text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full shadow">
+                🚨 Urgent
+              </span>
+            )}
+            {vehicle.visibilityBadge === 'certifie' && (
+              <span className="bg-emerald-600 text-white font-black text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full shadow">
+                🛡️ Certifié
               </span>
             )}
             <span className="bg-slate-950/70 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full backdrop-blur-sm border border-white/20">

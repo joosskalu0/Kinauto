@@ -474,6 +474,40 @@ const createVehicle = async (req, res, next) => {
       });
     }
 
+    // Vérification du quota d'annonces du forfait d'abonnement (dealership/seller)
+    const dealerIdTarget = parseInt(dealership_id) || 1;
+    if (req.user?.role !== 'admin') {
+      try {
+        const dealerCheck = await query(
+          `SELECT d.id, d.statut_abonnement, d.subscription_plan_id, sp.max_vehicles, sp.name as plan_nom,
+                  (SELECT COUNT(*) FROM vehicles v WHERE (v.dealership_id = d.id OR v.dealership_id = ?) AND v.deleted_at IS NULL AND v.status != 'inactive') as active_count
+           FROM dealers d
+           LEFT JOIN subscription_plans sp ON d.subscription_plan_id = sp.id
+           WHERE d.id = ? OR d.user_id = ?
+           LIMIT 1`,
+          [dealerIdTarget, dealerIdTarget, req.user?.id || 0]
+        );
+
+        if (dealerCheck && dealerCheck.length > 0) {
+          const quota = dealerCheck[0];
+          const activeCount = parseInt(quota.active_count) || 0;
+          const maxVehicles = parseInt(quota.max_vehicles) || 20;
+          if (activeCount >= maxVehicles) {
+            return res.status(403).json({
+              success: false,
+              message: `Limite de véhicules atteinte (${activeCount}/${maxVehicles}) pour votre forfait ${quota.plan_nom || 'Actuel'}. Veuillez passer à un forfait supérieur pour publier davantage.`,
+              quota_exceeded: true,
+              active_count: activeCount,
+              max_vehicles: maxVehicles,
+              plan_nom: quota.plan_nom
+            });
+          }
+        }
+      } catch (quotaErr) {
+        // En cas d'absence de table ou base mockée, tolérer la vérification
+      }
+    }
+
     // Gestion du statut initial :
     // Si l'utilisateur est admin, statut approuvé par défaut ou demandé.
     // Pour les autres utilisateurs, statut "pending" (en attente de modération) par défaut.

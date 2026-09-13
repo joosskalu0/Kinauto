@@ -8,7 +8,7 @@ import {
 import { DealershipInfo, DealershipAccount, Vehicle, GarageProfile } from '../types';
 import { InteractiveSearchBar } from './InteractiveSearchBar';
 
-export type AppViewMode = 'public' | 'garages' | 'admin-dashboard' | 'admin-stock' | 'admin-leads' | 'admin-settings' | 'admin-analytics' | 'super-admin';
+export type AppViewMode = 'public' | 'garages' | 'monetization' | 'admin-dashboard' | 'admin-stock' | 'admin-leads' | 'admin-settings' | 'admin-analytics' | 'super-admin';
 
 interface HeaderProps {
   currentView: AppViewMode;
@@ -399,6 +399,23 @@ export const Header: React.FC<HeaderProps> = ({
               <span>🔧 Garages & SOS Panne Kinshasa</span>
               <span className="bg-rose-500 text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase animate-pulse">
                 24/7
+              </span>
+            </button>
+
+            {/* Tarifs & Monétisation Tab */}
+            <button
+              id="nav-tab-monetization"
+              onClick={() => setCurrentView('monetization')}
+              className={`px-4 py-2 rounded-xl font-bold flex items-center gap-2 whitespace-nowrap transition cursor-pointer ${
+                currentView === 'monetization'
+                  ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-xs font-black'
+                  : 'bg-white text-slate-700 hover:text-slate-950 hover:bg-slate-100 border border-slate-200'
+              }`}
+            >
+              <Coins className="w-4 h-4 text-amber-600" />
+              <span>Tarifs & Solutions Pro</span>
+              <span className="bg-amber-100 text-amber-900 border border-amber-300 text-[9px] font-black px-1.5 py-0.2 rounded-full uppercase">
+                Pub & Boost
               </span>
             </button>
 

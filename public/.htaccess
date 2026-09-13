@@ -1,0 +1,66 @@
+# ==============================================================================
+# AutoConcession - Configuration Apache / LiteSpeed pour Hostinger
+# ==============================================================================
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # ----------------------------------------------------------------------------
+  # 1. Forcer le protocole HTTPS sécurisé (Recommandé sur Hostinger)
+  # ----------------------------------------------------------------------------
+  RewriteCond %{HTTPS} off
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # ----------------------------------------------------------------------------
+  # 2. Redirection des requêtes API vers l'application backend Node.js (Express)
+  # ----------------------------------------------------------------------------
+  # Toutes les requêtes commençant par /api/ sont relayées vers le serveur Node.js
+  # (par défaut sur le port 3000 ou le port défini dans votre environnement)
+  <IfModule mod_proxy.c>
+    RewriteRule ^api/(.*)$ http://127.0.0.1:3000/api/$1 [P,L]
+    ProxyPassReverse /api/ http://127.0.0.1:3000/api/
+  </IfModule>
+
+  # Alternative si mod_proxy n'est pas activé en mode standalone
+  RewriteCond %{REQUEST_URI} ^/api/ [NC]
+  RewriteRule ^api/(.*)$ http://127.0.0.1:3000/api/$1 [P,L]
+
+  # ----------------------------------------------------------------------------
+  # 3. Fichiers réels existants (CSS, JS, images, polices, favicons)
+  # ----------------------------------------------------------------------------
+  # Si le fichier ou dossier demandé existe physiquement sur le disque, le servir directement
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # ----------------------------------------------------------------------------
+  # 4. Routage SPA React (Single Page Application)
+  # ----------------------------------------------------------------------------
+  # Toutes les autres requêtes non-fichiers sont redirigées vers index.html
+  # pour que React gère les routes sans renvoyer d'erreur 404
+  RewriteRule . /index.html [L]
+</IfModule>
+
+# ------------------------------------------------------------------------------
+# 5. En-têtes de sécurité et optimisations de cache (Hostinger / LiteSpeed)
+# ------------------------------------------------------------------------------
+<IfModule mod_headers.c>
+  # Protection contre le reniflement de type MIME
+  Header always set X-Content-Type-Options "nosniff"
+  
+  # Protection contre les attaques XSS
+  Header always set X-XSS-Protection "1; mode=block"
+
+  # Cache optimisé pour les ressources statiques (images, polices, JS, CSS)
+  <FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|webp|svg|js|css|woff|woff2|ttf|eot)$">
+    Header set Cache-Control "max-age=2592000, public"
+  </FilesMatch>
+</IfModule>
+
+# ------------------------------------------------------------------------------
+# 6. Compression Gzip / Deflate pour un affichage ultra rapide sur mobile
+# ------------------------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css application/javascript application/json application/xml
+</IfModule>

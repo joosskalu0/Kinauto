@@ -646,8 +646,364 @@ function handleAdminStoreQuery(normalizedSql, rawSql, params, memoryStore) {
     }
   }
 
+  // 6. PLANS
+  if (normalizedSql.includes('FROM PLANS') || normalizedSql.includes('FROM SUBSCRIPTION_PLANS')) {
+    if (normalizedSql.startsWith('SELECT')) {
+      return memoryStore.plans;
+    }
+  }
+
   return null;
 }
+
+// Helpers CRUD directs pour contrôleurs en mode mémoire ou hybride
+const adminStorage = {
+  // MARQUES
+  getBrands: (store, { search, is_popular } = {}) => {
+    initAdminStore(store);
+    let list = [...store.marques];
+    if (search) {
+      const s = search.toLowerCase();
+      list = list.filter(b => b.nom.toLowerCase().includes(s) || (b.pays && b.pays.toLowerCase().includes(s)));
+    }
+    if (is_popular !== undefined && is_popular !== null && is_popular !== '') {
+      list = list.filter(b => Number(b.is_popular) === Number(is_popular));
+    }
+    return list;
+  },
+  getBrandById: (store, id) => {
+    initAdminStore(store);
+    return store.marques.find(b => Number(b.id) === Number(id)) || null;
+  },
+  createBrand: (store, data) => {
+    initAdminStore(store);
+    const newId = store.marques.length > 0 ? Math.max(...store.marques.map(b => Number(b.id))) + 1 : 1;
+    const brand = {
+      id: newId,
+      nom: data.nom,
+      slug: data.slug || data.nom.toLowerCase().replace(/\s+/g, '-'),
+      pays: data.pays || 'International',
+      logo_url: data.logo_url || null,
+      is_popular: data.is_popular ? 1 : 0,
+      is_active: data.is_active !== undefined ? (data.is_active ? 1 : 0) : 1,
+      created_at: new Date(),
+      updated_at: new Date()
+    };
+    store.marques.push(brand);
+    return brand;
+  },
+  updateBrand: (store, id, data) => {
+    initAdminStore(store);
+    const idx = store.marques.findIndex(b => Number(b.id) === Number(id));
+    if (idx === -1) return null;
+    const updated = {
+      ...store.marques[idx],
+      ...data,
+      updated_at: new Date()
+    };
+    store.marques[idx] = updated;
+    return updated;
+  },
+  deleteBrand: (store, id) => {
+    initAdminStore(store);
+    const idx = store.marques.findIndex(b => Number(b.id) === Number(id));
+    if (idx === -1) return false;
+    store.marques.splice(idx, 1);
+    return true;
+  },
+
+  // MODELES
+  getModels: (store, { marque_id, search, categorie } = {}) => {
+    initAdminStore(store);
+    let list = [...store.modeles];
+    if (marque_id) {
+      list = list.filter(m => Number(m.marque_id) === Number(marque_id));
+    }
+    if (categorie) {
+      list = list.filter(m => String(m.categorie).toLowerCase() === String(categorie).toLowerCase());
+    }
+    if (search) {
+      const s = search.toLowerCase();
+      list = list.filter(m => m.nom.toLowerCase().includes(s) || (m.marque_nom && m.marque_nom.toLowerCase().includes(s)));
+    }
+    return list;
+  },
+  getModelById: (store, id) => {
+    initAdminStore(store);
+    return store.modeles.find(m => Number(m.id) === Number(id)) || null;
+  },
+  createModel: (store, data) => {
+    initAdminStore(store);
+    const brand = store.marques.find(b => Number(b.id) === Number(data.marque_id));
+    const newId = store.modeles.length > 0 ? Math.max(...store.modeles.map(m => Number(m.id))) + 1 : 1;
+    const model = {
+      id: newId,
+      marque_id: Number(data.marque_id),
+      marque_nom: brand ? brand.nom : (data.marque_nom || 'Inconnue'),
+      nom: data.nom,
+      slug: data.slug || data.nom.toLowerCase().replace(/\s+/g, '-'),
+      categorie: data.categorie || 'SUV',
+      annee_debut: Number(data.annee_debut) || 2020,
+      annee_fin: data.annee_fin ? Number(data.annee_fin) : null,
+      is_popular: data.is_popular ? 1 : 0,
+      created_at: new Date(),
+      updated_at: new Date()
+    };
+    store.modeles.push(model);
+    return model;
+  },
+  updateModel: (store, id, data) => {
+    initAdminStore(store);
+    const idx = store.modeles.findIndex(m => Number(m.id) === Number(id));
+    if (idx === -1) return null;
+    let marque_nom = store.modeles[idx].marque_nom;
+    if (data.marque_id) {
+      const b = store.marques.find(br => Number(br.id) === Number(data.marque_id));
+      if (b) marque_nom = b.nom;
+    }
+    const updated = {
+      ...store.modeles[idx],
+      ...data,
+      marque_nom,
+      updated_at: new Date()
+    };
+    store.modeles[idx] = updated;
+    return updated;
+  },
+  deleteModel: (store, id) => {
+    initAdminStore(store);
+    const idx = store.modeles.findIndex(m => Number(m.id) === Number(id));
+    if (idx === -1) return false;
+    store.modeles.splice(idx, 1);
+    return true;
+  },
+
+  // SIGNALEMENTS / REPORTS
+  getReports: (store, { status, target_type, search } = {}) => {
+    initAdminStore(store);
+    let list = [...store.reports];
+    if (status && status !== 'all') {
+      list = list.filter(r => r.status === status);
+    }
+    if (target_type && target_type !== 'all') {
+      list = list.filter(r => r.target_type === target_type);
+    }
+    if (search) {
+      const s = search.toLowerCase();
+      list = list.filter(r =>
+        (r.target_title && r.target_title.toLowerCase().includes(s)) ||
+        (r.reporter_name && r.reporter_name.toLowerCase().includes(s)) ||
+        (r.description && r.description.toLowerCase().includes(s))
+      );
+    }
+    return list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  },
+  getReportById: (store, id) => {
+    initAdminStore(store);
+    return store.reports.find(r => Number(r.id) === Number(id)) || null;
+  },
+  createReport: (store, data) => {
+    initAdminStore(store);
+    const newId = store.reports.length > 0 ? Math.max(...store.reports.map(r => Number(r.id))) + 1 : 1;
+    const report = {
+      id: newId,
+      target_type: data.target_type || 'vehicle',
+      target_id: Number(data.target_id),
+      target_title: data.target_title || 'Élément signalé',
+      reporter_name: data.reporter_name || 'Anonyme',
+      reporter_email: data.reporter_email || null,
+      reporter_phone: data.reporter_phone || null,
+      reason: data.reason || 'autre',
+      description: data.description || '',
+      status: 'en_attente',
+      admin_notes: null,
+      treated_by: null,
+      treated_at: null,
+      created_at: new Date(),
+      updated_at: new Date()
+    };
+    store.reports.push(report);
+    return report;
+  },
+  updateReportStatus: (store, id, { status, admin_notes, treated_by }) => {
+    initAdminStore(store);
+    const idx = store.reports.findIndex(r => Number(r.id) === Number(id));
+    if (idx === -1) return null;
+    const updated = {
+      ...store.reports[idx],
+      status: status || store.reports[idx].status,
+      admin_notes: admin_notes !== undefined ? admin_notes : store.reports[idx].admin_notes,
+      treated_by: treated_by || store.reports[idx].treated_by,
+      treated_at: status && status !== 'en_attente' ? new Date() : store.reports[idx].treated_at,
+      updated_at: new Date()
+    };
+    store.reports[idx] = updated;
+    return updated;
+  },
+  deleteReport: (store, id) => {
+    initAdminStore(store);
+    const idx = store.reports.findIndex(r => Number(r.id) === Number(id));
+    if (idx === -1) return false;
+    store.reports.splice(idx, 1);
+    return true;
+  },
+
+  // PLANS & FORMULES
+  getPlans: (store) => {
+    initAdminStore(store);
+    return [...store.plans];
+  },
+
+  // ABONNEMENTS / SUBSCRIPTIONS
+  getSubscriptions: (store, { entity_type, statut, search } = {}) => {
+    initAdminStore(store);
+    let list = [...store.subscriptions];
+    if (entity_type && entity_type !== 'all') {
+      list = list.filter(s => s.entity_type === entity_type);
+    }
+    if (statut && statut !== 'all') {
+      list = list.filter(s => s.statut === statut);
+    }
+    if (search) {
+      const q = search.toLowerCase();
+      list = list.filter(s =>
+        (s.entity_nom && s.entity_nom.toLowerCase().includes(q)) ||
+        (s.plan_nom && s.plan_nom.toLowerCase().includes(q))
+      );
+    }
+    return list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  },
+  getSubscriptionById: (store, id) => {
+    initAdminStore(store);
+    return store.subscriptions.find(s => Number(s.id) === Number(id)) || null;
+  },
+  createSubscription: (store, data) => {
+    initAdminStore(store);
+    const newId = store.subscriptions.length > 0 ? Math.max(...store.subscriptions.map(s => Number(s.id))) + 1 : 1;
+    const plan = store.plans.find(p => p.id === data.plan_id);
+    const now = new Date();
+    const dateFin = data.date_fin ? new Date(data.date_fin) : new Date(now.getTime() + 30 * 24 * 3600 * 1000);
+    const sub = {
+      id: newId,
+      entity_type: data.entity_type || 'dealership',
+      dealership_id: data.dealership_id ? Number(data.dealership_id) : null,
+      garage_id: data.garage_id ? Number(data.garage_id) : null,
+      user_id: data.user_id ? Number(data.user_id) : null,
+      entity_nom: data.entity_nom || (data.entity_type === 'garage' ? 'Garage Client' : 'Concession Client'),
+      plan_id: data.plan_id || 'starter',
+      plan_nom: plan ? plan.nom : 'Formule Pro',
+      prix_usd: Number(data.prix_usd || (plan ? plan.prix_usd : 100)),
+      prix_cdf: Number(data.prix_cdf || (plan ? plan.prix_mensuel : 270000)),
+      statut: data.statut || 'actif',
+      date_debut: data.date_debut ? new Date(data.date_debut) : now,
+      date_fin: dateFin,
+      renouvellement_auto: data.renouvellement_auto !== undefined ? (data.renouvellement_auto ? 1 : 0) : 1,
+      payment_status: data.payment_status || 'paye',
+      created_at: now,
+      updated_at: now
+    };
+    store.subscriptions.push(sub);
+    return sub;
+  },
+  updateSubscription: (store, id, data) => {
+    initAdminStore(store);
+    const idx = store.subscriptions.findIndex(s => Number(s.id) === Number(id));
+    if (idx === -1) return null;
+    let plan_nom = store.subscriptions[idx].plan_nom;
+    if (data.plan_id) {
+      const p = store.plans.find(pl => pl.id === data.plan_id);
+      if (p) plan_nom = p.nom;
+    }
+    const updated = {
+      ...store.subscriptions[idx],
+      ...data,
+      plan_nom,
+      date_fin: data.date_fin ? new Date(data.date_fin) : store.subscriptions[idx].date_fin,
+      updated_at: new Date()
+    };
+    store.subscriptions[idx] = updated;
+    return updated;
+  },
+  deleteSubscription: (store, id) => {
+    initAdminStore(store);
+    const idx = store.subscriptions.findIndex(s => Number(s.id) === Number(id));
+    if (idx === -1) return false;
+    store.subscriptions.splice(idx, 1);
+    return true;
+  },
+
+  // PAIEMENTS / PAYMENTS
+  getPayments: (store, { statut, payment_method, purpose, search } = {}) => {
+    initAdminStore(store);
+    let list = [...store.payments];
+    if (statut && statut !== 'all') {
+      list = list.filter(p => p.statut === statut);
+    }
+    if (payment_method && payment_method !== 'all') {
+      list = list.filter(p => p.payment_method && p.payment_method.toLowerCase() === payment_method.toLowerCase());
+    }
+    if (purpose && purpose !== 'all') {
+      list = list.filter(p => p.purpose === purpose);
+    }
+    if (search) {
+      const q = search.toLowerCase();
+      list = list.filter(p =>
+        (p.transaction_id && p.transaction_id.toLowerCase().includes(q)) ||
+        (p.entity_nom && p.entity_nom.toLowerCase().includes(q)) ||
+        (p.client_nom && p.client_nom.toLowerCase().includes(q)) ||
+        (p.reference && p.reference.toLowerCase().includes(q))
+      );
+    }
+    return list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  },
+  getPaymentById: (store, id) => {
+    initAdminStore(store);
+    return store.payments.find(p => Number(p.id) === Number(id) || p.transaction_id === id) || null;
+  },
+  createPayment: (store, data) => {
+    initAdminStore(store);
+    const newId = store.payments.length > 0 ? Math.max(...store.payments.map(p => Number(p.id))) + 1 : 1;
+    const now = new Date();
+    const dateCode = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const txnCode = `TXN-${dateCode}-${String(newId).padStart(3, '0')}`;
+    const payment = {
+      id: newId,
+      transaction_id: data.transaction_id || txnCode,
+      user_id: data.user_id ? Number(data.user_id) : null,
+      dealership_id: data.dealership_id ? Number(data.dealership_id) : null,
+      garage_id: data.garage_id ? Number(data.garage_id) : null,
+      entity_nom: data.entity_nom || 'Client CONGOCAR',
+      client_nom: data.client_nom || 'Client Partenaire',
+      client_email: data.client_email || null,
+      amount: Number(data.amount) || 0,
+      currency: data.currency || 'USD',
+      payment_method: data.payment_method || 'M-Pesa',
+      phone_number: data.phone_number || null,
+      purpose: data.purpose || 'abonnement',
+      purpose_label: data.purpose_label || 'Paiement de service automobile',
+      statut: data.statut || 'reussi',
+      reference: data.reference || `REF-${Math.floor(10000000 + Math.random() * 90000000)}`,
+      notes: data.notes || '',
+      created_at: now,
+      updated_at: now
+    };
+    store.payments.push(payment);
+    return payment;
+  },
+  updatePaymentStatus: (store, id, { statut, notes }) => {
+    initAdminStore(store);
+    const idx = store.payments.findIndex(p => Number(p.id) === Number(id) || p.transaction_id === id);
+    if (idx === -1) return null;
+    const updated = {
+      ...store.payments[idx],
+      statut: statut || store.payments[idx].statut,
+      notes: notes !== undefined ? notes : store.payments[idx].notes,
+      updated_at: new Date()
+    };
+    store.payments[idx] = updated;
+    return updated;
+  }
+};
 
 module.exports = {
   INITIAL_BRANDS,
@@ -657,6 +1013,7 @@ module.exports = {
   INITIAL_SUBSCRIPTIONS,
   INITIAL_PAYMENTS,
   initAdminStore,
-  handleAdminStoreQuery
+  handleAdminStoreQuery,
+  adminStorage
 };
 

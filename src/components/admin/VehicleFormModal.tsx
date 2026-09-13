@@ -53,6 +53,11 @@ export const VehicleFormModal: React.FC<VehicleFormModalProps> = ({
   
   const [description, setDescription] = useState(vehicleToEdit?.description || '');
   const [equipements, setEquipements] = useState<string[]>(vehicleToEdit?.equipements || DEFAULT_EQUIPMENTS.slice(0, 5));
+  const [listingTier, setListingTier] = useState<'free' | 'premium' | 'featured'>(
+    vehicleToEdit?.listingTier || (vehicleToEdit?.enVedette ? 'featured' : 'free')
+  );
+  const [visibilityBadge, setVisibilityBadge] = useState<string>(vehicleToEdit?.visibilityBadge || '');
+  const [boostTopSearch, setBoostTopSearch] = useState<boolean>(Boolean(vehicleToEdit?.boostTopSearch));
   const [images, setImages] = useState<string[]>(
     vehicleToEdit?.images || [
       'https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=1200'
@@ -209,7 +214,10 @@ export const VehicleFormModal: React.FC<VehicleFormModalProps> = ({
         images: images.length > 0 ? images : ['https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=1200'],
         description,
         equipements,
-        enVedette: vehicleToEdit?.enVedette || false
+        enVedette: listingTier === 'featured' || vehicleToEdit?.enVedette || false,
+        listingTier,
+        visibilityBadge: (visibilityBadge as any) || undefined,
+        boostTopSearch
       },
       vehicleToEdit?.id
     );
@@ -680,6 +688,128 @@ export const VehicleFormModal: React.FC<VehicleFormModalProps> = ({
                   </button>
                 </div>
               ))}
+            </div>
+          </div>
+
+          {/* MONÉTISATION : FORMULE DE PUBLICATION & VISIBILITÉ */}
+          <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-amber-400" />
+                <h3 className="text-sm font-bold text-white">Formule de Publication & Visibilité Monétisée</h3>
+              </div>
+              <span className="text-[11px] text-slate-400">Modèles Économiques</span>
+            </div>
+
+            {/* 3 Formules principales */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {/* Gratuite */}
+              <div
+                onClick={() => setListingTier('free')}
+                className={`p-3.5 rounded-xl border cursor-pointer transition flex flex-col justify-between ${
+                  listingTier === 'free'
+                    ? 'bg-slate-900 border-blue-500 ring-2 ring-blue-500/20'
+                    : 'bg-slate-900/50 border-slate-800 hover:border-slate-700'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-slate-300">Standard</span>
+                    <span className="text-xs font-black text-white">0 $</span>
+                  </div>
+                  <p className="text-[11px] text-slate-400 mt-1 leading-snug">
+                    Visibilité classique dans les résultats, jusqu'à 5 photos.
+                  </p>
+                </div>
+                <div className="mt-3 flex items-center gap-1 text-[10px] text-slate-400 font-semibold">
+                  <Check className="w-3 h-3 text-blue-400" /> Gratuit 30 jours
+                </div>
+              </div>
+
+              {/* Premium */}
+              <div
+                onClick={() => setListingTier('premium')}
+                className={`p-3.5 rounded-xl border cursor-pointer transition flex flex-col justify-between relative ${
+                  listingTier === 'premium'
+                    ? 'bg-amber-950/30 border-amber-500 ring-2 ring-amber-500/20'
+                    : 'bg-slate-900/50 border-slate-800 hover:border-amber-500/50'
+                }`}
+              >
+                <span className="absolute -top-2 right-2 bg-amber-500 text-slate-950 text-[9px] font-black px-2 py-0.2 rounded-full uppercase">
+                  ⭐ Recommandé
+                </span>
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-amber-400">⭐ Premium</span>
+                    <span className="text-xs font-black text-amber-300">15 $</span>
+                  </div>
+                  <p className="text-[11px] text-slate-300 mt-1 leading-snug">
+                    Bordure dorée, badge Premium, priorité de tri, 15 photos.
+                  </p>
+                </div>
+                <div className="mt-3 flex items-center gap-1 text-[10px] text-amber-400 font-semibold">
+                  <Check className="w-3 h-3 text-amber-400" /> Affichage 60 jours
+                </div>
+              </div>
+
+              {/* À la Une */}
+              <div
+                onClick={() => setListingTier('featured')}
+                className={`p-3.5 rounded-xl border cursor-pointer transition flex flex-col justify-between ${
+                  listingTier === 'featured'
+                    ? 'bg-purple-950/30 border-purple-500 ring-2 ring-purple-500/20'
+                    : 'bg-slate-900/50 border-slate-800 hover:border-purple-500/50'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-purple-400">🔥 À la Une VIP</span>
+                    <span className="text-xs font-black text-purple-300">29 $</span>
+                  </div>
+                  <p className="text-[11px] text-slate-300 mt-1 leading-snug">
+                    Carrousel d'accueil, tête de liste absolue, badge À la Une.
+                  </p>
+                </div>
+                <div className="mt-3 flex items-center gap-1 text-[10px] text-purple-400 font-semibold">
+                  <Check className="w-3 h-3 text-purple-400" /> x5 de contacts garantis
+                </div>
+              </div>
+            </div>
+
+            {/* Badges et micro-boosts */}
+            <div className="pt-2 border-t border-slate-800/80">
+              <span className="text-xs font-bold text-slate-300 block mb-2">Options et Badges Additionnels :</span>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                <label className="flex items-center gap-2 p-2.5 bg-slate-900 rounded-lg border border-slate-800 cursor-pointer hover:bg-slate-850">
+                  <input
+                    type="checkbox"
+                    checked={visibilityBadge === 'urgent'}
+                    onChange={(e) => setVisibilityBadge(e.target.checked ? 'urgent' : '')}
+                    className="rounded text-rose-500 focus:ring-rose-500"
+                  />
+                  <span className="text-slate-200">🚨 Badge « Urgent » (+3$)</span>
+                </label>
+
+                <label className="flex items-center gap-2 p-2.5 bg-slate-900 rounded-lg border border-slate-800 cursor-pointer hover:bg-slate-850">
+                  <input
+                    type="checkbox"
+                    checked={visibilityBadge === 'certifie'}
+                    onChange={(e) => setVisibilityBadge(e.target.checked ? 'certifie' : '')}
+                    className="rounded text-emerald-500 focus:ring-emerald-500"
+                  />
+                  <span className="text-slate-200">🛡️ Badge « Certifié » (+7$)</span>
+                </label>
+
+                <label className="flex items-center gap-2 p-2.5 bg-slate-900 rounded-lg border border-slate-800 cursor-pointer hover:bg-slate-850">
+                  <input
+                    type="checkbox"
+                    checked={boostTopSearch}
+                    onChange={(e) => setBoostTopSearch(e.target.checked)}
+                    className="rounded text-blue-500 focus:ring-blue-500"
+                  />
+                  <span className="text-slate-200">⬆️ Remontée hebdo (+5$)</span>
+                </label>
+              </div>
             </div>
           </div>
 
