@@ -408,7 +408,7 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
             </div>
           )}
 
-          {/* Conditional Loan Calculator Dropdown */}
+          {/* Conditional Simulateur de crédit Dropdown */}
           {showLoanCalculator && (
             <div id="finance-calculator-dropdown" className="bg-slate-950 p-2 sm:p-4 rounded-2xl border border-sky-500/30">
               <FinanceCalculator
@@ -501,32 +501,32 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
               </div>
 
               <div className="flex justify-between items-center border-b border-slate-800/80 py-1.5">
-                <span className="text-slate-400 font-medium">🏷️ État (Condition)</span>
+                <span className="text-slate-400 font-medium">🏷️ État</span>
                 <span className="text-amber-400 font-bold uppercase">{vehicle.etat === 'neuf' ? 'Neuf' : 'Occasion'}</span>
               </div>
 
               <div className="flex justify-between items-center border-b border-slate-800/80 py-1.5">
-                <span className="text-slate-400 font-medium">📅 Année (Year)</span>
+                <span className="text-slate-400 font-medium">📅 Année</span>
                 <span className="text-white font-bold">{vehicle.annee}</span>
               </div>
 
               <div className="flex justify-between items-center border-b border-slate-800/80 py-1.5">
-                <span className="text-slate-400 font-medium">⚙️ Boîte (Transmission)</span>
+                <span className="text-slate-400 font-medium">⚙️ Boîte de vitesses</span>
                 <span className="text-white font-bold">{vehicle.transmission}</span>
               </div>
 
               <div className="flex justify-between items-center border-b border-slate-800/80 py-1.5">
-                <span className="text-slate-400 font-medium">⛽ Carburant (Fuel Type)</span>
+                <span className="text-slate-400 font-medium">⛽ Carburant</span>
                 <span className="text-white font-bold">{vehicle.carburant}</span>
               </div>
 
               <div className="flex justify-between items-center border-b border-slate-800/80 py-1.5">
-                <span className="text-slate-400 font-medium">📉 Kilométrage (Mileage)</span>
+                <span className="text-slate-400 font-medium">📉 Kilométrage</span>
                 <span className="text-white font-bold">{vehicle.kilometrage.toLocaleString('fr-FR')} km</span>
               </div>
 
               <div className="flex justify-between items-center border-b border-slate-800/80 py-1.5">
-                <span className="text-slate-400 font-medium">⚡ Motorisation (Engine)</span>
+                <span className="text-slate-400 font-medium">⚡ Motorisation</span>
                 <span className="text-white font-bold">{vehicle.moteur || `${vehicle.puissanceCh} ch (${vehicle.puissanceFiscale} CV)`}</span>
               </div>
 
@@ -541,14 +541,14 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
               </div>
 
               <div className="flex justify-between items-center border-b border-slate-800/80 py-1.5">
-                <span className="text-slate-400 font-medium">🏎️ Motricité (Drive)</span>
-                <span className="text-white font-bold">{vehicle.motrice || 'AWD (4 roues motrices)'}</span>
+                <span className="text-slate-400 font-medium">🏎️ Motricité</span>
+                <span className="text-white font-bold">{vehicle.motrice || '4x4 / Intégrale'}</span>
               </div>
 
               <div className="flex justify-between items-center border-b border-slate-800/80 py-1.5">
-                <span className="text-slate-400 font-medium">📄 Historique (History)</span>
+                <span className="text-slate-400 font-medium">📄 Historique</span>
                 <span className="text-sky-400 font-bold flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Carfax Vérifié
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Certifié & Contrôlé
                 </span>
               </div>
 
@@ -727,7 +727,7 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
                 className="bg-emerald-950 hover:bg-emerald-900 border border-emerald-500/50 text-emerald-300 font-bold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer"
               >
                 <RefreshCw className="w-4 h-4 text-emerald-400" />
-                <span>Demande de reprise (Trade in)</span>
+                <span>Demande de reprise</span>
               </button>
             </div>
           </div>
@@ -735,7 +735,7 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
           {/* MESSAGE TO DEALER FORM (Direct In-Page Form from video) */}
           <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800 space-y-4">
             <h3 className="text-sm font-black text-white uppercase tracking-wider">
-              MESSAGE AU CONCESSIONNAIRE (Message to Dealer)
+              MESSAGE AU CONCESSIONNAIRE
             </h3>
 
             {msgSentSuccess ? (

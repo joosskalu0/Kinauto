@@ -5,7 +5,7 @@ import {
   ChevronRight, Sparkles, User, ExternalLink, Trash2, Edit3, Eye, EyeOff, KeyRound, Sliders, X,
   Home, ArrowLeft, Phone, Mail, MapPin, Headphones, Globe,
   BarChart3, Activity, Users, MousePointerClick, TrendingUp, Flame, Play, Copy, Check, HelpCircle,
-  Layers, Tag, Wrench, Truck, Star, MessageSquare, Camera, Car
+  Layers, Tag, Wrench, Truck, Star, MessageSquare, Camera, Car, Megaphone
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, 
@@ -29,6 +29,7 @@ import { AdminBrandsModelsTab } from './AdminBrandsModelsTab';
 import { AdminReportsTab } from './AdminReportsTab';
 import { AdminSubscriptionsTab } from './AdminSubscriptionsTab';
 import { AdminPaymentsTab } from './AdminPaymentsTab';
+import { AdminMonetizationTab } from './AdminMonetizationTab';
 
 interface SuperAdminDashboardProps {
   dealershipAccounts: DealershipAccount[];
@@ -104,7 +105,7 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
   const [activeTab, setActiveTab] = useState<
     'stats' | 'utilisateurs' | 'vehicules' | 'concessions' | 'garages' | 
     'marques-modeles' | 'signalements' | 'abonnements' | 'facturation' | 
-    'paiements' | 'formules' | 'contact-admin' | 'analytics'
+    'paiements' | 'monetisation' | 'formules' | 'contact-admin' | 'analytics'
   >('stats');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>('ALL');
@@ -689,6 +690,18 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
         </button>
 
         <button
+          onClick={() => setActiveTab('monetisation')}
+          className={`px-3.5 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer whitespace-nowrap ${
+            activeTab === 'monetisation'
+              ? 'bg-amber-500 text-slate-950 font-black shadow-lg'
+              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+          }`}
+        >
+          <Megaphone className="w-4 h-4 text-amber-400" />
+          <span>Monétisation & Pub</span>
+        </button>
+
+        <button
           onClick={() => setActiveTab('facturation')}
           className={`px-3.5 py-2 rounded-xl flex items-center gap-2 transition cursor-pointer whitespace-nowrap ${
             activeTab === 'facturation'
@@ -780,6 +793,11 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
       {/* TAB: GESTION PAIEMENTS */}
       {activeTab === 'paiements' && (
         <AdminPaymentsTab />
+      )}
+
+      {/* TAB: MONÉTISATION & RÉGIE PUBLICITAIRE */}
+      {activeTab === 'monetisation' && (
+        <AdminMonetizationTab />
       )}
 
       {/* TAB 1: CONCESSIONS MANAGEMENT */}

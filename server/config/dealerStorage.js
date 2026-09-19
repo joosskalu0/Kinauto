@@ -103,10 +103,21 @@ function handleDealerQuery(normalizedSql, rawSql, params, memoryStore) {
 
   // =========================================================================
   // 1. REQUÊTES SUR LES CONCESSIONNAIRES (DEALERSHIPS / DEALERS)
+  // Ne doit intercepter que si la table principale est dealerships ou dealers (pas les JOINs depuis vehicles)
   // =========================================================================
-  const isDealerTable = normalizedSql.includes('DEALERSHIPS') || normalizedSql.includes('DEALERS');
+  const isDealerPrimary = 
+    normalizedSql.includes('FROM DEALERSHIPS') || 
+    normalizedSql.includes('FROM DEALERS') ||
+    normalizedSql.includes('INTO DEALERSHIPS') ||
+    normalizedSql.includes('INTO DEALERS') ||
+    normalizedSql.includes('UPDATE DEALERSHIPS') ||
+    normalizedSql.includes('UPDATE DEALERS') ||
+    normalizedSql.includes('DELETE FROM DEALERSHIPS') ||
+    normalizedSql.includes('DELETE FROM DEALERS');
 
-  if (isDealerTable) {
+  const isVehiclesPrimary = normalizedSql.includes('FROM VEHICLES') || normalizedSql.includes('INTO VEHICLES') || normalizedSql.includes('UPDATE VEHICLES') || normalizedSql.includes('DELETE FROM VEHICLES');
+
+  if (isDealerPrimary && !isVehiclesPrimary) {
     // 1.1 SELECT SINGLE DEALERSHIP BY ID: WHERE D.ID = ? OR WHERE ID = ?
     if (normalizedSql.startsWith('SELECT') && (normalizedSql.includes('WHERE D.ID = ?') || normalizedSql.includes('WHERE ID = ?'))) {
       const targetId = Number(params[0]);

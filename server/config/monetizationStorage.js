@@ -420,11 +420,94 @@ const monetizationStore = {
   ad_placements: [...AD_PLACEMENTS],
   ad_campaigns: [...INITIAL_AD_CAMPAIGNS],
   orders: [...INITIAL_MONETIZATION_ORDERS],
-  inquiries: []
+  inquiries: [],
+  vehicle_boosts: []
 };
+
+/**
+ * Gestionnaire SQL résilient pour le module de monétisation (MySQL & In-Memory)
+ */
+function handleMonetizationQuery(normalizedSql, sql, params, memoryStore) {
+  // 1. Table AD_CAMPAIGNS
+  if (normalizedSql.includes('AD_CAMPAIGNS')) {
+    if (normalizedSql.startsWith('SELECT')) {
+      let list = [...monetizationStore.ad_campaigns];
+      if (normalizedSql.includes('IS_ACTIVE = 1') || normalizedSql.includes('IS_ACTIVE = TRUE')) {
+        list = list.filter(a => a.is_active);
+      }
+      if (normalizedSql.includes('WHERE ID = ?')) {
+        const id = params[0];
+        return list.filter(a => a.id === id);
+      }
+      if (normalizedSql.includes('EMPLACEMENT = ?')) {
+        const emp = params[0];
+        list = list.filter(a => a.emplacement === emp || a.format === emp);
+      }
+      return list;
+    }
+    if (normalizedSql.startsWith('UPDATE AD_CAMPAIGNS')) {
+      if (normalizedSql.includes('CLICS = CLICS + 1')) {
+        const id = params[params.length - 1];
+        const ad = monetizationStore.ad_campaigns.find(a => a.id === id);
+        if (ad) ad.clics = (ad.clics || 0) + 1;
+        return { affectedRows: 1 };
+      }
+      if (normalizedSql.includes('IMPRESSIONS = IMPRESSIONS + 1')) {
+        const id = params[params.length - 1];
+        const ad = monetizationStore.ad_campaigns.find(a => a.id === id);
+        if (ad) ad.impressions = (ad.impressions || 0) + 1;
+        return { affectedRows: 1 };
+      }
+      return { affectedRows: 1 };
+    }
+    if (normalizedSql.startsWith('INSERT INTO AD_CAMPAIGNS')) {
+      return { affectedRows: 1, insertId: Date.now() };
+    }
+    if (normalizedSql.startsWith('DELETE FROM AD_CAMPAIGNS')) {
+      const id = params[0];
+      monetizationStore.ad_campaigns = monetizationStore.ad_campaigns.filter(a => a.id !== id);
+      return { affectedRows: 1 };
+    }
+  }
+
+  // 2. Table MONETIZATION_ORDERS
+  if (normalizedSql.includes('MONETIZATION_ORDERS')) {
+    if (normalizedSql.startsWith('SELECT')) {
+      let list = [...monetizationStore.orders];
+      if (normalizedSql.includes('WHERE STATUS = ?')) {
+        list = list.filter(o => o.status === params[0]);
+      }
+      return list;
+    }
+    if (normalizedSql.startsWith('INSERT INTO MONETIZATION_ORDERS')) {
+      return { affectedRows: 1, insertId: Date.now() };
+    }
+    if (normalizedSql.startsWith('UPDATE MONETIZATION_ORDERS')) {
+      return { affectedRows: 1 };
+    }
+  }
+
+  // 3. Table AD_INQUIRIES
+  if (normalizedSql.includes('AD_INQUIRIES')) {
+    if (normalizedSql.startsWith('SELECT')) {
+      return [...monetizationStore.inquiries];
+    }
+    if (normalizedSql.startsWith('INSERT INTO AD_INQUIRIES')) {
+      return { affectedRows: 1, insertId: Date.now() };
+    }
+  }
+
+  // 4. Table VEHICLE_BOOSTS
+  if (normalizedSql.includes('VEHICLE_BOOSTS')) {
+    return { affectedRows: 1, insertId: Date.now() };
+  }
+
+  return null;
+}
 
 module.exports = {
   monetizationStore,
+  handleMonetizationQuery,
   LISTING_TIERS,
   VISIBILITY_OPTIONS,
   DEALERSHIP_SUBSCRIPTION_PLANS,

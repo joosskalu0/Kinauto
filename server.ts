@@ -15,6 +15,7 @@ const favoriteRoutes = require("./server/routes/favorites.js");
 const garageRoutes = require("./server/routes/garages.js");
 const adminRoutes = require("./server/routes/admin.js");
 const monetizationRoutes = require("./server/routes/monetization.js");
+const { pool } = require("./server/config/database.js");
 
 dotenv.config();
 
@@ -38,6 +39,61 @@ async function startServer() {
   // API Health check
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok", timestamp: new Date().toISOString() });
+  });
+
+  // Route de test de la connexion active à la base de données MySQL
+  app.get("/api/test-db", async (req, res) => {
+    const startTime = Date.now();
+    try {
+      if (!pool) {
+        console.warn("[DB Test] ⚠️ Pool MySQL non initialisé.");
+        return res.status(503).json({
+          success: false,
+          connected: false,
+          message: "Pool de connexion MySQL non initialisé.",
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      // Tenter une connexion active réelle et exécuter une requête test
+      const connection = await pool.getConnection();
+      const [rows] = await connection.query("SELECT 1 AS connected, NOW() AS server_time, VERSION() AS mysql_version");
+      connection.release();
+
+      const latencyMs = Date.now() - startTime;
+      console.log(`[DB Test] ✅ Test de connexion MySQL RÉUSSI (${latencyMs}ms) - Base: "${process.env.DB_NAME || 'congocar_db'}" :`, rows);
+
+      return res.json({
+        success: true,
+        connected: true,
+        message: "Connexion active à la base de données MySQL vérifiée avec succès.",
+        latency_ms: latencyMs,
+        database: process.env.DB_NAME || 'congocar_db',
+        host: process.env.DB_HOST || 'localhost',
+        port: Number(process.env.DB_PORT) || 3306,
+        server_info: rows,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error: any) {
+      const latencyMs = Date.now() - startTime;
+      console.error(`[DB Test] ❌ Résultat du test de connexion MySQL (${latencyMs}ms) : ${error.message}`);
+
+      return res.status(500).json({
+        success: false,
+        connected: false,
+        message: "Échec de la connexion active à la base de données MySQL.",
+        error: error.message,
+        code: error.code || null,
+        latency_ms: latencyMs,
+        config: {
+          host: process.env.DB_HOST || 'localhost',
+          port: Number(process.env.DB_PORT) || 3306,
+          database: process.env.DB_NAME || 'congocar_db',
+          user: process.env.DB_USER || 'root'
+        },
+        timestamp: new Date().toISOString()
+      });
+    }
   });
 
   // Mount Node.js + MySQL Authentication & Platform Routes

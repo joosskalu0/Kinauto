@@ -43,6 +43,7 @@ const { handleVehiclesQuery } = require('./vehicleStorage');
 const { handleDealerQuery, INITIAL_LEADS } = require('./dealerStorage');
 const { handleGarageQuery, INITIAL_GARAGES, INITIAL_GARAGE_SERVICES, INITIAL_GARAGE_IMAGES, INITIAL_BREAKDOWNS } = require('./garageStorage');
 const { handleAdminStoreQuery, initAdminStore, INITIAL_BRANDS, INITIAL_MODELS, INITIAL_REPORTS, INITIAL_PLANS, INITIAL_SUBSCRIPTIONS, INITIAL_PAYMENTS } = require('./adminStorage');
+const { handleMonetizationQuery } = require('./monetizationStorage');
 
 const memoryStore = {
   users: [
@@ -304,6 +305,12 @@ const query = async (sql, params = []) => {
   const adminQueryResult = handleAdminStoreQuery(normalizedSql, sql, params, memoryStore);
   if (adminQueryResult !== null) {
     return adminQueryResult;
+  }
+
+  // --- TABLES MONETIZATION (AD_CAMPAIGNS, MONETIZATION_ORDERS, AD_INQUIRIES, VEHICLE_BOOSTS) ---
+  const monetizationQueryResult = handleMonetizationQuery(normalizedSql, sql, params, memoryStore);
+  if (monetizationQueryResult !== null) {
+    return monetizationQueryResult;
   }
 
   // Par défaut, retourner tableau vide si requête non interceptée

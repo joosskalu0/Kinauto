@@ -183,8 +183,27 @@ const updateLeadStatus = async (req, res, next) => {
   }
 };
 
+/**
+ * @route   DELETE /api/leads/:id
+ * @desc    Supprimer un lead
+ * @access  Private (Dealer, Admin)
+ */
+const deleteLead = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await query('DELETE FROM leads WHERE id = ?', [id]);
+    res.json({
+      success: true,
+      message: 'Demande supprimée avec succès.'
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createLead,
   getLeads,
-  updateLeadStatus
+  updateLeadStatus,
+  deleteLead
 };

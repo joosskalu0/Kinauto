@@ -89,7 +89,7 @@ export const MotorsHeader: React.FC<MotorsHeaderProps> = ({
               onClick={() => setCurrentView('public')}
               className={`hover:text-blue-600 transition cursor-pointer ${currentView === 'public' ? 'text-blue-600' : ''}`}
             >
-              Inventory
+              Véhicules en Stock
             </button>
             <button 
               onClick={() => setCurrentView('garages')}
@@ -178,7 +178,7 @@ export const MotorsHeader: React.FC<MotorsHeaderProps> = ({
             <button
               id="motors-header-add-btn"
               onClick={openAddVehicleModal}
-              title="Publier un véhicule / Add car"
+              title="Déposer une annonce véhicule"
               className="w-9 h-9 sm:w-10 sm:h-10 bg-blue-600 hover:bg-blue-700 text-white rounded-xl flex items-center justify-center shadow-sm transition transform hover:scale-105 active:scale-95 cursor-pointer"
             >
               <Plus className="w-5 h-5 sm:w-6 sm:h-6 stroke-[3]" />
@@ -252,7 +252,7 @@ export const MotorsHeader: React.FC<MotorsHeaderProps> = ({
                 >
                   <div className="flex items-center gap-3">
                     <Home className="w-4 h-4 text-blue-600" />
-                    <span>Catalogue / Inventory</span>
+                    <span>Catalogue des Véhicules</span>
                   </div>
                   <ChevronRight className="w-4 h-4 text-slate-400" />
                 </button>

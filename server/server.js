@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
-const { testConnection } = require('./config/database');
+const { testConnection, pool } = require('./config/database');
 const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
 
 // Charger les variables d'environnement (.env)
@@ -66,6 +66,43 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+app.get('/api/test-db', async (req, res) => {
+  const startTime = Date.now();
+  try {
+    if (!pool) {
+      console.warn('[MySQL Test DB] ⚠️ Pool MySQL non initialisé.');
+      return res.status(503).json({
+        success: false,
+        connected: false,
+        message: 'Pool MySQL non initialisé.'
+      });
+    }
+    const connection = await pool.getConnection();
+    const [rows] = await connection.query('SELECT 1 AS connected, NOW() AS server_time, VERSION() AS mysql_version');
+    connection.release();
+    const latencyMs = Date.now() - startTime;
+    console.log(`[MySQL Test DB] ✅ Test de connexion MySQL RÉUSSI (${latencyMs}ms) :`, rows);
+    return res.json({
+      success: true,
+      connected: true,
+      message: 'Connexion active à la base de données MySQL vérifiée avec succès.',
+      latency_ms: latencyMs,
+      database: process.env.DB_NAME || 'congocar_db',
+      server_info: rows
+    });
+  } catch (error) {
+    const latencyMs = Date.now() - startTime;
+    console.error(`[MySQL Test DB] ❌ Résultat du test de connexion MySQL (${latencyMs}ms) : ${error.message}`);
+    return res.status(500).json({
+      success: false,
+      connected: false,
+      message: 'Échec de la connexion active à la base de données MySQL.',
+      error: error.message,
+      latency_ms: latencyMs
+    });
+  }
+});
+
 // Importation des routes concessionnaires et garages
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/users');
@@ -75,6 +112,7 @@ const leadRoutes = require('./routes/leads');
 const favoriteRoutes = require('./routes/favorites');
 const garageRoutes = require('./routes/garages');
 const adminRoutes = require('./routes/admin');
+const monetizationRoutes = require('./routes/monetization');
 
 // Montage des routes sous le préfixe /api
 app.use('/api/auth', authRoutes);
@@ -86,6 +124,8 @@ app.use('/api/leads', leadRoutes);
 app.use('/api/favorites', favoriteRoutes);
 app.use('/api/garages', garageRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/monetization', monetizationRoutes);
+app.use('/api/monetisation', monetizationRoutes);
 
 // Alias de rétrocompatibilité
 app.use('/api/agencies', dealershipRoutes);

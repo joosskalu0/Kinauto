@@ -62,7 +62,22 @@ export const AdBanner: React.FC<AdBannerProps> = ({
   onOpenAdInquiry,
   onNavigateToMonetization
 }) => {
-  const ad = campaign || (FALLBACK_ADS[format] as AdCampaign);
+  const [remoteCampaign, setRemoteCampaign] = useState<AdCampaign | null>(null);
+
+  React.useEffect(() => {
+    if (!campaign) {
+      fetch(`/api/monetization/ads?emplacement=${format}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.success && Array.isArray(data.ads) && data.ads.length > 0) {
+            setRemoteCampaign(data.ads[0]);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [campaign, format]);
+
+  const ad = campaign || remoteCampaign || (FALLBACK_ADS[format] as AdCampaign);
 
   const handleClickAd = () => {
     if (ad.id) {

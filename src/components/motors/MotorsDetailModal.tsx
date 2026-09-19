@@ -130,7 +130,7 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
     'Apple CarPlay & Android Auto', 'Software Auto-Update'
   ];
   const safetyList = [
-    'Airbag: Driver', 'Airbag: Passenger', 'Side Airbags', 
+    'Airbag conducteur', 'Airbag passager', 'Airbags latéraux', 
     'Anti-lock Brakes (ABS)', 'Compound Brakes', 'Security System & Alarm'
   ];
   const seatsList = [
@@ -143,20 +143,38 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
     .filter((v) => v.id !== vehicle.id && (v.marque === vehicle.marque || v.categorie === vehicle.categorie))
     .slice(0, 3);
 
+  const brandInfo = MOTORS_BRANDS.find(
+    (b) => b.name.toLowerCase() === vehicle.marque.toLowerCase() ||
+           vehicle.marque.toLowerCase().includes(b.name.toLowerCase())
+  );
+  const BrandLogoComponent = brandInfo?.Component;
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto bg-black/85 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4">
       <div className="bg-white text-slate-900 w-full max-w-6xl rounded-3xl shadow-2xl overflow-hidden my-auto max-h-[96vh] flex flex-col font-sans border border-slate-200">
         
         {/* Top Header Bar matching video */}
         <div className="bg-white px-4 sm:px-8 py-4 border-b border-slate-200 flex flex-wrap items-center justify-between gap-4 shrink-0">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-              <Clock className="w-3.5 h-3.5 text-blue-600" />
-              <span>ADDED: {vehicle.dateAjout ? new Date(vehicle.dateAjout).toLocaleDateString('en-US', { month: 'long', day: '2-digit', year: 'numeric' }).toUpperCase() : 'SEPTEMBER 04, 2024'}</span>
+          <div className="flex items-center gap-3.5">
+            {BrandLogoComponent && (
+              <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center p-2 shrink-0 shadow-2xs">
+                <BrandLogoComponent className="w-full h-full object-contain" />
+              </div>
+            )}
+            <div>
+              <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                <Clock className="w-3.5 h-3.5 text-blue-600" />
+                <span>Publié le : {vehicle.dateAjout ? new Date(vehicle.dateAjout).toLocaleDateString('fr-FR', { month: 'long', day: '2-digit', year: 'numeric' }) : 'Récent'}</span>
+                {brandInfo?.country && (
+                  <span className="hidden sm:inline bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full text-[10px] font-bold">
+                    {brandInfo.country}
+                  </span>
+                )}
+              </div>
+              <h1 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight mt-0.5">
+                {vehicle.marque} {vehicle.modele} <span className="font-normal text-slate-500 text-lg">{vehicle.annee}</span>
+              </h1>
             </div>
-            <h1 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight mt-0.5">
-              {vehicle.marque} {vehicle.modele} <span className="font-normal text-slate-500 text-lg">{vehicle.annee}</span>
-            </h1>
           </div>
 
           <div className="flex items-center gap-2">
@@ -184,24 +202,24 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
             <div className="p-5 sm:p-7 flex flex-wrap items-center justify-between gap-4">
               {/* Buy Price */}
               <div>
-                <p className="text-xs font-extrabold uppercase tracking-widest text-blue-200">BUY FOR</p>
+                <p className="text-xs font-extrabold uppercase tracking-widest text-blue-200">PRIX D'ACHAT</p>
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl sm:text-5xl font-black tracking-tight">{formatPrice(buyPrice)}</span>
                 </div>
-                <p className="text-xs text-blue-100 font-medium mt-0.5">Included Taxes & Checkup</p>
+                <p className="text-xs text-blue-100 font-medium mt-0.5">Taxes et contrôle technique inclus</p>
               </div>
 
               {/* MSRP */}
               <div className="text-right sm:text-left">
-                <p className="text-xs font-extrabold uppercase tracking-widest text-blue-200">MSRP</p>
+                <p className="text-xs font-extrabold uppercase tracking-widest text-blue-200">PRIX CONSTRUCTEUR</p>
                 <span className="text-2xl sm:text-3xl font-bold line-through text-blue-200/90">{formatPrice(msrpPrice)}</span>
               </div>
             </div>
 
             {/* Instant Savings bottom strip */}
             <div className="bg-blue-700/90 px-5 sm:px-7 py-3 flex items-center justify-between border-t border-blue-500/40 text-xs sm:text-sm font-black uppercase tracking-wider">
-              <span>INSTANT SAVINGS:</span>
-              <span className="text-amber-300 text-base sm:text-lg">-${formatPrice(instantSavings).replace('$', '')}</span>
+              <span>ÉCONOMIE IMMÉDIATE :</span>
+              <span className="text-amber-300 text-base sm:text-lg">-{formatPrice(instantSavings)}</span>
             </div>
           </div>
 
@@ -264,7 +282,7 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                   className="bg-white hover:bg-blue-50 border border-blue-200 text-blue-600 p-3 rounded-xl flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
                 >
                   <Calendar className="w-4 h-4 text-blue-600" />
-                  <span>Schedule Test Drive</span>
+                  <span>Réserver un essai</span>
                 </button>
 
                 <button
@@ -272,7 +290,7 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                   className="bg-white hover:bg-blue-50 border border-blue-200 text-blue-600 p-3 rounded-xl flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
                 >
                   <Calculator className="w-4 h-4 text-blue-600" />
-                  <span>Loan Calculator</span>
+                  <span>Simulateur de crédit</span>
                 </button>
 
                 <button
@@ -284,7 +302,7 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                   }`}
                 >
                   <Scale className="w-4 h-4" />
-                  <span>{isCompared ? 'Compared ✓' : 'Add to compare'}</span>
+                  <span>{isCompared ? 'Comparé ✓' : 'Comparer'}</span>
                 </button>
 
                 <button
@@ -296,7 +314,7 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                   }`}
                 >
                   <Heart className={`w-4 h-4 ${isFavorite ? 'fill-current' : ''}`} />
-                  <span>{isFavorite ? 'In Favorites ♥' : 'Add to Favorites'}</span>
+                  <span>{isFavorite ? 'Favori ♥' : 'Ajouter aux favoris'}</span>
                 </button>
 
                 <button
@@ -304,7 +322,7 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                   className="bg-white hover:bg-blue-50 border border-blue-200 text-blue-600 p-3 rounded-xl flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
                 >
                   <Share2 className="w-4 h-4 text-blue-600" />
-                  <span>{copiedLink ? 'Link Copied!' : 'Share'}</span>
+                  <span>{copiedLink ? 'Lien copié !' : 'Partager'}</span>
                 </button>
 
                 <button
@@ -312,11 +330,11 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                   className="bg-white hover:bg-blue-50 border border-blue-200 text-blue-600 p-3 rounded-xl flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
                 >
                   <Printer className="w-4 h-4 text-blue-600" />
-                  <span>Print</span>
+                  <span>Imprimer</span>
                 </button>
               </div>
 
-              {/* Loan Calculator popup block */}
+              {/* Simulateur de crédit popup block */}
               {showLoanCalculator && (
                 <div className="bg-white p-6 rounded-2xl border border-blue-200 shadow-lg">
                   <FinanceCalculator vehiclePrice={vehicle.prix} />
@@ -328,74 +346,74 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                 <div className="flex items-center gap-3">
                   <div className="bg-blue-50 border border-blue-200 text-blue-700 px-3 py-1.5 rounded-lg text-xs font-black uppercase flex items-center gap-1.5">
                     <Shield className="w-4 h-4 text-blue-600" />
-                    <span>AutoCheck</span>
+                    <span>Contrôle Certifié</span>
                   </div>
                   <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-1.5 rounded-lg text-xs font-black uppercase flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4 text-red-600" />
-                    <span>SHOW ME THE CARFAX</span>
+                    <span>HISTORIQUE VÉRIFIÉ</span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
-                  <div className="bg-slate-100 px-3 py-1.5 rounded-lg">12 City MPG</div>
+                  <div className="bg-slate-100 px-3 py-1.5 rounded-lg">Urbain : 11 L/100km</div>
                   <Fuel className="w-4 h-4 text-slate-400" />
-                  <div className="bg-slate-100 px-3 py-1.5 rounded-lg">8 HWY MPG</div>
+                  <div className="bg-slate-100 px-3 py-1.5 rounded-lg">Route : 7.5 L/100km</div>
                 </div>
               </div>
 
               {/* VEHICLE DETAILS Table matching video */}
               <div className="bg-white p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xs space-y-4">
                 <h3 className="text-base font-black text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-3">
-                  VEHICLE DETAILS
+                  CARACTÉRISTIQUES DU VÉHICULE
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-6 text-sm">
                   <div className="flex items-center justify-between py-1.5 border-b border-slate-50">
-                    <span className="text-slate-500 font-medium">Make:</span>
+                    <span className="text-slate-500 font-medium">Marque :</span>
                     <span className="font-bold text-slate-900">{vehicle.marque}</span>
                   </div>
                   <div className="flex items-center justify-between py-1.5 border-b border-slate-50">
-                    <span className="text-slate-500 font-medium">Model:</span>
+                    <span className="text-slate-500 font-medium">Modèle :</span>
                     <span className="font-bold text-slate-900">{vehicle.modele}</span>
                   </div>
                   <div className="flex items-center justify-between py-1.5 border-b border-slate-50">
-                    <span className="text-slate-500 font-medium">Body:</span>
+                    <span className="text-slate-500 font-medium">Carrosserie :</span>
                     <span className="font-bold text-slate-900">{vehicle.categorie}</span>
                   </div>
                   <div className="flex items-center justify-between py-1.5 border-b border-slate-50">
-                    <span className="text-slate-500 font-medium">Condition:</span>
+                    <span className="text-slate-500 font-medium">État :</span>
                     <span className="font-bold text-slate-900 capitalize">{vehicle.etat}</span>
                   </div>
                   <div className="flex items-center justify-between py-1.5 border-b border-slate-50">
-                    <span className="text-slate-500 font-medium">Year:</span>
+                    <span className="text-slate-500 font-medium">Année :</span>
                     <span className="font-bold text-slate-900">{vehicle.annee}</span>
                   </div>
                   <div className="flex items-center justify-between py-1.5 border-b border-slate-50">
-                    <span className="text-slate-500 font-medium">Transmission:</span>
+                    <span className="text-slate-500 font-medium">Boîte de vitesses :</span>
                     <span className="font-bold text-slate-900">{vehicle.transmission}</span>
                   </div>
                   <div className="flex items-center justify-between py-1.5 border-b border-slate-50">
-                    <span className="text-slate-500 font-medium">Fuel type:</span>
+                    <span className="text-slate-500 font-medium">Carburant :</span>
                     <span className="font-bold text-slate-900">{vehicle.carburant}</span>
                   </div>
                   <div className="flex items-center justify-between py-1.5 border-b border-slate-50">
-                    <span className="text-slate-500 font-medium">Mileage:</span>
+                    <span className="text-slate-500 font-medium">Kilométrage :</span>
                     <span className="font-bold text-slate-900">{vehicle.kilometrage.toLocaleString('fr-FR')} km</span>
                   </div>
                   <div className="flex items-center justify-between py-1.5 border-b border-slate-50">
-                    <span className="text-slate-500 font-medium">Engine:</span>
+                    <span className="text-slate-500 font-medium">Moteur :</span>
                     <span className="font-bold text-slate-900">{vehicle.moteur || 'V6 3.5L'}</span>
                   </div>
                   <div className="flex items-center justify-between py-1.5 border-b border-slate-50">
-                    <span className="text-slate-500 font-medium">Drive:</span>
-                    <span className="font-bold text-slate-900">{vehicle.motrice || 'FWD'}</span>
+                    <span className="text-slate-500 font-medium">Motricité :</span>
+                    <span className="font-bold text-slate-900">{vehicle.motrice || '4x4 / Intégrale'}</span>
                   </div>
                   <div className="flex items-center justify-between py-1.5 border-b border-slate-50">
-                    <span className="text-slate-500 font-medium">Color:</span>
-                    <span className="font-bold text-slate-900">{vehicle.couleur || 'Silver'}</span>
+                    <span className="text-slate-500 font-medium">Couleur :</span>
+                    <span className="font-bold text-slate-900">{vehicle.couleur || 'Gris métallisé'}</span>
                   </div>
                   <div className="flex items-center justify-between py-1.5 border-b border-slate-50">
-                    <span className="text-slate-500 font-medium">VIN:</span>
+                    <span className="text-slate-500 font-medium">Châssis (VIN) :</span>
                     <span className="font-mono font-bold text-xs text-slate-800">{vehicle.vin || 'ML32F3FJ8KHF15816'}</span>
                   </div>
                 </div>
@@ -404,13 +422,13 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
               {/* CAR FEATURES Checklists matching video */}
               <div className="bg-white p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xs space-y-6">
                 <h3 className="text-base font-black text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-3">
-                  CAR FEATURES
+                  ÉQUIPEMENTS & OPTIONS
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-xs">
-                  {/* Comfort */}
+                  {/* Confort */}
                   <div className="space-y-2.5">
-                    <h4 className="font-black text-slate-900 uppercase text-[11px] tracking-wider text-blue-600">Comfort</h4>
+                    <h4 className="font-black text-slate-900 uppercase text-[11px] tracking-wider text-blue-600">Confort</h4>
                     <ul className="space-y-1.5">
                       {comfortList.map((item, i) => (
                         <li key={i} className="flex items-center gap-2 text-slate-700 font-medium">
@@ -421,9 +439,9 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                     </ul>
                   </div>
 
-                  {/* Entertainment */}
+                  {/* Multimédia */}
                   <div className="space-y-2.5">
-                    <h4 className="font-black text-slate-900 uppercase text-[11px] tracking-wider text-blue-600">Entertainment</h4>
+                    <h4 className="font-black text-slate-900 uppercase text-[11px] tracking-wider text-blue-600">Multimédia</h4>
                     <ul className="space-y-1.5">
                       {entertainmentList.map((item, i) => (
                         <li key={i} className="flex items-center gap-2 text-slate-700 font-medium">
@@ -434,9 +452,9 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                     </ul>
                   </div>
 
-                  {/* Safety */}
+                  {/* Sécurité */}
                   <div className="space-y-2.5">
-                    <h4 className="font-black text-slate-900 uppercase text-[11px] tracking-wider text-blue-600">Safety</h4>
+                    <h4 className="font-black text-slate-900 uppercase text-[11px] tracking-wider text-blue-600">Sécurité</h4>
                     <ul className="space-y-1.5">
                       {safetyList.map((item, i) => (
                         <li key={i} className="flex items-center gap-2 text-slate-700 font-medium">
@@ -447,9 +465,9 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                     </ul>
                   </div>
 
-                  {/* Seats */}
+                  {/* Sièges & Intérieur */}
                   <div className="space-y-2.5">
-                    <h4 className="font-black text-slate-900 uppercase text-[11px] tracking-wider text-blue-600">Seats</h4>
+                    <h4 className="font-black text-slate-900 uppercase text-[11px] tracking-wider text-blue-600">Sièges & Intérieur</h4>
                     <ul className="space-y-1.5">
                       {seatsList.map((item, i) => (
                         <li key={i} className="flex items-center gap-2 text-slate-700 font-medium">
@@ -465,17 +483,17 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
               {/* SELLER'S NOTES */}
               <div className="bg-white p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xs space-y-3">
                 <h3 className="text-base font-black text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-3">
-                  SELLER'S NOTES
+                  DESCRIPTION DU VENDEUR
                 </h3>
                 <p className="text-sm text-slate-700 leading-relaxed font-normal">
-                  {vehicle.description || `Exceptional vehicle maintained meticulously. Clean CARFAX with zero accidents reported. Comes with full warranty coverage, fresh service checkup, and all official inspection documents.`}
+                  {vehicle.description || `Véhicule en parfait état, entretenu avec rigueur. Historique vérifié sans aucun sinistre. Livré avec garantie, révision complète effectuée et ensemble des documents officiels en règle.`}
                 </p>
               </div>
 
               {/* Location Map Box */}
               <div className="bg-white p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xs space-y-3">
                 <h3 className="text-base font-black text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-3">
-                  LOCATION & SHOWROOM
+                  LOCALISATION & SHOWROOM
                 </h3>
                 <div className="bg-slate-100 rounded-2xl p-4 flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -492,20 +510,20 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
               </div>
             </div>
 
-            {/* RIGHT COLUMN (1 Col): Seller Profile, WhatsApp, Message Form, Offers */}
+            {/* RIGHT COLUMN (1 Col): Profil Vendeur, WhatsApp, Message Form, Offers */}
             <div className="space-y-6">
               
-              {/* Seller Profile Card matching video */}
+              {/* Profil Vendeur Card matching video */}
               <div className="bg-white p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xs space-y-4">
                 <div className="flex items-center gap-4">
                   <img 
                     src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" 
-                    alt="Seller"
+                    alt="Vendeur"
                     className="w-14 h-14 rounded-full object-cover border-2 border-blue-600"
                   />
                   <div>
-                    <h4 className="font-black text-base text-slate-900">Joe Doe</h4>
-                    <p className="text-xs text-slate-500 font-medium">Private Seller / {dealership.nom}</p>
+                    <h4 className="font-black text-base text-slate-900">{(dealership as any).contactNom || 'Conseiller Commercial'}</h4>
+                    <p className="text-xs text-slate-500 font-medium">Vendeur Agréé / {dealership.nom}</p>
                   </div>
                 </div>
 
@@ -517,7 +535,7 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                   className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-xs py-3 rounded-xl flex items-center justify-center gap-2 transition shadow-sm cursor-pointer"
                 >
                   <MessageSquare className="w-4 h-4" />
-                  <span>CHAT VIA WHATSAPP</span>
+                  <span>DISCUTER SUR WHATSAPP</span>
                 </a>
 
                 {/* Show Phone Number Button */}
@@ -526,7 +544,7 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                   className="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs py-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer"
                 >
                   <Phone className="w-4 h-4 text-blue-600" />
-                  <span>{showPhone ? dealership.telephone : '+1 ******* Show Number'}</span>
+                  <span>{showPhone ? dealership.telephone : '+243 ••• ••• Afficher le numéro'}</span>
                 </button>
               </div>
 
@@ -537,7 +555,7 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                   className="w-full bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-sm transition cursor-pointer"
                 >
                   <DollarSign className="w-4 h-4 text-amber-400" />
-                  <span>Make an offer price</span>
+                  <span>Faire une offre de prix</span>
                 </button>
 
                 <button
@@ -545,14 +563,14 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                   className="w-full bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-extrabold text-xs py-3.5 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer"
                 >
                   <RefreshCw className="w-4 h-4 text-blue-600" />
-                  <span>Trade in form (Reprise)</span>
+                  <span>Demande de reprise</span>
                 </button>
               </div>
 
               {/* MESSAGE TO DEALER Form matching video */}
               <div className="bg-white p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xs space-y-4">
                 <h3 className="text-sm font-black text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2">
-                  MESSAGE TO DEALER
+                  CONTACTER LA CONCESSION
                 </h3>
 
                 {msgSentSuccess ? (
@@ -568,6 +586,7 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                         required
                         value={dealerMsgText}
                         onChange={(e) => setDealerMsgText(e.target.value)}
+                        placeholder="Votre message ou question sur ce véhicule..."
                         className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:border-blue-500 font-medium"
                       ></textarea>
                     </div>
@@ -575,7 +594,7 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                     <div>
                       <input
                         type="text"
-                        placeholder="Name"
+                        placeholder="Votre nom complet *"
                         required
                         value={dealerMsgName}
                         onChange={(e) => setDealerMsgName(e.target.value)}
@@ -586,7 +605,7 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                     <div>
                       <input
                         type="tel"
-                        placeholder="Phone"
+                        placeholder="Numéro de téléphone / WhatsApp *"
                         required
                         value={dealerMsgPhone}
                         onChange={(e) => setDealerMsgPhone(e.target.value)}
@@ -601,14 +620,14 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                         onChange={(e) => setAgreedTerms(e.target.checked)}
                         className="rounded text-blue-600 focus:ring-0 mt-0.5"
                       />
-                      <span>I accept the service terms and privacy agreement</span>
+                      <span>J'accepte les conditions d'utilisation et la politique de confidentialité.</span>
                     </label>
 
                     <button
                       type="submit"
                       className="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3 rounded-xl transition shadow-sm cursor-pointer"
                     >
-                      Send message
+                      Envoyer le message
                     </button>
                   </form>
                 )}

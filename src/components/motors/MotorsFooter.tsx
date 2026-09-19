@@ -43,7 +43,7 @@ export const MotorsFooter: React.FC<MotorsFooterProps> = ({ onNavigate, openAuth
             <ul className="space-y-2 text-xs font-semibold text-slate-400">
               <li>
                 <button onClick={() => onNavigate('public')} className="hover:text-white transition cursor-pointer">
-                  Inventory / Catalogue
+                  Catalogue des Véhicules
                 </button>
               </li>
               <li>
@@ -66,12 +66,12 @@ export const MotorsFooter: React.FC<MotorsFooterProps> = ({ onNavigate, openAuth
             <ul className="space-y-2 text-xs font-semibold text-slate-400">
               <li>
                 <button onClick={handleAuthClick} className="hover:text-white transition cursor-pointer">
-                  Dealer Profile (Concessionnaires)
+                  Profil Concession (Concessionnaires)
                 </button>
               </li>
               <li>
                 <button onClick={handleAuthClick} className="hover:text-white transition cursor-pointer">
-                  Seller Profile (Vendeurs Agréés)
+                  Profil Vendeur (Vendeurs Agréés)
                 </button>
               </li>
               <li>
@@ -107,11 +107,11 @@ export const MotorsFooter: React.FC<MotorsFooterProps> = ({ onNavigate, openAuth
           <p>© 2025 AutoConcession Kinshasa. Tous droits réservés.</p>
           <div className="flex items-center gap-4 font-semibold text-slate-400">
             <button onClick={handleAuthClick} className="hover:text-white transition cursor-pointer">
-              Dealer Profile
+              Profil Concession
             </button>
             <span>|</span>
             <button onClick={handleAuthClick} className="hover:text-white transition cursor-pointer">
-              Seller Profile
+              Profil Vendeur
             </button>
           </div>
         </div>

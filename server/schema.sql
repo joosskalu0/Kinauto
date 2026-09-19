@@ -283,6 +283,14 @@ CREATE TABLE `vehicles` (
   `en_vedette` BOOLEAN NOT NULL DEFAULT FALSE,
   `is_featured` BOOLEAN GENERATED ALWAYS AS (`en_vedette`) STORED,
   `featured_until` DATETIME DEFAULT NULL,
+  `listing_tier` ENUM('free', 'premium', 'featured') NOT NULL DEFAULT 'free',
+  `visibility_badge` ENUM('urgent', 'certifie', 'promo', 'top_deal', 'garantie_incluse') DEFAULT NULL,
+  `boost_top_search` BOOLEAN NOT NULL DEFAULT FALSE,
+  `boost_top_search_until` DATETIME DEFAULT NULL,
+  `boost_homepage` BOOLEAN NOT NULL DEFAULT FALSE,
+  `boost_homepage_until` DATETIME DEFAULT NULL,
+  `is_sponsored` BOOLEAN NOT NULL DEFAULT FALSE,
+  `sponsor_name` VARCHAR(150) DEFAULT NULL,
   `views_count` INT UNSIGNED NOT NULL DEFAULT 0,
   `favorites_count` INT UNSIGNED NOT NULL DEFAULT 0,
   `leads_count` INT UNSIGNED NOT NULL DEFAULT 0,
@@ -306,6 +314,8 @@ CREATE TABLE `vehicles` (
   INDEX `idx_vehicles_ville_commune` (`ville`, `commune`),
   INDEX `idx_vehicles_dealer_status` (`dealership_id`, `status`),
   INDEX `idx_vehicles_en_vedette` (`en_vedette`),
+  INDEX `idx_vehicles_listing_tier` (`listing_tier`),
+  INDEX `idx_vehicles_boost_search` (`boost_top_search`),
   INDEX `idx_vehicles_created_at` (`created_at`),
   INDEX `idx_vehicles_deleted_at` (`deleted_at`),
   FULLTEXT `idx_vehicles_search` (`marque`, `modele`, `finition`, `description`)
@@ -579,6 +589,105 @@ CREATE TABLE `audit_logs` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ====================================================================
+-- 18. TABLE : MONETIZATION_ORDERS (Commandes de Forfaits, Boosts & Abonnements)
+-- ====================================================================
+DROP TABLE IF EXISTS `monetization_orders`;
+CREATE TABLE `monetization_orders` (
+  `id` VARCHAR(64) PRIMARY KEY,
+  `type` ENUM('listing_tier', 'visibility_boost', 'dealership_subscription', 'garage_subscription', 'ad_campaign') NOT NULL,
+  `item_id` VARCHAR(100) NOT NULL,
+  `item_nom` VARCHAR(255) NOT NULL,
+  `target_vehicle_id` BIGINT UNSIGNED DEFAULT NULL,
+  `dealership_id` BIGINT UNSIGNED DEFAULT NULL,
+  `garage_id` BIGINT UNSIGNED DEFAULT NULL,
+  `client_nom` VARCHAR(255) NOT NULL,
+  `client_phone` VARCHAR(50) NOT NULL,
+  `client_email` VARCHAR(191) DEFAULT NULL,
+  `montant_usd` DECIMAL(12, 2) NOT NULL,
+  `devise` ENUM('USD', 'CDF') NOT NULL DEFAULT 'USD',
+  `payment_method` ENUM('mpesa', 'orange_money', 'airtel_money', 'afrimoney', 'visa_mastercard', 'virement', 'cash') NOT NULL DEFAULT 'mpesa',
+  `payment_reference` VARCHAR(100) DEFAULT NULL,
+  `status` ENUM('pending', 'completed', 'cancelled', 'failed') NOT NULL DEFAULT 'pending',
+  `metadata` JSON DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_mord_vehicle_id` FOREIGN KEY (`target_vehicle_id`) REFERENCES `vehicles` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_mord_dealer_id` FOREIGN KEY (`dealership_id`) REFERENCES `dealers` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_mord_garage_id` FOREIGN KEY (`garage_id`) REFERENCES `garages` (`id`) ON DELETE SET NULL,
+  INDEX `idx_mord_type` (`type`),
+  INDEX `idx_mord_status` (`status`),
+  INDEX `idx_mord_vehicle` (`target_vehicle_id`),
+  INDEX `idx_mord_dealer` (`dealership_id`),
+  INDEX `idx_mord_created` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ====================================================================
+-- 19. TABLE : AD_CAMPAIGNS (Régie Publicitaire & Bannières Partenaires)
+-- ====================================================================
+DROP TABLE IF EXISTS `ad_campaigns`;
+CREATE TABLE `ad_campaigns` (
+  `id` VARCHAR(64) PRIMARY KEY,
+  `titre` VARCHAR(255) NOT NULL,
+  `annonceur` VARCHAR(255) NOT NULL,
+  `tag` VARCHAR(100) DEFAULT 'Partenaire Officiel',
+  `format` ENUM('banner_leaderboard', 'banner_inline', 'sidebar_box', 'banner_sos') NOT NULL DEFAULT 'banner_inline',
+  `emplacement` VARCHAR(100) NOT NULL DEFAULT 'catalogue_inline',
+  `image_url` VARCHAR(1000) NOT NULL,
+  `description` TEXT DEFAULT NULL,
+  `cta_text` VARCHAR(100) DEFAULT 'En savoir plus',
+  `cta_url` VARCHAR(500) DEFAULT '#',
+  `badge_color` VARCHAR(100) DEFAULT 'bg-blue-600 text-white',
+  `impressions` INT UNSIGNED NOT NULL DEFAULT 0,
+  `clics` INT UNSIGNED NOT NULL DEFAULT 0,
+  `date_debut` DATE DEFAULT NULL,
+  `date_fin` DATE DEFAULT NULL,
+  `is_active` BOOLEAN NOT NULL DEFAULT TRUE,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_ads_active_emplacement` (`is_active`, `emplacement`),
+  INDEX `idx_ads_format` (`format`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ====================================================================
+-- 20. TABLE : AD_INQUIRIES (Demandes d'Espace Pub / Devenir Annonceur)
+-- ====================================================================
+DROP TABLE IF EXISTS `ad_inquiries`;
+CREATE TABLE `ad_inquiries` (
+  `id` VARCHAR(64) PRIMARY KEY,
+  `nom_entreprise` VARCHAR(255) NOT NULL,
+  `contact_nom` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(191) DEFAULT NULL,
+  `telephone` VARCHAR(50) NOT NULL,
+  `format_souhaite` VARCHAR(100) DEFAULT 'banner_inline',
+  `duree_mois` SMALLINT UNSIGNED DEFAULT 1,
+  `budget_estime` DECIMAL(12, 2) DEFAULT NULL,
+  `message` TEXT DEFAULT NULL,
+  `statut` ENUM('nouvelle', 'contacte', 'devis_envoye', 'validee', 'rejetee') NOT NULL DEFAULT 'nouvelle',
+  `notes_internes` TEXT DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  INDEX `idx_inq_statut` (`statut`),
+  INDEX `idx_inq_created` (`created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ====================================================================
+-- 21. TABLE : VEHICLE_BOOSTS (Options Visibilité & Surclassements Véhicules)
+-- ====================================================================
+DROP TABLE IF EXISTS `vehicle_boosts`;
+CREATE TABLE `vehicle_boosts` (
+  `id` BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `vehicle_id` BIGINT UNSIGNED NOT NULL,
+  `boost_type` ENUM('boost_top_search', 'boost_urgent', 'boost_certifie', 'boost_carrousel_home') NOT NULL,
+  `date_debut` DATETIME NOT NULL,
+  `date_fin` DATETIME NOT NULL,
+  `order_id` VARCHAR(64) DEFAULT NULL,
+  `is_active` BOOLEAN NOT NULL DEFAULT TRUE,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT `fk_vboost_vehicle_id` FOREIGN KEY (`vehicle_id`) REFERENCES `vehicles` (`id`) ON DELETE CASCADE,
+  INDEX `idx_vboost_active` (`vehicle_id`, `is_active`, `date_fin`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ====================================================================
 -- VUES DE RÉTROCOMPATIBILITÉ ET OPTIMISATION (HIGH PERFORMANCE VIEWS)
 -- ====================================================================
 
@@ -788,6 +897,19 @@ INSERT INTO `reviews` (`user_id`, `dealer_id`, `rating`, `title`, `comment`, `is
 -- 17. Audit Log
 INSERT INTO `audit_logs` (`user_id`, `action`, `entity_type`, `entity_id`, `ip_address`, `details`) VALUES
 (1, 'DATABASE_INIT', 'SYSTEM', 1, '127.0.0.1', '{"message": "Initialisation de la base de données CONGOCAR version 2.5 réussie"}');
+
+-- 18. Campagnes Publicitaires Actives (Ad Campaigns)
+INSERT INTO `ad_campaigns` (`id`, `titre`, `annonceur`, `tag`, `format`, `emplacement`, `image_url`, `description`, `cta_text`, `cta_url`, `badge_color`, `impressions`, `clics`, `date_debut`, `date_fin`, `is_active`) VALUES
+('camp-rawbank-credit-auto', 'Crédit Auto Rawbank jusqu’à 80%', 'Rawbank RDC', 'Partenaire Financement Officiel', 'banner_inline', 'catalogue_inline', 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&q=80&w=1200', 'Financez l’achat de votre véhicule neuf ou d’occasion avec un taux préférentiel et une réponse rapide à Kinshasa.', 'Simuler mon Crédit', '#financement', 'bg-emerald-600 text-white', 28450, 1420, '2025-01-01', '2026-12-31', 1),
+('camp-sonas-assurance', 'Assurance Automobile Obligatoire & Tous Risques SONAS', 'SONAS RDC', 'Partenaire Assurance', 'banner_leaderboard', 'home_top', 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&q=80&w=1200', 'Attestation instantanée délivrée sur WhatsApp pour circuler en toute sérénité à Kinshasa et en provinces.', 'Demander un Devis', '#assurance', 'bg-blue-600 text-white', 54200, 2180, '2025-01-01', '2026-12-31', 1),
+('camp-sonas-sidebar', 'Souscrivez votre assurance auto en 3 minutes', 'SONAS SA', 'Assurance Immédiate', 'sidebar_box', 'vehicle_detail_sidebar', 'https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&q=80&w=800', 'Formule au tiers ou tous risques adaptée au réseau routier de Kinshasa.', 'Tarifs Assurance', '#assurance', 'bg-blue-600 text-white', 19800, 890, '2025-01-01', '2026-12-31', 1),
+('camp-total-lubrifiants', 'Huile Moteur Quartz TotalEnergies : Protection Maximale', 'TotalEnergies RDC', 'Partenaire Entretien Moteur', 'banner_sos', 'annuaire_garages', 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&q=80&w=1200', 'Optimisée pour les conditions routières et le climat tropical de Kinshasa. Disponible dans toutes les stations-services.', 'Localiser une Station', '#garages', 'bg-rose-600 text-white', 14100, 620, '2025-01-01', '2026-12-31', 1);
+
+-- 19. Commandes de Monétisation (Monetization Orders)
+INSERT INTO `monetization_orders` (`id`, `type`, `item_id`, `item_nom`, `target_vehicle_id`, `dealership_id`, `client_nom`, `client_phone`, `montant_usd`, `devise`, `payment_method`, `payment_reference`, `status`, `created_at`) VALUES
+('ORD-2026-001', 'listing_tier', 'featured', 'Passage Annonce À la Une (Toyota Land Cruiser Prado VXR)', 1, 1, 'Auto Prestige Kinshasa', '+243 81 555 0101', 29.00, 'USD', 'mpesa', 'MP-89241044', 'completed', DATE_SUB(NOW(), INTERVAL 2 DAY)),
+('ORD-2026-002', 'visibility_boost', 'boost_urgent', 'Badge Urgent (Hyundai Tucson N Line)', 3, 2, 'M. Jean-Luc Kalonji', '+243 99 888 1234', 3.00, 'USD', 'orange_money', 'OM-34982103', 'completed', DATE_SUB(NOW(), INTERVAL 12 HOUR)),
+('ORD-2026-003', 'dealership_subscription', 'pro', 'Abonnement Mensuel Concession Pro', NULL, 1, 'Auto Prestige Kinshasa', '+243 81 555 0101', 99.00, 'USD', 'virement', 'VIR-RAW-9921', 'completed', DATE_SUB(NOW(), INTERVAL 10 DAY));
 
 SET FOREIGN_KEY_CHECKS = 1;
 

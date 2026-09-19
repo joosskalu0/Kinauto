@@ -11,18 +11,121 @@ import { INITIAL_LEADS, DEFAULT_DEALERSHIP_INFO } from './data/mockLeads';
 import { INITIAL_DEALERSHIP_ACCOUNTS, SUBSCRIPTION_PLANS, GARAGE_SUBSCRIPTION_PLANS, DEFAULT_SITE_ADMIN_INFO } from './data/mockSaas';
 import { INITIAL_GARAGES } from './data/mockGarages';
 
-import { 
-  subscribeVehicles, 
-  saveVehicleToFirestore, 
-  deleteVehicleFromFirestore,
-  subscribeLeads,
-  saveLeadToFirestore,
-  deleteLeadFromFirestore,
-  subscribeAccounts,
-  saveAccountToFirestore,
-  deleteAccountFromFirestore,
-  deleteDealershipAndVehicles
-} from './lib/firebase';
+import { vehiclesApi, leadsApi, dealershipsApi } from './services/api';
+
+// Helper pour adapter un véhicule renvoyé par l'API MySQL vers le format attendu par le frontend React
+function mapApiVehicleToFrontend(v: any): Vehicle {
+  const images = Array.isArray(v.images) && v.images.length > 0 
+    ? v.images 
+    : v.primary_image 
+      ? [v.primary_image] 
+      : ['https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1200'];
+
+  const equipements = Array.isArray(v.equipements)
+    ? v.equipements
+    : typeof v.equipements === 'string'
+      ? (() => { try { return JSON.parse(v.equipements); } catch { return []; } })()
+      : [];
+
+  let status: VehicleStatus = 'disponible';
+  if (v.status === 'sold' || v.status === 'vendu') status = 'vendu';
+  else if (v.status === 'pending' || v.status === 'reserve') status = 'reserve';
+  else status = 'disponible';
+
+  return {
+    id: String(v.id || `car-${Date.now()}`),
+    dealershipId: v.dealership_id ? String(v.dealership_id) : (v.dealershipId || 'dealership-1'),
+    marque: v.marque || 'Véhicule',
+    modele: v.modele || '',
+    finition: v.finition || '',
+    annee: Number(v.annee) || 2024,
+    prix: Number(v.prix) || 0,
+    msrp: v.msrp ? Number(v.msrp) : undefined,
+    remiseInstantanee: v.remise_instantanee ? Number(v.remise_instantanee) : undefined,
+    ancienPrix: v.ancien_prix ? Number(v.ancien_prix) : undefined,
+    enPromo: Boolean(v.en_promo || v.enPromo),
+    kilometrage: Number(v.kilometrage) || 0,
+    carburant: (v.carburant || 'Essence') as any,
+    transmission: (v.transmission || 'Automatique') as any,
+    categorie: (v.categorie || 'SUV') as any,
+    etat: (v.etat || 'occasion') as any,
+    status,
+    puissanceCh: Number(v.puissance_ch || v.puissanceCh) || 200,
+    puissanceFiscale: Number(v.puissance_fiscale || v.puissanceFiscale) || 15,
+    couleur: v.couleur || 'Noir',
+    couleurInterieure: v.couleur_interieure || v.couleurInterieure,
+    moteur: v.moteur || '',
+    motrice: v.motrice || '',
+    portes: Number(v.portes) || 5,
+    places: Number(v.places) || 5,
+    co2Gkm: Number(v.co2_gkm || v.co2Gkm) || 200,
+    garantieMois: Number(v.garantie_mois || v.garantieMois) || 12,
+    vin: v.vin || `VIN${Math.floor(1000000000000 + Math.random() * 9000000000000)}`,
+    images,
+    description: v.description || '',
+    equipements,
+    dateAjout: v.created_at ? new Date(v.created_at).toISOString().split('T')[0] : (v.dateAjout || new Date().toISOString().split('T')[0]),
+    enVedette: Boolean(v.en_vedette || v.enVedette),
+    version: v.version,
+    localisation: v.ville ? `${v.ville}${v.commune ? ' - ' + v.commune : ''}` : v.localisation
+  };
+}
+
+// Helper pour adapter un lead renvoyé par l'API MySQL vers le format attendu par le frontend React
+function mapApiLeadToFrontend(l: any): Lead {
+  return {
+    id: String(l.id || `lead-${Date.now()}`),
+    dealershipId: l.dealership_id ? String(l.dealership_id) : (l.dealershipId || 'dealership-1'),
+    vehicleId: String(l.vehicle_id || l.vehicleId || 'car-1'),
+    vehicleTitle: l.vehicle_title || l.vehicleTitle || 'Véhicule',
+    vehiclePrice: Number(l.vehicle_price || l.vehiclePrice || 0),
+    nomClient: l.nom_client || l.nomClient || 'Client',
+    email: l.email || '',
+    telephone: l.telephone || '',
+    typeDemande: (l.type_demande || l.typeDemande || 'information') as any,
+    dateSouhaitee: l.date_souhaitee || l.dateSouhaitee,
+    horaireSouhaite: l.horaire_souhaite || l.horaireSouhaite,
+    message: l.message || '',
+    offrePrixProposee: l.offre_prix_proposee ? Number(l.offre_prix_proposee) : undefined,
+    vehiculeRepriseInfo: l.vehicule_reprise_info || l.vehiculeRepriseInfo,
+    dateDemande: l.created_at ? new Date(l.created_at).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }) : (l.dateDemande || new Date().toLocaleString('fr-FR')),
+    statut: (l.statut || 'nouveau') as any,
+    notesAdmin: l.notes_admin || l.notes_internes || l.notesAdmin
+  };
+}
+
+// Helper pour adapter une concession renvoyée par l'API MySQL vers le format attendu par le frontend React
+function mapApiDealershipToFrontend(d: any): DealershipAccount {
+  return {
+    id: String(d.id || `dealership-${Date.now()}`),
+    info: {
+      nom: d.nom || 'Auto Prestige',
+      slogan: d.slogan || "Votre spécialiste automobile à Kinshasa",
+      adresse: d.adresse || 'Kinshasa, Gombe',
+      ville: d.ville || 'Kinshasa',
+      codePostal: d.code_postal || '1000',
+      telephone: d.telephone || '+243 89 555 0101',
+      email: d.email || 'contact@autoprestige.cd',
+      horaires: d.horaires || 'Lun - Sam : 08h30 - 18h30',
+      siteWeb: d.site_web || 'www.autoprestige.cd',
+      logoUrl: d.logo_url || "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&q=80&w=200",
+      bannerUrl: d.banner_url || "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&q=80&w=1200",
+      sippCode: d.sipp_code || 'CD-RCCM-001',
+      siret: d.siret || '01-CD-89234'
+    },
+    responsableNom: d.responsable_nom || d.nom || 'Directeur Concession',
+    emailLogin: d.email || 'contact@autoprestige.cd',
+    motDePasse: 'password123',
+    planId: d.plan_id || 'pro',
+    dateInscription: d.created_at ? d.created_at.split('T')[0] : '2026-08-01',
+    finEssaiGratuit: '2026-09-30',
+    statutAbonnement: (d.statut_abonnement || 'actif') as any,
+    prochaineFacturation: '2026-10-01',
+    prixFactureMensuel: 500000,
+    nbVehiculesActifs: d.nb_vehicules || 10,
+    invoices: []
+  };
+}
 
 import { Header, AppViewMode } from './components/Header';
 import { VehicleCard } from './components/VehicleCard';
@@ -85,8 +188,8 @@ import {
 } from './lib/storage';
 
 export default function App() {
-  // Database Connection Status
-  const [isFirestoreConnected, setIsFirestoreConnected] = useState(false);
+  // Database Connection Status (MySQL Backend)
+  const [isMysqlConnected, setIsMysqlConnected] = useState(false);
 
   // Currency & Rate Configuration ($ USD / FC Franc Congolais)
   const [currency, setCurrency] = useState<'USD' | 'FC'>(() => {
@@ -122,7 +225,7 @@ export default function App() {
   const currentAccount = dealershipAccounts.find((a) => a.id === currentAccountId) || dealershipAccounts[0] || INITIAL_DEALERSHIP_ACCOUNTS[0];
   const dealership = currentAccount?.info || DEFAULT_DEALERSHIP_INFO;
 
-  // Real-Time Vehicles, Leads & Accounts from Firestore
+  // State des Véhicules, Leads & Comptes (Synchronisés avec MySQL)
   const [vehicles, setVehicles] = useState<Vehicle[]>(() => {
     const saved = safeGetStorage<Vehicle[]>('autoconcession_vehicles', []);
     if (Array.isArray(saved) && saved.length > 0) {
@@ -206,26 +309,39 @@ export default function App() {
     setBreakdownRequests(prev => prev.filter(r => r.id !== requestId));
   };
 
-  // Connect Real-Time Firestore Listeners
+  // -------------------------------------------------------------
+  // CHARGEMENT PRINCIPAL : BACKEND MYSQL
+  // -------------------------------------------------------------
+  const loadDataFromMysql = async () => {
+    try {
+      // 1. Récupération des véhicules depuis l'API MySQL
+      const vRes = await vehiclesApi.getAll({ limit: 100 });
+      if (vRes.success && Array.isArray(vRes.data) && vRes.data.length > 0) {
+        const mappedVehicles = vRes.data.map(mapApiVehicleToFrontend);
+        setVehicles(mappedVehicles);
+        setIsMysqlConnected(true);
+      }
+
+      // 2. Récupération des prospects / leads depuis l'API MySQL
+      const lRes = await leadsApi.getAll({ limit: 100 });
+      if (lRes.success && Array.isArray(lRes.data) && lRes.data.length > 0) {
+        const mappedLeads = lRes.data.map(mapApiLeadToFrontend);
+        setLeads(mappedLeads);
+      }
+
+      // 3. Récupération des concessions depuis l'API MySQL
+      const dRes = await dealershipsApi.getAll();
+      if (dRes.success && Array.isArray(dRes.data) && dRes.data.length > 0) {
+        const mappedAccounts = dRes.data.map(mapApiDealershipToFrontend);
+        setDealershipAccounts(mappedAccounts);
+      }
+    } catch (apiErr) {
+      console.warn('⚠️ Erreur lors de la synchronisation avec l\'API MySQL:', apiErr);
+    }
+  };
+
   useEffect(() => {
-    const unsubVehicles = subscribeVehicles((data) => {
-      setVehicles(data);
-      setIsFirestoreConnected(true);
-    });
-
-    const unsubLeads = subscribeLeads((data) => {
-      setLeads(data);
-    });
-
-    const unsubAccounts = subscribeAccounts((data) => {
-      setDealershipAccounts(data);
-    });
-
-    return () => {
-      unsubVehicles();
-      unsubLeads();
-      unsubAccounts();
-    };
+    loadDataFromMysql();
   }, []);
 
   // UI & View state
@@ -669,7 +785,20 @@ export default function App() {
   // Multi-Tenant SaaS Handlers
   const handleRegisterDealership = (newAccount: DealershipAccount) => {
     setDealershipAccounts([newAccount, ...dealershipAccounts]);
-    saveAccountToFirestore(newAccount).catch(console.error);
+
+    // 1. Sauvegarde vers MySQL via dealershipsApi
+    dealershipsApi.create({
+      nom: newAccount.info.nom,
+      telephone: newAccount.info.telephone,
+      email: newAccount.info.email || newAccount.emailLogin,
+      ville: newAccount.info.ville,
+      adresse: newAccount.info.adresse,
+      plan_id: newAccount.planId,
+      slogan: newAccount.info.slogan,
+      logo_url: newAccount.info.logoUrl,
+      banner_url: newAccount.info.bannerUrl
+    }).catch((err) => console.warn('Erreur création MySQL concessionnaire:', err));
+
     setCurrentAccountId(newAccount.id);
     setIsRegisterModalOpen(false);
     setIsAdmin(true);
@@ -680,15 +809,21 @@ export default function App() {
     setDealershipAccounts(
       dealershipAccounts.map((a) => (a.id === updatedAccount.id ? updatedAccount : a))
     );
-    saveAccountToFirestore(updatedAccount).catch(console.error);
+
+    // 1. Synchronisation vers MySQL
+    dealershipsApi.update(updatedAccount.id, {
+      nom: updatedAccount.info.nom,
+      telephone: updatedAccount.info.telephone,
+      email: updatedAccount.info.email,
+      statut_abonnement: updatedAccount.statutAbonnement,
+      plan_id: updatedAccount.planId
+    }).catch((err) => console.warn('Erreur mise à jour MySQL concessionnaire:', err));
   };
 
   const handleToggleMaskAccount = (accountId: string) => {
     const updated = dealershipAccounts.map((a) => {
       if (a.id === accountId) {
-        const accUpdated = { ...a, estMasque: !a.estMasque };
-        saveAccountToFirestore(accUpdated).catch(console.error);
-        return accUpdated;
+        return { ...a, estMasque: !a.estMasque };
       }
       return a;
     });
@@ -698,9 +833,7 @@ export default function App() {
   const handleUpdateAccountPassword = (accountId: string, newPassword: string) => {
     const updated = dealershipAccounts.map((a) => {
       if (a.id === accountId) {
-        const accUpdated = { ...a, motDePasse: newPassword };
-        saveAccountToFirestore(accUpdated).catch(console.error);
-        return accUpdated;
+        return { ...a, motDePasse: newPassword };
       }
       return a;
     });
@@ -839,11 +972,12 @@ export default function App() {
     const remainingAccounts = dealershipAccounts.filter((a) => a.id !== accountId);
     setDealershipAccounts(remainingAccounts);
 
-    // Also remove vehicles belonging to this dealership locally and in Firestore
+    // Also remove vehicles belonging to this dealership locally
     const remainingVehicles = vehicles.filter((v) => v.dealershipId !== accountId);
     setVehicles(remainingVehicles);
 
-    deleteDealershipAndVehicles(accountId, vehicles).catch(console.error);
+    // Suppression dans MySQL via l'API REST
+    dealershipsApi.delete(accountId).catch((err) => console.warn('Erreur suppression MySQL concessionnaire:', err));
 
     if (currentAccountId === accountId && remainingAccounts.length > 0) {
       setCurrentAccountId(remainingAccounts[0].id);
@@ -854,7 +988,19 @@ export default function App() {
     const updated = dealershipAccounts.map((acc) => {
       if (acc.id === currentAccountId) {
         const accUpdated = { ...acc, info: newInfo };
-        saveAccountToFirestore(accUpdated).catch(console.error);
+
+        // Sauvegarde vers MySQL
+        dealershipsApi.update(acc.id, {
+          nom: newInfo.nom,
+          telephone: newInfo.telephone,
+          email: newInfo.email,
+          ville: newInfo.ville,
+          adresse: newInfo.adresse,
+          slogan: newInfo.slogan,
+          logo_url: newInfo.logoUrl,
+          banner_url: newInfo.bannerUrl
+        }).catch((err) => console.warn('Erreur mise à jour infos concessionnaire MySQL:', err));
+
         return accUpdated;
       }
       return acc;
@@ -895,7 +1041,32 @@ export default function App() {
       if (existing) {
         const updatedVehicle: Vehicle = { ...existing, ...data };
         setVehicles(vehicles.map((v) => (v.id === editId ? updatedVehicle : v)));
-        saveVehicleToFirestore(updatedVehicle).catch(console.error);
+        
+        // Sauvegarde vers MySQL via l'API REST
+        vehiclesApi.update(editId, {
+          marque: updatedVehicle.marque,
+          modele: updatedVehicle.modele,
+          finition: updatedVehicle.finition,
+          annee: updatedVehicle.annee,
+          prix: updatedVehicle.prix,
+          ancien_prix: updatedVehicle.ancienPrix,
+          msrp: updatedVehicle.msrp,
+          remise_instantanee: updatedVehicle.remiseInstantanee,
+          kilometrage: updatedVehicle.kilometrage,
+          carburant: updatedVehicle.carburant,
+          transmission: updatedVehicle.transmission,
+          categorie: updatedVehicle.categorie,
+          etat: updatedVehicle.etat,
+          couleur: updatedVehicle.couleur,
+          couleur_interieure: updatedVehicle.couleurInterieure,
+          puissance_ch: updatedVehicle.puissanceCh,
+          puissance_fiscale: updatedVehicle.puissanceFiscale,
+          description: updatedVehicle.description,
+          en_vedette: updatedVehicle.enVedette,
+          en_promo: updatedVehicle.enPromo,
+          images: updatedVehicle.images,
+          equipements: updatedVehicle.equipements
+        }).catch((err) => console.warn('Erreur sauvegarde MySQL véhicule:', err));
       }
     } else {
       // Enforcement de quota pour l'abonnement concessionnaire
@@ -916,7 +1087,33 @@ export default function App() {
         dateAjout: new Date().toISOString().split('T')[0]
       };
       setVehicles([newVehicle, ...vehicles]);
-      saveVehicleToFirestore(newVehicle).catch(console.error);
+
+      // Sauvegarde vers MySQL via l'API REST
+      vehiclesApi.create({
+        dealership_id: newVehicle.dealershipId,
+        marque: newVehicle.marque,
+        modele: newVehicle.modele,
+        finition: newVehicle.finition,
+        annee: newVehicle.annee,
+        prix: newVehicle.prix,
+        ancien_prix: newVehicle.ancienPrix,
+        msrp: newVehicle.msrp,
+        remise_instantanee: newVehicle.remiseInstantanee,
+        kilometrage: newVehicle.kilometrage,
+        carburant: newVehicle.carburant,
+        transmission: newVehicle.transmission,
+        categorie: newVehicle.categorie,
+        etat: newVehicle.etat,
+        couleur: newVehicle.couleur,
+        couleur_interieure: newVehicle.couleurInterieure,
+        puissance_ch: newVehicle.puissanceCh,
+        puissance_fiscale: newVehicle.puissanceFiscale,
+        description: newVehicle.description,
+        en_vedette: newVehicle.enVedette,
+        en_promo: newVehicle.enPromo,
+        images: newVehicle.images,
+        equipements: newVehicle.equipements
+      }).catch((err) => console.warn('Erreur création MySQL véhicule:', err));
 
       // Update vehicle counter on account
       if (currentAccount) {
@@ -928,7 +1125,10 @@ export default function App() {
 
   const handleDeleteVehicle = (id: string) => {
     setVehicles(vehicles.filter((v) => v.id !== id));
-    deleteVehicleFromFirestore(id).catch(console.error);
+    
+    // Suppression dans MySQL via l'API REST
+    vehiclesApi.delete(id).catch((err) => console.warn('Erreur suppression MySQL véhicule:', err));
+
     setComparedVehicleIds(comparedVehicleIds.filter((c) => c !== id));
     setFavoriteIds(favoriteIds.filter((f) => f !== id));
   };
@@ -942,7 +1142,32 @@ export default function App() {
       dateAjout: new Date().toISOString().split('T')[0]
     };
     setVehicles([dup, ...vehicles]);
-    saveVehicleToFirestore(dup).catch(console.error);
+
+    vehiclesApi.create({
+      dealership_id: dup.dealershipId,
+      marque: dup.marque,
+      modele: dup.modele,
+      finition: dup.finition,
+      annee: dup.annee,
+      prix: dup.prix,
+      ancien_prix: dup.ancienPrix,
+      msrp: dup.msrp,
+      remise_instantanee: dup.remiseInstantanee,
+      kilometrage: dup.kilometrage,
+      carburant: dup.carburant,
+      transmission: dup.transmission,
+      categorie: dup.categorie,
+      etat: dup.etat,
+      couleur: dup.couleur,
+      couleur_interieure: dup.couleurInterieure,
+      puissance_ch: dup.puissanceCh,
+      puissance_fiscale: dup.puissanceFiscale,
+      description: dup.description,
+      en_vedette: dup.enVedette,
+      en_promo: dup.enPromo,
+      images: dup.images,
+      equipements: dup.equipements
+    }).catch((err) => console.warn('Erreur duplication MySQL véhicule:', err));
   };
 
   const handleUpdateStatus = (id: string, status: VehicleStatus) => {
@@ -950,7 +1175,10 @@ export default function App() {
     if (target) {
       const updated = { ...target, status };
       setVehicles(vehicles.map((v) => (v.id === id ? updated : v)));
-      saveVehicleToFirestore(updated).catch(console.error);
+
+      vehiclesApi.update(id, {
+        status: status === 'vendu' ? 'sold' : status === 'reserve' ? 'pending' : 'available'
+      }).catch((err) => console.warn('Erreur mise à jour statut MySQL:', err));
     }
   };
 
@@ -959,7 +1187,10 @@ export default function App() {
     if (target) {
       const updated = { ...target, enVedette: !target.enVedette };
       setVehicles(vehicles.map((v) => (v.id === id ? updated : v)));
-      saveVehicleToFirestore(updated).catch(console.error);
+
+      vehiclesApi.update(id, {
+        en_vedette: updated.enVedette
+      }).catch((err) => console.warn('Erreur mise à jour vedette MySQL:', err));
     }
   };
 
@@ -971,7 +1202,23 @@ export default function App() {
       statut: 'nouveau'
     };
     setLeads([newLead, ...leads]);
-    saveLeadToFirestore(newLead).catch(console.error);
+
+    // Enregistrement vers l'API MySQL
+    leadsApi.create({
+      dealership_id: leadData.dealershipId,
+      vehicle_id: leadData.vehicleId,
+      vehicle_title: leadData.vehicleTitle,
+      vehicle_price: leadData.vehiclePrice,
+      nom_client: leadData.nomClient,
+      email: leadData.email,
+      telephone: leadData.telephone,
+      type_demande: leadData.typeDemande,
+      date_souhaitee: leadData.dateSouhaitee,
+      horaire_souhaite: leadData.horaireSouhaite,
+      message: leadData.message,
+      offre_prix_proposee: leadData.offrePrixProposee,
+      vehicule_reprise_info: leadData.vehiculeRepriseInfo
+    }).catch((err) => console.warn('Erreur création MySQL lead:', err));
 
     // Track in Google Analytics
     if (leadData.typeDemande === 'essai') {
@@ -997,13 +1244,20 @@ export default function App() {
     if (target) {
       const updated = { ...target, statut, notesAdmin };
       setLeads(leads.map((l) => (l.id === id ? updated : l)));
-      saveLeadToFirestore(updated).catch(console.error);
+
+      // Mise à jour vers l'API MySQL
+      leadsApi.updateStatus(id, {
+        statut,
+        notes_admin: notesAdmin
+      }).catch((err) => console.warn('Erreur mise à jour MySQL lead:', err));
     }
   };
 
   const handleDeleteLead = (id: string) => {
     setLeads(leads.filter((l) => l.id !== id));
-    deleteLeadFromFirestore(id).catch(console.error);
+
+    // Suppression dans MySQL
+    leadsApi.delete(id).catch((err) => console.warn('Erreur suppression MySQL lead:', err));
   };
 
   const resetFilterOptions = () => {
@@ -1073,22 +1327,22 @@ export default function App() {
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 pb-28 md:pb-10 space-y-8">
         
-        {/* Real Firestore Database Banner Status */}
+        {/* Statut de la Base de Données (Backend MySQL & Cloud) */}
         {isAdmin && (
-          <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 flex items-center justify-between gap-3 text-xs text-slate-800 shadow-xs">
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-800 shadow-xs">
             <div className="flex items-center gap-2.5">
               <span className="relative flex h-3 w-3">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
               </span>
               <Database className="w-4 h-4 text-emerald-600" />
-              <span className="font-extrabold text-slate-900">Base de Données Firestore Cloud :</span>
+              <span className="font-extrabold text-slate-900">Base de Données Principale (API MySQL) :</span>
               <span className="text-emerald-700 font-bold">
-                {isFirestoreConnected ? 'Connectée en Direct (Stock & Prospects Temps Réel)' : 'Connexion en cours...'}
+                {isMysqlConnected ? 'Connectée et Opérationnelle (Véhicules, Prospects, Comptes)' : 'Synchronisation en cours...'}
               </span>
             </div>
-            <div className="text-[11px] text-slate-500 font-mono hidden sm:block">
-              ID Firestore : turnkey-physics-n9v0l
+            <div className="flex items-center gap-3 text-[11px] text-slate-600 font-mono">
+              <span className="bg-emerald-100/80 text-emerald-800 px-2 py-0.5 rounded font-semibold">Mode : 100% MySQL REST API</span>
             </div>
           </div>
         )}

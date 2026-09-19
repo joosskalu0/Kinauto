@@ -502,7 +502,7 @@ export const MotorsAuthModal: React.FC<MotorsAuthModalProps> = ({
                     className="px-2 py-0.5 rounded-lg bg-blue-100 text-blue-800 font-black hover:bg-blue-200 transition"
                     title="Concessionnaire"
                   >
-                    Dealer
+                    Concession
                   </button>
                   <button 
                     type="button" 
@@ -510,7 +510,7 @@ export const MotorsAuthModal: React.FC<MotorsAuthModalProps> = ({
                     className="px-2 py-0.5 rounded-lg bg-sky-100 text-sky-800 font-black hover:bg-sky-200 transition"
                     title="Commercial Showroom"
                   >
-                    Seller
+                    Vendeur
                   </button>
                   <button 
                     type="button" 
@@ -526,7 +526,7 @@ export const MotorsAuthModal: React.FC<MotorsAuthModalProps> = ({
                     className="px-2 py-0.5 rounded-lg bg-emerald-100 text-emerald-800 font-black hover:bg-emerald-200 transition"
                     title="Client Particulier"
                   >
-                    User
+                    Client
                   </button>
                 </div>
               </div>

@@ -71,7 +71,7 @@ export const FinanceCalculator: React.FC<FinanceCalculatorProps> = ({
             className="text-xs text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition flex items-center gap-1 cursor-pointer"
           >
             <RefreshCw className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">Reset</span>
+            <span className="hidden sm:inline">Réinitialiser</span>
           </button>
         </div>
       </div>

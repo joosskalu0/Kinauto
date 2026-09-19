@@ -313,6 +313,11 @@ export const leadsApi = {
     request<{ success: boolean; data: any; message: string }>(`/leads/${id}/status`, {
       method: 'PUT',
       body: JSON.stringify(statusData)
+    }),
+
+  delete: (id: string | number) =>
+    request<{ success: boolean; message: string }>(`/leads/${id}`, {
+      method: 'DELETE'
     })
 };
 
@@ -469,6 +474,110 @@ export const adminApi = {
 
   deleteUser: (id: number | string) => 
     request<{ success: boolean; message: string }>(`/admin/users/${id}`, {
+      method: 'DELETE'
+    })
+};
+
+// ====================================================================
+// 8. API MONÉTISATION, GRILLES TARIFAIRES, BOOSTS & RÉGIE PUBLICITAIRE
+// ====================================================================
+export const monetizationApi = {
+  // Récupérer toutes les grilles tarifaires (annonces gratuites, premium, à la une, options, abonnements concessions et garages)
+  getPlans: () =>
+    request<{
+      success: boolean;
+      data: {
+        listing_tiers: any[];
+        visibility_options: any[];
+        dealership_plans: any[];
+        garage_plans: any[];
+        ad_placements: any[];
+      };
+    }>('/monetization/plans'),
+
+  // Récupérer les campagnes publicitaires actives
+  getActiveAds: (emplacement?: string) => {
+    const q = emplacement ? `?emplacement=${encodeURIComponent(emplacement)}` : '';
+    return request<{ success: boolean; count: number; ads: any[] }>(`/monetization/ads${q}`);
+  },
+
+  // Comptabiliser un clic sur une bannière
+  recordAdClick: (adId: string) =>
+    request<{ success: boolean; message: string }>(`/monetization/ads/${adId}/click`, {
+      method: 'POST'
+    }),
+
+  // Demande d'encart publicitaire (devenir annonceur)
+  submitAdInquiry: (inquiryData: {
+    nom_entreprise: string;
+    contact_nom: string;
+    telephone: string;
+    email: string;
+    format_souhaite: string;
+    duree_mois?: number;
+    budget_estime?: string;
+    message?: string;
+  }) =>
+    request<{ success: boolean; message: string; data?: any }>('/monetization/ads/inquiry', {
+      method: 'POST',
+      body: JSON.stringify(inquiryData)
+    }),
+
+  // Créer une commande / intention de paiement (extensible pour M-Pesa, Orange Money, Airtel Money, virement)
+  createOrder: (orderData: {
+    type: string;
+    item_id: string;
+    item_nom: string;
+    target_vehicle_id?: number | string;
+    dealership_id?: number | string;
+    garage_id?: number | string;
+    client_nom?: string;
+    client_phone?: string;
+    montant_usd: number;
+    devise?: string;
+    payment_method?: string;
+    simulate_instant_approval?: boolean;
+  }) =>
+    request<{ success: boolean; message: string; order: any }>('/monetization/order', {
+      method: 'POST',
+      body: JSON.stringify(orderData)
+    }),
+
+  // Appliquer un surclassement / boost à un véhicule
+  applyBoost: (vehicleId: string | number, boostType: string, options: { duree_jours?: number; badge?: string } = {}) =>
+    request<{ success: boolean; message: string; vehicle?: any }>(`/monetization/boost-vehicle/${vehicleId}`, {
+      method: 'POST',
+      body: JSON.stringify({ boost_type: boostType, ...options })
+    }),
+
+  // Liste des commandes (Admin)
+  getOrders: (params: { status?: string; page?: number; limit?: number } = {}) => {
+    const qp = new URLSearchParams();
+    if (params.status) qp.append('status', params.status);
+    if (params.page) qp.append('page', String(params.page));
+    if (params.limit) qp.append('limit', String(params.limit));
+    const qs = qp.toString() ? `?${qp.toString()}` : '';
+    return request<{ success: boolean; total: number; orders: any[] }>(`/monetization/orders${qs}`);
+  },
+
+  // Gestion des annonces régie pub (Admin)
+  getAdminAds: () =>
+    request<{ success: boolean; ads: any[] }>('/monetization/admin/ads'),
+
+  createAdminAd: (adData: any) =>
+    request<{ success: boolean; message: string; ad: any }>('/monetization/admin/ads', {
+      method: 'POST',
+      body: JSON.stringify(adData)
+    }),
+
+  updateAdminAd: (id: string, adData: any) =>
+    request<{ success: boolean; message: string; ad: any }>(`/monetization/admin/ads/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(adData)
+    }),
+
+  deleteAdminAd: (id: string) =>
+    request<{ success: boolean; message: string }>(`/monetization/admin/ads/${id}`, {
       method: 'DELETE'
     })
 };

@@ -98,10 +98,10 @@ export const MotorsHeroSearch: React.FC<MotorsHeroSearchProps> = ({
   const years = Array.from(new Set(vehicles.map(v => v.annee))).sort((a, b) => b - a);
 
   const tabs = [
-    { id: 'ALL', label: 'All' },
-    { id: 'certified', label: 'Certified Used' },
-    { id: 'neuf', label: 'New' },
-    { id: 'occasion', label: 'Used' },
+    { id: 'ALL', label: 'Tous' },
+    { id: 'certified', label: 'Occasions Certifiées' },
+    { id: 'neuf', label: 'Neuf' },
+    { id: 'occasion', label: 'Occasion' },
   ];
 
   return (
@@ -153,14 +153,14 @@ export const MotorsHeroSearch: React.FC<MotorsHeroSearchProps> = ({
           {/* White Filter Card */}
           <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-7 shadow-2xl space-y-4 text-left border border-slate-100">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-              {/* Select Make */}
+              {/* Choisir une marque */}
               <div className="relative">
                 <select
                   value={make}
                   onChange={(e) => setMake(e.target.value)}
                   className="w-full bg-white border border-slate-200 hover:border-blue-500 text-slate-800 text-sm font-semibold rounded-xl px-4 py-3.5 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition cursor-pointer"
                 >
-                  <option value="ALL">Select Make</option>
+                  <option value="ALL">Choisir une marque</option>
                   {makes.map(m => (
                     <option key={m} value={m}>{m}</option>
                   ))}
@@ -168,7 +168,7 @@ export const MotorsHeroSearch: React.FC<MotorsHeroSearchProps> = ({
                 <ChevronDown className="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
 
-              {/* Select Model */}
+              {/* Choisir un modèle */}
               <div className="relative">
                 <select
                   value={model}
@@ -176,7 +176,7 @@ export const MotorsHeroSearch: React.FC<MotorsHeroSearchProps> = ({
                   disabled={make === 'ALL' && models.length > 20}
                   className="w-full bg-white border border-slate-200 hover:border-blue-500 text-slate-800 text-sm font-semibold rounded-xl px-4 py-3.5 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition cursor-pointer disabled:bg-slate-50 disabled:text-slate-400"
                 >
-                  <option value="ALL">Select Model</option>
+                  <option value="ALL">Choisir un modèle</option>
                   {models.map(m => (
                     <option key={m} value={m}>{m}</option>
                   ))}
@@ -184,14 +184,14 @@ export const MotorsHeroSearch: React.FC<MotorsHeroSearchProps> = ({
                 <ChevronDown className="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none" />
               </div>
 
-              {/* Select Year */}
+              {/* Choisir l'année */}
               <div className="relative">
                 <select
                   value={year}
                   onChange={(e) => setYear(e.target.value)}
                   className="w-full bg-white border border-slate-200 hover:border-blue-500 text-slate-800 text-sm font-semibold rounded-xl px-4 py-3.5 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-600 transition cursor-pointer"
                 >
-                  <option value="ALL">Select Year</option>
+                  <option value="ALL">Choisir l'année</option>
                   {years.map(y => (
                     <option key={y} value={y.toString()}>{y}</option>
                   ))}
@@ -208,7 +208,7 @@ export const MotorsHeroSearch: React.FC<MotorsHeroSearchProps> = ({
                 className="w-full sm:w-auto px-8 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-sm rounded-xl sm:rounded-2xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 transform hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
               >
                 <Search className="w-4 h-4 stroke-[3]" />
-                <span>{displayCount} Cars</span>
+                <span>{displayCount} Véhicule{displayCount > 1 ? 's' : ''}</span>
               </button>
             </div>
           </div>
