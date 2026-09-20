@@ -38,6 +38,11 @@ export interface Vehicle {
   equipements: string[];
   dateAjout: string;
   enVedette?: boolean;
+  is_featured?: boolean;
+  isFeatured?: boolean;
+  featured_until?: string | Date;
+  featuredUntil?: string | Date;
+  userId?: string | number;
   listingTier?: 'free' | 'premium' | 'featured';
   visibilityBadge?: 'urgent' | 'promo' | 'top_deal' | 'certifie' | 'garantie_incluse' | 'baisse_prix';
   boostTopSearch?: boolean;

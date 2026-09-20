@@ -138,9 +138,14 @@ export const MotorsVehicleCard: React.FC<MotorsVehicleCardProps> = ({
 
         {/* Top-Left: SPECIAL / FEATURED & Monetization Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-1 items-start z-10">
-          {(isSpecial || vehicle.listingTier === 'featured') && (
-            <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-extrabold text-[10px] px-2.5 py-0.5 rounded-full shadow-sm flex items-center gap-1 uppercase tracking-wider">
-              <span>🔥 À LA UNE</span>
+          {(vehicle.listingTier === 'featured' || vehicle.enVedette || vehicle.is_featured || vehicle.isFeatured) && (
+            <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white font-black text-[10px] px-2.5 py-1 rounded-full shadow-md flex items-center gap-1 uppercase tracking-wider border border-white/20">
+              <span>🚀 À LA UNE</span>
+            </div>
+          )}
+          {Boolean(vehicle.enPromo) && !(vehicle.listingTier === 'featured' || vehicle.enVedette || vehicle.is_featured || vehicle.isFeatured) && (
+            <div className="bg-rose-600 text-white font-extrabold text-[10px] px-2.5 py-0.5 rounded-full shadow-sm flex items-center gap-1 uppercase tracking-wider">
+              <span>PROMO</span>
             </div>
           )}
           {vehicle.listingTier === 'premium' && (

@@ -482,6 +482,18 @@ export const adminApi = {
 // 8. API MONÉTISATION, GRILLES TARIFAIRES, BOOSTS & RÉGIE PUBLICITAIRE
 // ====================================================================
 export const monetizationApi = {
+  // Obtenir la configuration complète et les grilles tarifaires
+  getConfig: () =>
+    request<{
+      success: boolean;
+      data: {
+        free_listings_config: any;
+        promotion_options: any;
+        subscription_plans: any;
+        ad_placements: any;
+      };
+    }>('/monetization/config'),
+
   // Récupérer toutes les grilles tarifaires (annonces gratuites, premium, à la une, options, abonnements concessions et garages)
   getPlans: () =>
     request<{
@@ -494,6 +506,76 @@ export const monetizationApi = {
         ad_placements: any[];
       };
     }>('/monetization/plans'),
+
+  // Créer une intention de promotion sécurisée (prix calculé strictement côté serveur, statut PENDING)
+  promoteVehicle: (payload: {
+    vehicle_id: string | number;
+    option_id: string;
+    duration_days: number;
+    payment_method?: string;
+    payer_phone?: string;
+    payer_name?: string;
+  }) =>
+    request<{
+      success: boolean;
+      message: string;
+      payment: {
+        payment_id: string;
+        transaction_reference: string;
+        amount: number;
+        amount_fc: number;
+        currency: string;
+        status: string;
+        option: string;
+        duration_days: number;
+        vehicle: string;
+      };
+      instructions?: string;
+    }>('/monetization/promote-vehicle', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    }),
+
+  // Consulter le statut d'une transaction de paiement (statut serveur)
+  getPaymentStatus: (paymentIdOrRef: string) =>
+    request<{
+      success: boolean;
+      payment: {
+        id: number | string;
+        transaction_reference: string;
+        status: string;
+        amount: number;
+        currency: string;
+        paid_at: string | null;
+      };
+      vehicle?: any;
+    }>(`/monetization/payments/${paymentIdOrRef}/status`),
+
+  // Vérifier et valider un paiement côté serveur (sécurisé : active is_featured et featured_until)
+  verifyPayment: (
+    paymentIdOrRef: string,
+    verificationData: { validation_code?: string; phone?: string } = {}
+  ) =>
+    request<{
+      success: boolean;
+      verified: boolean;
+      payment_status: string;
+      message: string;
+      payment: any;
+      vehicle: {
+        id: string;
+        is_featured: boolean;
+        enVedette: boolean;
+        listingTier: string;
+        featured_until: string;
+        featuredUntil: string;
+        marque?: string;
+        modele?: string;
+      };
+    }>(`/monetization/payments/${paymentIdOrRef}/verify`, {
+      method: 'POST',
+      body: JSON.stringify(verificationData)
+    }),
 
   // Récupérer les campagnes publicitaires actives
   getActiveAds: (emplacement?: string) => {

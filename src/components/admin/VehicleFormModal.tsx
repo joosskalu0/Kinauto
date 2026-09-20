@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   X, Sparkles, Plus, Trash2, CheckCircle, Car, AlertCircle, RefreshCw,
   Globe, Search, Award, Zap, Check, FileText, SlidersHorizontal, Bot, Tag, Home,
-  Camera, Image as ImageIcon, UploadCloud
+  Camera, Image as ImageIcon, UploadCloud, Clock, ShieldCheck
 } from 'lucide-react';
 import { Vehicle, FuelType, TransmissionType, BodyType, CarCondition } from '../../types';
 
@@ -68,6 +68,42 @@ export const VehicleFormModal: React.FC<VehicleFormModalProps> = ({
   const [isProcessingPhoto, setIsProcessingPhoto] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+
+  // Quotas utilisateur & Monétisation
+  const [userQuota, setUserQuota] = useState<{
+    active_count: number;
+    max_free_listings: number;
+    max_allowed: number;
+    remaining: number;
+    is_pro: boolean;
+    plan_name: string;
+    can_publish: boolean;
+    limit_reached_message: string | null;
+  } | null>(null);
+
+  // 2. Options payantes pour promouvoir une annonce (À la une, sponsorisée, remontée, badge premium)
+  // Durées configurables : 3, 7, 15, 30 jours
+  const [promotionOption, setPromotionOption] = useState<'none' | 'featured' | 'sponsored' | 'bump' | 'badge_premium'>(
+    vehicleToEdit?.enVedette ? 'featured' : (vehicleToEdit?.listingTier === 'featured' ? 'featured' : (vehicleToEdit?.listingTier === 'premium' ? 'badge_premium' : 'none'))
+  );
+  const [promotionDuration, setPromotionDuration] = useState<number>(7);
+
+  useEffect(() => {
+    const fetchQuota = async () => {
+      try {
+        const token = localStorage.getItem('token') || localStorage.getItem('autoconcession_jwt_token');
+        if (!token) return;
+        const res = await fetch('/api/monetization/user-quota', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          setUserQuota(data);
+        }
+      } catch (e) {}
+    };
+    fetchQuota();
+  }, []);
 
   const handlePhoneFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -190,6 +226,11 @@ export const VehicleFormModal: React.FC<VehicleFormModalProps> = ({
     e.preventDefault();
     if (!marque || !modele) return;
 
+    const finalTier = promotionOption === 'featured' ? 'featured' : (promotionOption === 'badge_premium' ? 'premium' : 'free');
+    const isFeatured = promotionOption === 'featured';
+    const isBump = promotionOption === 'bump';
+    const badge = promotionOption === 'badge_premium' ? 'top_deal' : ((visibilityBadge as any) || undefined);
+
     onSave(
       {
         marque,
@@ -214,10 +255,10 @@ export const VehicleFormModal: React.FC<VehicleFormModalProps> = ({
         images: images.length > 0 ? images : ['https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=1200'],
         description,
         equipements,
-        enVedette: listingTier === 'featured' || vehicleToEdit?.enVedette || false,
-        listingTier,
-        visibilityBadge: (visibilityBadge as any) || undefined,
-        boostTopSearch
+        enVedette: isFeatured,
+        listingTier: finalTier,
+        visibilityBadge: badge,
+        boostTopSearch: isBump
       },
       vehicleToEdit?.id
     );
@@ -268,6 +309,40 @@ export const VehicleFormModal: React.FC<VehicleFormModalProps> = ({
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
           
+          {/* BANDEAU QUOTA D'ANNONCES (1. ANNONCES GRATUITES) */}
+          {userQuota && (
+            <div className={`p-4 rounded-xl border flex flex-wrap items-center justify-between gap-3 text-xs ${
+              !userQuota.can_publish
+                ? 'bg-rose-950/40 border-rose-500/40 text-rose-200'
+                : userQuota.remaining <= 1
+                ? 'bg-amber-950/40 border-amber-500/40 text-amber-200'
+                : 'bg-emerald-950/30 border-emerald-500/30 text-emerald-200'
+            }`}>
+              <div className="flex items-center gap-2">
+                <Car className="w-4 h-4 shrink-0 text-amber-400" />
+                <div>
+                  <span className="font-extrabold uppercase tracking-wider text-[11px] block">
+                    {userQuota.is_pro ? userQuota.plan_name : 'Formule Particulier (Gratuit)'}
+                  </span>
+                  <span>
+                    Vous avez <strong>{userQuota.active_count}</strong> sur <strong>{userQuota.max_allowed}</strong> annonces actives ({userQuota.remaining} restante{userQuota.remaining > 1 ? 's' : ''})
+                  </span>
+                </div>
+              </div>
+
+              {!userQuota.can_publish ? (
+                <div className="flex items-center gap-1.5 text-rose-400 font-bold bg-rose-950/60 px-2.5 py-1 rounded-lg border border-rose-800/50">
+                  <AlertCircle className="w-4 h-4" />
+                  <span>Limite de 3 annonces atteinte. Souscrivez un forfait Pro.</span>
+                </div>
+              ) : (
+                <span className="bg-slate-900/90 text-emerald-400 px-2.5 py-1 rounded-full text-[11px] font-bold border border-emerald-500/30">
+                  ✓ Publication autorisée ({userQuota.remaining} restante{userQuota.remaining > 1 ? 's' : ''})
+                </span>
+              )}
+            </div>
+          )}
+
           {/* Main Specs Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 bg-slate-950 p-4 rounded-xl border border-slate-800">
             <div>
@@ -691,126 +766,188 @@ export const VehicleFormModal: React.FC<VehicleFormModalProps> = ({
             </div>
           </div>
 
-          {/* MONÉTISATION : FORMULE DE PUBLICATION & VISIBILITÉ */}
+          {/* MONÉTISATION : 2. ANNONCES PREMIUM & OPTIONS DE PROMOTION */}
           <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-amber-400" />
-                <h3 className="text-sm font-bold text-white">Formule de Publication & Visibilité Monétisée</h3>
+                <div>
+                  <h3 className="text-sm font-bold text-white">Options Payantes de Promotion (Annonces Premium)</h3>
+                  <p className="text-[11px] text-slate-400">Multipliez les contacts acheteurs grâce à la visibilité surclassée AutoKin</p>
+                </div>
               </div>
-              <span className="text-[11px] text-slate-400">Modèles Économiques</span>
+              <span className="text-[11px] text-amber-400 font-bold bg-amber-500/10 px-2.5 py-1 rounded-full border border-amber-500/20">
+                Paiement Mobile Money / Carte
+              </span>
             </div>
 
-            {/* 3 Formules principales */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              {/* Gratuite */}
+            {/* Sélecteur de Durée Configurable (3, 7, 15 ou 30 jours) */}
+            <div className="bg-slate-900/90 p-3 rounded-xl border border-slate-800 flex flex-wrap items-center justify-between gap-3">
+              <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                <Clock className="w-4 h-4 text-amber-400" /> Durée de la promotion souhaitée :
+              </span>
+              <div className="flex items-center gap-1.5">
+                {[
+                  { days: 3, label: '3 jours' },
+                  { days: 7, label: '7 jours (Populaire)' },
+                  { days: 15, label: '15 jours' },
+                  { days: 30, label: '30 jours' }
+                ].map(({ days, label }) => (
+                  <button
+                    type="button"
+                    key={days}
+                    onClick={() => setPromotionDuration(days)}
+                    className={`px-3 py-1.5 rounded-lg font-bold text-xs transition cursor-pointer ${
+                      promotionDuration === days
+                        ? 'bg-amber-500 text-slate-950 shadow'
+                        : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Grille des 4 Options Officielles + Gratuit Standard */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+              {/* Option 0 : Gratuit Standard */}
               <div
-                onClick={() => setListingTier('free')}
+                onClick={() => setPromotionOption('none')}
                 className={`p-3.5 rounded-xl border cursor-pointer transition flex flex-col justify-between ${
-                  listingTier === 'free'
+                  promotionOption === 'none'
                     ? 'bg-slate-900 border-blue-500 ring-2 ring-blue-500/20'
-                    : 'bg-slate-900/50 border-slate-800 hover:border-slate-700'
+                    : 'bg-slate-900/40 border-slate-800 hover:border-slate-700'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-300">Standard</span>
-                    <span className="text-xs font-black text-white">0 $</span>
+                    <span className="text-xs font-black text-emerald-400">Gratuit</span>
                   </div>
-                  <p className="text-[11px] text-slate-400 mt-1 leading-snug">
-                    Visibilité classique dans les résultats, jusqu'à 5 photos.
+                  <p className="text-[11px] text-slate-400 mt-1.5 leading-snug">
+                    Publication classique dans les résultats selon la date d'ajout.
                   </p>
                 </div>
                 <div className="mt-3 flex items-center gap-1 text-[10px] text-slate-400 font-semibold">
-                  <Check className="w-3 h-3 text-blue-400" /> Gratuit 30 jours
+                  <Check className="w-3 h-3 text-blue-400" /> Inclus dans le quota
                 </div>
               </div>
 
-              {/* Premium */}
+              {/* Option 1 : À la une */}
               <div
-                onClick={() => setListingTier('premium')}
+                onClick={() => setPromotionOption('featured')}
                 className={`p-3.5 rounded-xl border cursor-pointer transition flex flex-col justify-between relative ${
-                  listingTier === 'premium'
-                    ? 'bg-amber-950/30 border-amber-500 ring-2 ring-amber-500/20'
-                    : 'bg-slate-900/50 border-slate-800 hover:border-amber-500/50'
+                  promotionOption === 'featured'
+                    ? 'bg-amber-950/40 border-amber-500 ring-2 ring-amber-500/30'
+                    : 'bg-slate-900/40 border-slate-800 hover:border-amber-500/50'
                 }`}
               >
-                <span className="absolute -top-2 right-2 bg-amber-500 text-slate-950 text-[9px] font-black px-2 py-0.2 rounded-full uppercase">
-                  ⭐ Recommandé
+                <span className="absolute -top-2 right-2 bg-amber-500 text-slate-950 text-[9px] font-black px-1.5 py-0.2 rounded-full uppercase">
+                  ⭐ Top Vente
                 </span>
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-amber-400">⭐ Premium</span>
-                    <span className="text-xs font-black text-amber-300">15 $</span>
+                    <span className="text-xs font-bold text-amber-400">⭐ À la une</span>
+                    <span className="text-xs font-black text-amber-300">
+                      ${promotionDuration === 3 ? 8 : promotionDuration === 7 ? 15 : promotionDuration === 15 ? 25 : 40}
+                    </span>
                   </div>
-                  <p className="text-[11px] text-slate-300 mt-1 leading-snug">
-                    Bordure dorée, badge Premium, priorité de tri, 15 photos.
+                  <p className="text-[11px] text-slate-300 mt-1.5 leading-snug">
+                    Carrousel d'accueil & position prioritaire en tête de liste.
                   </p>
                 </div>
-                <div className="mt-3 flex items-center gap-1 text-[10px] text-amber-400 font-semibold">
-                  <Check className="w-3 h-3 text-amber-400" /> Affichage 60 jours
+                <div className="mt-3 text-[10px] text-amber-400/90 font-semibold">
+                  Durée : {promotionDuration} jours
                 </div>
               </div>
 
-              {/* À la Une */}
+              {/* Option 2 : Annonce sponsorisée */}
               <div
-                onClick={() => setListingTier('featured')}
+                onClick={() => setPromotionOption('sponsored')}
                 className={`p-3.5 rounded-xl border cursor-pointer transition flex flex-col justify-between ${
-                  listingTier === 'featured'
-                    ? 'bg-purple-950/30 border-purple-500 ring-2 ring-purple-500/20'
-                    : 'bg-slate-900/50 border-slate-800 hover:border-purple-500/50'
+                  promotionOption === 'sponsored'
+                    ? 'bg-purple-950/40 border-purple-500 ring-2 ring-purple-500/30'
+                    : 'bg-slate-900/40 border-slate-800 hover:border-purple-500/50'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-purple-400">🔥 À la Une VIP</span>
-                    <span className="text-xs font-black text-purple-300">29 $</span>
+                    <span className="text-xs font-bold text-purple-400">🔥 Sponsorisée</span>
+                    <span className="text-xs font-black text-purple-300">
+                      ${promotionDuration === 3 ? 6 : promotionDuration === 7 ? 12 : promotionDuration === 15 ? 20 : 35}
+                    </span>
                   </div>
-                  <p className="text-[11px] text-slate-300 mt-1 leading-snug">
-                    Carrousel d'accueil, tête de liste absolue, badge À la Une.
+                  <p className="text-[11px] text-slate-300 mt-1.5 leading-snug">
+                    Encart publicitaire ciblé dans les recherches similaires.
                   </p>
                 </div>
-                <div className="mt-3 flex items-center gap-1 text-[10px] text-purple-400 font-semibold">
-                  <Check className="w-3 h-3 text-purple-400" /> x5 de contacts garantis
+                <div className="mt-3 text-[10px] text-purple-400/90 font-semibold">
+                  Durée : {promotionDuration} jours
+                </div>
+              </div>
+
+              {/* Option 3 : Remonter l'annonce dans les résultats */}
+              <div
+                onClick={() => setPromotionOption('bump')}
+                className={`p-3.5 rounded-xl border cursor-pointer transition flex flex-col justify-between ${
+                  promotionOption === 'bump'
+                    ? 'bg-blue-950/40 border-blue-500 ring-2 ring-blue-500/30'
+                    : 'bg-slate-900/40 border-slate-800 hover:border-blue-500/50'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-blue-400">⚡ Remontée Top</span>
+                    <span className="text-xs font-black text-blue-300">
+                      ${promotionDuration === 3 ? 4 : promotionDuration === 7 ? 7 : promotionDuration === 15 ? 12 : 20}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-300 mt-1.5 leading-snug">
+                    Repositionne instantanément l'annonce tout en haut comme neuve.
+                  </p>
+                </div>
+                <div className="mt-3 text-[10px] text-blue-400/90 font-semibold">
+                  Durée : {promotionDuration} jours
+                </div>
+              </div>
+
+              {/* Option 4 : Badge "Premium" */}
+              <div
+                onClick={() => setPromotionOption('badge_premium')}
+                className={`p-3.5 rounded-xl border cursor-pointer transition flex flex-col justify-between ${
+                  promotionOption === 'badge_premium'
+                    ? 'bg-emerald-950/40 border-emerald-500 ring-2 ring-emerald-500/30'
+                    : 'bg-slate-900/40 border-slate-800 hover:border-emerald-500/50'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-emerald-400">👑 Badge Premium</span>
+                    <span className="text-xs font-black text-emerald-300">
+                      ${promotionDuration === 3 ? 5 : promotionDuration === 7 ? 9 : promotionDuration === 15 ? 15 : 25}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-300 mt-1.5 leading-snug">
+                    Badge de confiance doré attirant l'attention immédiate des acheteurs.
+                  </p>
+                </div>
+                <div className="mt-3 text-[10px] text-emerald-400/90 font-semibold">
+                  Durée : {promotionDuration} jours
                 </div>
               </div>
             </div>
 
-            {/* Badges et micro-boosts */}
-            <div className="pt-2 border-t border-slate-800/80">
-              <span className="text-xs font-bold text-slate-300 block mb-2">Options et Badges Additionnels :</span>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
-                <label className="flex items-center gap-2 p-2.5 bg-slate-900 rounded-lg border border-slate-800 cursor-pointer hover:bg-slate-850">
-                  <input
-                    type="checkbox"
-                    checked={visibilityBadge === 'urgent'}
-                    onChange={(e) => setVisibilityBadge(e.target.checked ? 'urgent' : '')}
-                    className="rounded text-rose-500 focus:ring-rose-500"
-                  />
-                  <span className="text-slate-200">🚨 Badge « Urgent » (+3$)</span>
-                </label>
-
-                <label className="flex items-center gap-2 p-2.5 bg-slate-900 rounded-lg border border-slate-800 cursor-pointer hover:bg-slate-850">
-                  <input
-                    type="checkbox"
-                    checked={visibilityBadge === 'certifie'}
-                    onChange={(e) => setVisibilityBadge(e.target.checked ? 'certifie' : '')}
-                    className="rounded text-emerald-500 focus:ring-emerald-500"
-                  />
-                  <span className="text-slate-200">🛡️ Badge « Certifié » (+7$)</span>
-                </label>
-
-                <label className="flex items-center gap-2 p-2.5 bg-slate-900 rounded-lg border border-slate-800 cursor-pointer hover:bg-slate-850">
-                  <input
-                    type="checkbox"
-                    checked={boostTopSearch}
-                    onChange={(e) => setBoostTopSearch(e.target.checked)}
-                    className="rounded text-blue-500 focus:ring-blue-500"
-                  />
-                  <span className="text-slate-200">⬆️ Remontée hebdo (+5$)</span>
-                </label>
+            {/* Note de sécurité sur l'activation conditionnelle */}
+            {promotionOption !== 'none' && (
+              <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-[11px] text-amber-300 flex items-start gap-2">
+                <ShieldCheck className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+                <div>
+                  <strong>Validation sécurisée : </strong>
+                  L'option choisie génère une référence de paiement. La mise en avant sera activée dès réception et validation du règlement Mobile Money (M-Pesa, Airtel, Orange) ou Carte.
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Modal Footer Submit */}

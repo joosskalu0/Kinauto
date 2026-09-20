@@ -474,7 +474,7 @@ const createVehicle = async (req, res, next) => {
       });
     }
 
-    // Vérification du quota d'annonces du forfait d'abonnement (dealership/seller)
+    // Vérification du quota d'annonces (Particulier : 3 max gratuit / Pro : selon forfait)
     const dealerIdTarget = parseInt(dealership_id) || 1;
     if (req.user?.role !== 'admin') {
       try {
@@ -483,7 +483,7 @@ const createVehicle = async (req, res, next) => {
                   (SELECT COUNT(*) FROM vehicles v WHERE (v.dealership_id = d.id OR v.dealership_id = ?) AND v.deleted_at IS NULL AND v.status != 'inactive') as active_count
            FROM dealers d
            LEFT JOIN subscription_plans sp ON d.subscription_plan_id = sp.id
-           WHERE d.id = ? OR d.user_id = ?
+           WHERE (d.id = ? OR d.user_id = ?) AND d.statut_abonnement = 'actif'
            LIMIT 1`,
           [dealerIdTarget, dealerIdTarget, req.user?.id || 0]
         );
@@ -502,9 +502,38 @@ const createVehicle = async (req, res, next) => {
               plan_nom: quota.plan_nom
             });
           }
+        } else {
+          // Utilisateur particulier : Limite stricte de 3 annonces actives gratuites
+          let userActiveCount = 0;
+          try {
+            const userVehCount = await query(
+              `SELECT COUNT(*) as total FROM vehicles 
+               WHERE user_id = ? AND deleted_at IS NULL AND status IN ('approved', 'disponible', 'pending')`,
+              [req.user.id]
+            );
+            userActiveCount = Number(userVehCount[0]?.total) || 0;
+          } catch (e) {
+            const memList = memoryStore?.vehicles || [];
+            userActiveCount = memList.filter(v => 
+              Number(v.user_id) === Number(req.user.id) && 
+              !v.deleted_at && 
+              ['approved', 'disponible', 'pending'].includes(v.status)
+            ).length;
+          }
+
+          if (userActiveCount >= 3) {
+            return res.status(403).json({
+              success: false,
+              message: `Limite d’annonces gratuites atteinte (${userActiveCount}/3 actives). En tant que particulier, vous êtes limité à 3 annonces simultanées. Veuillez souscrire à un forfait professionnel pour continuer.`,
+              quota_exceeded: true,
+              active_count: userActiveCount,
+              max_free_listings: 3,
+              is_particulier: true
+            });
+          }
         }
       } catch (quotaErr) {
-        // En cas d'absence de table ou base mockée, tolérer la vérification
+        // En cas d'erreur de requête, continuer
       }
     }
 

@@ -296,6 +296,21 @@ Réponds au format JSON strict avec ce schéma :
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server AutoConcession running on http://0.0.0.0:${PORT}`);
+
+    // Exécution initiale et tâche périodique de nettoyage des expirations (Requirement 8 - Automatisation)
+    try {
+      const monetizationController = require("./server/controllers/monetizationController.js");
+      monetizationController.cleanupExpiredMonetization(null, null).then((report: any) => {
+        if (report) console.log("[AutoKin Monetization Cron] Initialisation :", report.message);
+      }).catch((e: any) => console.warn("[AutoKin Monetization Cron] Warning:", e.message));
+
+      // Exécuter toutes les 15 minutes
+      setInterval(() => {
+        monetizationController.cleanupExpiredMonetization(null, null).catch(() => {});
+      }, 15 * 60 * 1000);
+    } catch (e: any) {
+      console.warn("[AutoKin Monetization Cron] Non démarré:", e.message);
+    }
   });
 }
 

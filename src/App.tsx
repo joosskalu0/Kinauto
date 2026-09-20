@@ -599,6 +599,13 @@ export default function App() {
   const [onlyFavorites, setOnlyFavorites] = useState(false);
   const [motorsListingTab, setMotorsListingTab] = useState<'popular' | 'recent' | 'featured'>('popular');
 
+  const handleVehicleUpdated = (updatedVehicle: Vehicle) => {
+    setVehicles((prev) => prev.map((v) => (v.id === updatedVehicle.id ? updatedVehicle : v)));
+    setSelectedVehicleForModal(updatedVehicle);
+    // Afficher l'annonce dans la section "À la une"
+    setMotorsListingTab('featured');
+  };
+
   // Vehicle Modals
   const [selectedVehicleForModal, setSelectedVehicleForModal] = useState<Vehicle | null>(null);
   const [selectedVehicleForTestDrive, setSelectedVehicleForTestDrive] = useState<Vehicle | null>(null);
@@ -752,7 +759,7 @@ export default function App() {
     // Calcul de visibilité monétisée (Boost recherche, Annonce en vedette, Annonce premium)
     const getMonetizationRank = (v: Vehicle) => {
       let rank = 0;
-      if (v.listingTier === 'featured' || v.enVedette) rank += 1000;
+      if (v.listingTier === 'featured' || v.enVedette || v.is_featured || v.isFeatured) rank += 1000;
       if (v.boostTopSearch) rank += 500;
       if (v.listingTier === 'premium') rank += 250;
       if (v.visibilityBadge === 'urgent') rank += 100;
@@ -768,6 +775,10 @@ export default function App() {
 
     // Default sorting guided by Motors tab (Popular, Recent, Featured)
     if (motorsListingTab === 'featured') {
+      const aFeatured = Boolean(a.listingTier === 'featured' || a.enVedette || a.is_featured || a.isFeatured);
+      const bFeatured = Boolean(b.listingTier === 'featured' || b.enVedette || b.is_featured || b.isFeatured);
+      if (aFeatured && !bFeatured) return -1;
+      if (!aFeatured && bFeatured) return 1;
       if (rankDiff !== 0) return rankDiff;
     } else if (motorsListingTab === 'popular') {
       const aSavings = (a.remiseInstantanee || 0) + ((a.msrp && a.msrp > a.prix) ? a.msrp - a.prix : 0);
@@ -2154,6 +2165,11 @@ export default function App() {
           onSelectVehicle={(v) => setSelectedVehicleForModal(v)}
           currency={currency}
           usdToFcRate={usdToFcRate}
+          isLoggedIn={isDealershipLoggedIn || Boolean(authUser)}
+          currentUser={authUser || dealershipAccounts.find((a) => a.id === currentAccountId) || null}
+          currentAccountId={currentAccountId}
+          onOpenAuth={() => setIsDealershipAuthModalOpen(true)}
+          onVehicleUpdated={handleVehicleUpdated}
         />
       )}
 

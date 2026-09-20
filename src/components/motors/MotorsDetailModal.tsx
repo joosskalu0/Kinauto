@@ -1,16 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   X, Calendar, Gauge, Fuel, Zap, Shield, FileText, Printer, 
   Share2, Heart, CheckCircle2, Car, Sparkles, MapPin, Phone, 
   MessageSquare, ChevronRight, Calculator, Scale, Clock, DollarSign,
   RefreshCw, Award, Send, Check, Eye, Copy, Mail, Globe, ExternalLink,
-  Home, ArrowLeft, ChevronLeft, User, HelpCircle, Star
+  Home, ArrowLeft, ChevronLeft, User, HelpCircle, Star, Rocket
 } from 'lucide-react';
 import { Vehicle, DealershipInfo, Lead } from '../../types';
 import { FinanceCalculator } from '../FinanceCalculator';
 import { MakeOfferModal } from '../MakeOfferModal';
 import { TradeInModal } from '../TradeInModal';
 import { MOTORS_BRANDS } from './MotorsBrandIcons';
+import { PromoteVehicleModal } from '../monetization/PromoteVehicleModal';
 
 interface MotorsDetailModalProps {
   vehicle: Vehicle;
@@ -26,6 +27,11 @@ interface MotorsDetailModalProps {
   onSelectVehicle?: (vehicle: Vehicle) => void;
   currency?: 'USD' | 'FC';
   usdToFcRate?: number;
+  isLoggedIn?: boolean;
+  currentUser?: any;
+  currentAccountId?: string;
+  onOpenAuth?: () => void;
+  onVehicleUpdated?: (updatedVehicle: Vehicle) => void;
 }
 
 const FALLBACK_CAR_IMAGE = "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&q=80&w=1200";
@@ -44,7 +50,26 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
   onSelectVehicle,
   currency = 'USD',
   usdToFcRate = 2850,
+  isLoggedIn = false,
+  currentUser = null,
+  currentAccountId,
+  onOpenAuth,
+  onVehicleUpdated,
 }) => {
+  const [currentVehicle, setCurrentVehicle] = useState<Vehicle>(vehicle);
+  const [isPromoteModalOpen, setIsPromoteModalOpen] = useState(false);
+
+  useEffect(() => {
+    setCurrentVehicle(vehicle);
+  }, [vehicle]);
+
+  const isFeaturedActive = Boolean(
+    currentVehicle.enVedette || 
+    currentVehicle.is_featured || 
+    currentVehicle.isFeatured || 
+    currentVehicle.listingTier === 'featured'
+  );
+
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [showLoanCalculator, setShowLoanCalculator] = useState(false);
   const [showPhone, setShowPhone] = useState(false);
@@ -60,11 +85,11 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
   const [agreedTerms, setAgreedTerms] = useState(true);
   const [msgSentSuccess, setMsgSentSuccess] = useState(false);
 
-  const imagesList = vehicle.images && vehicle.images.length > 0 ? vehicle.images : [FALLBACK_CAR_IMAGE];
+  const imagesList = currentVehicle.images && currentVehicle.images.length > 0 ? currentVehicle.images : [FALLBACK_CAR_IMAGE];
 
-  const buyPrice = vehicle.prix;
-  const msrpPrice = vehicle.msrp || vehicle.ancienPrix || Math.round(vehicle.prix * 1.08);
-  const instantSavings = vehicle.remiseInstantanee || (msrpPrice > buyPrice ? msrpPrice - buyPrice : 3000);
+  const buyPrice = currentVehicle.prix;
+  const msrpPrice = currentVehicle.msrp || currentVehicle.ancienPrix || Math.round(currentVehicle.prix * 1.08);
+  const instantSavings = currentVehicle.remiseInstantanee || (msrpPrice > buyPrice ? msrpPrice - buyPrice : 3000);
 
   const formatPrice = (amountUSD: number) => {
     if (currency === 'FC') {
@@ -171,13 +196,29 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                   </span>
                 )}
               </div>
-              <h1 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight mt-0.5">
-                {vehicle.marque} {vehicle.modele} <span className="font-normal text-slate-500 text-lg">{vehicle.annee}</span>
-              </h1>
+              <div className="flex items-center gap-3 flex-wrap">
+                <h1 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight mt-0.5">
+                  {currentVehicle.marque} {currentVehicle.modele} <span className="font-normal text-slate-500 text-lg">{currentVehicle.annee}</span>
+                </h1>
+                {isFeaturedActive && (
+                  <span className="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black text-xs px-2.5 py-1 rounded-full flex items-center gap-1 shadow-xs">
+                    <Star className="w-3.5 h-3.5 fill-white" />
+                    <span>À LA UNE</span>
+                  </span>
+                )}
+              </div>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              id="btn-motors-modal-promote-top"
+              onClick={() => setIsPromoteModalOpen(true)}
+              className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-600 hover:to-orange-600 text-white font-black text-xs px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-md transition cursor-pointer"
+            >
+              <Rocket className="w-4 h-4 text-amber-200 animate-pulse" />
+              <span>{isFeaturedActive ? '★ Gérer À la une' : '🚀 Mettre à la une'}</span>
+            </button>
             <button
               onClick={onClose}
               className="bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs px-4 py-2 rounded-xl flex items-center gap-1.5 shadow-sm transition cursor-pointer"
@@ -223,6 +264,45 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
             </div>
           </div>
 
+          {/* BANDEAU MONÉTISATION & BOOST "METTRE À LA UNE" */}
+          <div className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 rounded-2xl sm:rounded-3xl p-5 sm:p-6 text-white shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4 border border-amber-400/40">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0 border border-white/30 text-white shadow-inner">
+                <Rocket className="w-6 h-6 text-amber-200 animate-pulse" />
+              </div>
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-2">
+                  <span className="bg-slate-950/40 text-amber-200 text-[10px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                    {isFeaturedActive ? '★ VÉHICULE EN VEDETTE' : 'BOOST DE VENTE AUTOKIN'}
+                  </span>
+                  {isFeaturedActive && (
+                    <span className="text-xs text-amber-100 font-bold">
+                      À la une jusqu'au {new Date(currentVehicle.featured_until || currentVehicle.featuredUntil || Date.now()).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </span>
+                  )}
+                </div>
+                <h3 className="text-base sm:text-lg font-black tracking-tight">
+                  {isFeaturedActive 
+                    ? 'Cette annonce est propulsée "À la une" sur AutoKin' 
+                    : 'Propulsez ce véhicule en tête des résultats AutoKin'}
+                </h3>
+                <p className="text-xs text-amber-100 max-w-xl">
+                  {isFeaturedActive
+                    ? 'Votre véhicule bénéficie du badge exclusif "À la une" et de la position prioritaire n°1 dans les recherches et l\'onglet "Featured items".'
+                    : 'Activez l\'option "À la une" (3, 7, 15 ou 30 jours) pour attirer jusqu\'à 4x plus d\'acheteurs sérieux par WhatsApp et appel direct.'}
+                </p>
+              </div>
+            </div>
+            <button
+              id="btn-detail-promote-featured"
+              onClick={() => setIsPromoteModalOpen(true)}
+              className="w-full sm:w-auto bg-slate-950 hover:bg-slate-900 text-amber-400 hover:text-amber-300 font-black text-xs px-6 py-3.5 rounded-2xl transition shadow-xl flex items-center justify-center gap-2.5 cursor-pointer shrink-0 border border-amber-400/30"
+            >
+              <Rocket className="w-4 h-4 text-amber-400" />
+              <span>{isFeaturedActive ? 'Prolonger la mise à la une' : '🚀 Mettre à la une'}</span>
+            </button>
+          </div>
+
           {/* Main 2-Columns Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             
@@ -232,9 +312,15 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
               {/* Photo Display Carousel */}
               <div className="bg-white p-3 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xs space-y-3">
                 <div className="relative aspect-[16/10] rounded-xl sm:rounded-2xl overflow-hidden bg-slate-100">
+                  {isFeaturedActive && (
+                    <div className="absolute top-3 left-3 z-10 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black text-xs px-3 py-1.5 rounded-xl shadow-lg flex items-center gap-1.5 border border-white/30">
+                      <Rocket className="w-3.5 h-3.5 text-amber-200 animate-pulse" />
+                      <span>★ EN VEDETTE / À LA UNE</span>
+                    </div>
+                  )}
                   <img 
                     src={imagesList[activeImageIndex]} 
-                    alt={vehicle.modele}
+                    alt={currentVehicle.modele}
                     className="w-full h-full object-cover transition-all duration-300"
                   />
 
@@ -275,10 +361,19 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                 )}
               </div>
 
-              {/* 6 Quick Action Pill Buttons matching video */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs font-bold">
+              {/* Quick Action Pill Buttons matching video */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 text-xs font-bold">
                 <button
-                  onClick={() => onRequestTestDrive(vehicle)}
+                  id="btn-quick-promote-vehicle"
+                  onClick={() => setIsPromoteModalOpen(true)}
+                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white p-3 rounded-xl flex items-center justify-center gap-2 transition shadow-xs cursor-pointer font-black"
+                >
+                  <Rocket className="w-4 h-4 text-amber-200 animate-pulse" />
+                  <span>🚀 Mettre à la une</span>
+                </button>
+
+                <button
+                  onClick={() => onRequestTestDrive(currentVehicle)}
                   className="bg-white hover:bg-blue-50 border border-blue-200 text-blue-600 p-3 rounded-xl flex items-center justify-center gap-2 transition shadow-xs cursor-pointer"
                 >
                   <Calendar className="w-4 h-4 text-blue-600" />
@@ -294,7 +389,7 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                 </button>
 
                 <button
-                  onClick={() => onToggleCompare(vehicle.id)}
+                  onClick={() => onToggleCompare(currentVehicle.id)}
                   className={`border p-3 rounded-xl flex items-center justify-center gap-2 transition shadow-xs cursor-pointer ${
                     isCompared 
                       ? 'bg-blue-600 text-white border-blue-600' 
@@ -306,7 +401,7 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                 </button>
 
                 <button
-                  onClick={() => onToggleFavorite(vehicle.id)}
+                  onClick={() => onToggleFavorite(currentVehicle.id)}
                   className={`border p-3 rounded-xl flex items-center justify-center gap-2 transition shadow-xs cursor-pointer ${
                     isFavorite 
                       ? 'bg-rose-500 text-white border-rose-500' 
@@ -527,9 +622,19 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
                   </div>
                 </div>
 
+                {/* 🚀 Mettre cette annonce à la une */}
+                <button
+                  id="btn-sidebar-promote-vehicle"
+                  onClick={() => setIsPromoteModalOpen(true)}
+                  className="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 hover:from-amber-600 hover:to-orange-600 text-white font-black text-xs py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-md transition cursor-pointer"
+                >
+                  <Rocket className="w-4 h-4 text-amber-200 animate-pulse" />
+                  <span>🚀 Mettre cette annonce à la une</span>
+                </button>
+
                 {/* WhatsApp Chat Button */}
                 <a
-                  href={`https://wa.me/${(dealership as any).whatsapp || dealership.telephone?.replace(/[^0-9]/g, '') || '243820000000'}?text=Bonjour, je suis intéressé par votre ${vehicle.marque} ${vehicle.modele}`}
+                  href={`https://wa.me/${(dealership as any).whatsapp || dealership.telephone?.replace(/[^0-9]/g, '') || '243820000000'}?text=Bonjour, je suis intéressé par votre ${currentVehicle.marque} ${currentVehicle.modele}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-xs py-3 rounded-xl flex items-center justify-center gap-2 transition shadow-sm cursor-pointer"
@@ -659,6 +764,27 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
           }}
         />
       )}
+
+      {/* Monetization Promote Vehicle Modal */}
+      <PromoteVehicleModal
+        isOpen={isPromoteModalOpen}
+        vehicle={currentVehicle}
+        onClose={() => setIsPromoteModalOpen(false)}
+        isLoggedIn={isLoggedIn}
+        currentUser={currentUser}
+        currentAccountId={currentAccountId}
+        onOpenAuth={() => {
+          if (onOpenAuth) onOpenAuth();
+        }}
+        onPromotionSuccess={(updatedVehicle) => {
+          setCurrentVehicle(updatedVehicle);
+          if (onVehicleUpdated) {
+            onVehicleUpdated(updatedVehicle);
+          }
+        }}
+        currency={currency}
+        usdToFcRate={usdToFcRate}
+      />
     </div>
   );
 };
