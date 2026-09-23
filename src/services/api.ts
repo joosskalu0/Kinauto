@@ -491,6 +491,7 @@ export const monetizationApi = {
         promotion_options: any;
         subscription_plans: any;
         ad_placements: any;
+        payment_accounts?: any;
       };
     }>('/monetization/config'),
 
@@ -504,6 +505,7 @@ export const monetizationApi = {
         dealership_plans: any[];
         garage_plans: any[];
         ad_placements: any[];
+        payment_accounts?: any;
       };
     }>('/monetization/plans'),
 
@@ -550,6 +552,47 @@ export const monetizationApi = {
       };
       vehicle?: any;
     }>(`/monetization/payments/${paymentIdOrRef}/status`),
+
+  // Soumettre une capture d'écran de preuve de paiement par l'utilisateur
+  submitPaymentProof: (
+    paymentIdOrRef: string,
+    data: {
+      proof_image: string;
+      transaction_reference?: string;
+      payer_phone?: string;
+      payer_name?: string;
+      notes?: string;
+    }
+  ) =>
+    request<{
+      success: boolean;
+      message: string;
+      payment: any;
+    }>(`/monetization/payments/${paymentIdOrRef}/proof`, {
+      method: 'POST',
+      body: JSON.stringify(data)
+    }),
+
+  // Mettre à jour les coordonnées de réception Mobile Money (Admin)
+  updatePaymentAccounts: (data: {
+    titulaire?: string;
+    mpesa_number?: string;
+    mpesa_name?: string;
+    airtel_number?: string;
+    airtel_name?: string;
+    orange_number?: string;
+    orange_name?: string;
+    whatsapp_number?: string;
+    instructions?: string;
+  }) =>
+    request<{
+      success: boolean;
+      message: string;
+      payment_accounts: any;
+    }>('/monetization/admin/payment-accounts', {
+      method: 'PUT',
+      body: JSON.stringify(data)
+    }),
 
   // Vérifier et valider un paiement côté serveur (sécurisé : active is_featured et featured_until)
   verifyPayment: (

@@ -5,6 +5,7 @@ import {
   Camera, Image as ImageIcon, UploadCloud, Clock, ShieldCheck
 } from 'lucide-react';
 import { Vehicle, FuelType, TransmissionType, BodyType, CarCondition } from '../../types';
+import { compressImageFile } from '../../lib/imageOptimization';
 
 interface VehicleFormModalProps {
   vehicleToEdit?: Vehicle | null;
@@ -105,40 +106,24 @@ export const VehicleFormModal: React.FC<VehicleFormModalProps> = ({
     fetchQuota();
   }, []);
 
-  const handlePhoneFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhoneFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
     setIsProcessingPhoto(true);
-    const readers: Promise<string>[] = [];
+    try {
+      const compressionPromises = Array.from(files).map((file: File) => 
+        compressImageFile(file, 1600, 1200, 0.82)
+      );
 
-    Array.from(files).forEach((file: File) => {
-      const p = new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          if (event.target?.result) {
-            resolve(event.target.result as string);
-          } else {
-            reject('Erreur');
-          }
-        };
-        reader.onerror = () => reject('Erreur');
-        reader.readAsDataURL(file);
-      });
-      readers.push(p);
-    });
-
-    Promise.all(readers)
-      .then((newImgs) => {
-        setImages((prev) => [...prev, ...newImgs]);
-        setIsProcessingPhoto(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setIsProcessingPhoto(false);
-      });
-
-    if (e.target) e.target.value = '';
+      const compressedImages = await Promise.all(compressionPromises);
+      setImages((prev) => [...prev, ...compressedImages]);
+    } catch (err) {
+      console.error("Erreur d'importation des photos:", err);
+    } finally {
+      setIsProcessingPhoto(false);
+      if (e.target) e.target.value = '';
+    }
   };
   
   // AI SEO Generator state

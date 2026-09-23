@@ -3,7 +3,8 @@ import {
   Wrench, Search, MapPin, Phone, MessageSquare, ShieldCheck, 
   Clock, Truck, AlertTriangle, PlusCircle, Star, Filter, 
   ChevronRight, Sparkles, Navigation, CheckCircle2, SlidersHorizontal,
-  Flame, Zap, Cpu, Wind, Shield, Droplet, Layers, Package, Disc, Info
+  Flame, Zap, Cpu, Wind, Shield, Droplet, Layers, Package, Disc, Info,
+  DollarSign, Edit3
 } from 'lucide-react';
 import { GarageProfile, KinshasaCommune, GarageSpecialty, BreakdownRequest } from '../../types';
 import { KINSHASA_COMMUNES, GARAGE_SPECIALTY_LABELS } from '../../data/mockGarages';
@@ -14,6 +15,7 @@ import { RegisterGarageModal } from './RegisterGarageModal';
 interface GarageDirectoryProps {
   garages: GarageProfile[];
   onAddGarage: (garage: GarageProfile) => void;
+  onUpdateGarage?: (garage: GarageProfile) => void;
   onSubmitBreakdownRequest: (request: BreakdownRequest) => void;
   onNavigateHome?: () => void;
 }
@@ -21,6 +23,7 @@ interface GarageDirectoryProps {
 export const GarageDirectory: React.FC<GarageDirectoryProps> = ({
   garages,
   onAddGarage,
+  onUpdateGarage,
   onSubmitBreakdownRequest,
   onNavigateHome
 }) => {
@@ -33,10 +36,16 @@ export const GarageDirectory: React.FC<GarageDirectoryProps> = ({
 
   // Modals state
   const [activeDetailGarage, setActiveDetailGarage] = useState<GarageProfile | null>(null);
+  const [openTarifsEditorInitially, setOpenTarifsEditorInitially] = useState(false);
   const [isBreakdownModalOpen, setIsBreakdownModalOpen] = useState(false);
   const [targetGarageForSOS, setTargetGarageForSOS] = useState<GarageProfile | null>(null);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [recentSOSSuccess, setRecentSOSSuccess] = useState<BreakdownRequest | null>(null);
+
+  const handleGarageUpdated = (updatedGarage: GarageProfile) => {
+    setActiveDetailGarage(updatedGarage);
+    onUpdateGarage?.(updatedGarage);
+  };
 
   // Filtered Garages
   const filteredGarages = useMemo(() => {
@@ -483,6 +492,59 @@ export const GarageDirectory: React.FC<GarageDirectoryProps> = ({
                     </div>
                   </div>
 
+                  {/* Aperçu Prix des Prestations / Tarifs du Garagiste */}
+                  {garage.tarifsIndicatifs && garage.tarifsIndicatifs.length > 0 ? (
+                    <div className="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800/80 space-y-1.5">
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="text-slate-400 font-bold flex items-center gap-1">
+                          <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
+                          Prix des services :
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setActiveDetailGarage(garage);
+                            setOpenTarifsEditorInitially(true);
+                          }}
+                          className="text-emerald-400 hover:text-emerald-300 font-bold text-[10px] flex items-center gap-1 cursor-pointer transition"
+                          title="Modifier les prix de cet atelier"
+                        >
+                          <span>{garage.tarifsIndicatifs.length} prestation{garage.tarifsIndicatifs.length > 1 ? 's' : ''}</span>
+                          <span className="text-slate-600">•</span>
+                          <span className="underline flex items-center gap-0.5">
+                            <Edit3 className="w-2.5 h-2.5" /> Donner mes prix
+                          </span>
+                        </button>
+                      </div>
+                      <div className="space-y-1">
+                        {garage.tarifsIndicatifs.slice(0, 2).map((t, idx) => (
+                          <div key={idx} className="flex items-center justify-between text-[11px] gap-2">
+                            <span className="text-slate-300 truncate font-medium">{t.prestation}</span>
+                            <span className="bg-emerald-500/10 text-emerald-400 font-mono font-bold text-[10px] px-2 py-0.5 rounded border border-emerald-500/20 shrink-0">
+                              {t.prixEstime}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-slate-950/40 p-2 rounded-xl border border-dashed border-slate-800 flex items-center justify-between text-[11px]">
+                      <span className="text-slate-400 flex items-center gap-1 text-[10px]">
+                        <DollarSign className="w-3 h-3 text-slate-500" /> Tarifs non renseignés
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveDetailGarage(garage);
+                          setOpenTarifsEditorInitially(true);
+                        }}
+                        className="text-amber-400 hover:text-amber-300 font-bold text-[10px] underline cursor-pointer"
+                      >
+                        Donner mes prix
+                      </button>
+                    </div>
+                  )}
+
                   {/* Actions Bar */}
                   <div className="space-y-2 pt-3 border-t border-slate-800/80">
                     
@@ -510,7 +572,10 @@ export const GarageDirectory: React.FC<GarageDirectoryProps> = ({
                     {/* Secondary Actions */}
                     <div className="grid grid-cols-2 gap-2">
                       <button
-                        onClick={() => setActiveDetailGarage(garage)}
+                        onClick={() => {
+                          setOpenTarifsEditorInitially(false);
+                          setActiveDetailGarage(garage);
+                        }}
                         className="bg-slate-950 hover:bg-slate-800 border border-slate-800 text-slate-200 font-bold py-2.5 px-3 rounded-xl text-xs flex items-center justify-center gap-1 transition cursor-pointer"
                       >
                         <span>Fiche Complète</span>
@@ -540,8 +605,13 @@ export const GarageDirectory: React.FC<GarageDirectoryProps> = ({
       <GarageDetailModal
         garage={activeDetailGarage}
         isOpen={!!activeDetailGarage}
-        onClose={() => setActiveDetailGarage(null)}
+        onClose={() => {
+          setActiveDetailGarage(null);
+          setOpenTarifsEditorInitially(false);
+        }}
         onRequestBreakdown={(g) => handleOpenSOS(g)}
+        onUpdateGarage={handleGarageUpdated}
+        initialOpenTarifsEditor={openTarifsEditorInitially}
       />
 
       <BreakdownRequestModal

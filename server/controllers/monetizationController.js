@@ -1,5 +1,6 @@
 const { query, memoryStore } = require('../config/database');
 const { 
+  ADMIN_PAYMENT_ACCOUNTS,
   FREE_LISTINGS_CONFIG, 
   PROMOTION_OPTIONS, 
   SUBSCRIPTION_PLANS, 
@@ -102,6 +103,7 @@ exports.getAllPlans = async (req, res) => {
     res.json({
       success: true,
       data: {
+        payment_accounts: monetizationStore.payment_accounts || ADMIN_PAYMENT_ACCOUNTS,
         free_listings_config: FREE_LISTINGS_CONFIG,
         promotion_options: PROMOTION_OPTIONS,
         subscription_plans: SUBSCRIPTION_PLANS,
@@ -498,7 +500,7 @@ exports.createOrder = async (req, res) => {
 };
 
 /**
- * 6. Obtenir la liste des paiements avec filtres de statuts (PENDING, PAID, FAILED, CANCELLED, EXPIRED)
+ * 6. Obtenir la liste des paiements avec filtres de statuts (PENDING, PENDING_VERIFICATION, PAID, FAILED, CANCELLED, EXPIRED)
  */
 exports.getPayments = async (req, res) => {
   try {
@@ -510,8 +512,12 @@ exports.getPayments = async (req, res) => {
       const params = [];
 
       if (status && status !== 'all') {
-        sql += ' AND (status = ? OR UPPER(status) = ?)';
-        params.push(status, status.toUpperCase());
+        if (status.toLowerCase() === 'pending_verification') {
+          sql += ' AND (status = "PENDING_VERIFICATION" OR status = "pending_verification")';
+        } else {
+          sql += ' AND (status = ? OR UPPER(status) = ?)';
+          params.push(status, status.toUpperCase());
+        }
       }
       if (search) {
         sql += ' AND (transaction_reference LIKE ? OR payer_phone LIKE ? OR payer_name LIKE ?)';
@@ -542,24 +548,61 @@ exports.getPayments = async (req, res) => {
       }
     }
 
+    // Enrichir chaque paiement avec les informations du véhicule et la capture d'écran
+    const enrichedList = list.map(p => {
+      let meta = p.metadata;
+      if (typeof meta === 'string') {
+        try { meta = JSON.parse(meta); } catch (e) { meta = {}; }
+      }
+      meta = meta || {};
+
+      const vehId = p.vehicle_id || meta.vehicle_id;
+      let vehicleInfo = null;
+      if (vehId) {
+        vehicleInfo = (memoryStore?.vehicles || []).find(v => Number(v.id) === Number(vehId));
+      }
+
+      const proofImg = p.proof_image || meta.proof_image || null;
+
+      return {
+        ...p,
+        metadata: meta,
+        proof_image: proofImg,
+        proof_submitted_at: p.proof_submitted_at || meta.proof_submitted_at || null,
+        vehicle_id: vehId,
+        vehicle_title: vehicleInfo ? `${vehicleInfo.marque} ${vehicleInfo.modele} (${vehicleInfo.annee})` : (meta.vehicle_title || (vehId ? `Véhicule #${vehId}` : 'Abonnement / Service')),
+        vehicle_image: vehicleInfo?.images?.[0] || null,
+        vehicle_price: vehicleInfo?.prix || null,
+        duration_days: meta.duration_days || null,
+        option_nom: meta.option_nom || meta.option_id || 'Mise en avant'
+      };
+    });
+
     // Calcul des KPI de paiements
     const allPay = monetizationStore.payments;
     const totalPaid = allPay
       .filter(p => ['PAID', 'completed'].includes(String(p.status).toUpperCase()))
       .reduce((acc, p) => acc + (Number(p.amount) || 0), 0);
     const totalPending = allPay
-      .filter(p => ['PENDING'].includes(String(p.status).toUpperCase()))
+      .filter(p => ['PENDING', 'PENDING_VERIFICATION'].includes(String(p.status).toUpperCase()))
       .reduce((acc, p) => acc + (Number(p.amount) || 0), 0);
+
+    const countPendingVerification = allPay.filter(p => 
+      String(p.status).toUpperCase() === 'PENDING_VERIFICATION' || 
+      (String(p.status).toUpperCase() === 'PENDING' && (p.proof_image || p.metadata?.proof_image))
+    ).length;
 
     res.json({
       success: true,
-      data: list,
-      count: list.length,
+      data: enrichedList,
+      count: enrichedList.length,
+      payment_accounts: monetizationStore.payment_accounts || ADMIN_PAYMENT_ACCOUNTS,
       kpis: {
         total_paid_usd: totalPaid,
         total_pending_usd: totalPending,
         count_paid: allPay.filter(p => ['PAID', 'completed'].includes(String(p.status).toUpperCase())).length,
-        count_pending: allPay.filter(p => ['PENDING'].includes(String(p.status).toUpperCase())).length
+        count_pending: allPay.filter(p => ['PENDING'].includes(String(p.status).toUpperCase())).length,
+        count_pending_verification: countPendingVerification
       }
     });
   } catch (error) {
@@ -773,6 +816,153 @@ exports.rejectPayment = async (req, res) => {
   } catch (error) {
     console.error('Erreur rejectPayment:', error);
     res.status(500).json({ success: false, message: 'Erreur lors du rejet du paiement' });
+  }
+};
+
+/**
+ * 8.b ENVOI DE LA PREUVE DE PAIEMENT PAR L'UTILISATEUR (Capture d'écran de confirmation)
+ * Permet aux utilisateurs d'envoyer la capture d'écran du paiement Mobile Money (M-Pesa, Airtel, Orange)
+ * pour validation manuelle par l'administrateur.
+ */
+exports.submitPaymentProof = async (req, res) => {
+  try {
+    const paymentId = req.params.id;
+    const { 
+      proof_image, 
+      transaction_reference, 
+      payer_phone, 
+      payer_name, 
+      notes 
+    } = req.body;
+
+    if (!proof_image && !notes && !transaction_reference) {
+      return res.status(400).json({
+        success: false,
+        message: "Veuillez fournir une capture d'écran de votre preuve de paiement ou une référence de transaction."
+      });
+    }
+
+    // 1. Recherche du paiement
+    let payment = null;
+    try {
+      const resPay = await query('SELECT * FROM payments WHERE id = ? OR transaction_reference = ? LIMIT 1', [paymentId, paymentId]);
+      if (resPay && resPay.length > 0) payment = resPay[0];
+    } catch (e) {}
+
+    if (!payment) {
+      payment = monetizationStore.payments.find(p => 
+        String(p.id) === String(paymentId) || 
+        p.transaction_reference === paymentId || 
+        p.payment_id === paymentId
+      );
+    }
+
+    if (!payment) {
+      return res.status(404).json({ success: false, message: 'Transaction de paiement introuvable.' });
+    }
+
+    const now = new Date();
+    let meta = payment.metadata;
+    if (typeof meta === 'string') {
+      try { meta = JSON.parse(meta); } catch (e) { meta = {}; }
+    }
+    meta = meta || {};
+
+    // Stocker la capture et les infos de preuve
+    meta.proof_image = proof_image || meta.proof_image;
+    meta.proof_submitted_at = now.toISOString();
+    if (transaction_reference) meta.user_submitted_reference = transaction_reference;
+
+    // Mise à jour de l'enregistrement en base
+    try {
+      await query(
+        `UPDATE payments 
+         SET status = 'PENDING_VERIFICATION',
+             proof_image = ?,
+             notes = COALESCE(?, notes),
+             metadata = ?,
+             updated_at = NOW() 
+         WHERE id = ? OR transaction_reference = ?`,
+        [
+          proof_image || null,
+          notes ? `${payment.notes || ''} | Preuve client : ${notes}` : null,
+          JSON.stringify(meta),
+          payment.id,
+          payment.transaction_reference
+        ]
+      );
+    } catch (sqlErr) {
+      // Si la colonne proof_image n'existe pas dans MySQL, fallback sur metadata
+      try {
+        await query(
+          `UPDATE payments 
+           SET status = 'PENDING_VERIFICATION',
+               metadata = ?,
+               updated_at = NOW() 
+           WHERE id = ? OR transaction_reference = ?`,
+          [JSON.stringify(meta), payment.id, payment.transaction_reference]
+        );
+      } catch (e) {}
+    }
+
+    // Mise à jour dans le store mémoire
+    payment.status = 'PENDING_VERIFICATION';
+    payment.proof_image = proof_image || payment.proof_image;
+    payment.proof_submitted_at = now;
+    payment.metadata = meta;
+    if (payer_phone) payment.payer_phone = payer_phone;
+    if (payer_name) payment.payer_name = payer_name;
+    if (notes) payment.notes = `${payment.notes || ''} [Preuve: ${notes}]`;
+
+    res.json({
+      success: true,
+      message: "Preuve de paiement transmise avec succès ! Votre demande est en attente de vérification par l'administrateur.",
+      payment
+    });
+  } catch (err) {
+    console.error('Erreur submitPaymentProof:', err);
+    res.status(500).json({ success: false, message: "Erreur lors de l'enregistrement de la preuve de paiement" });
+  }
+};
+
+/**
+ * 8.c MISE À JOUR DES COMPTES DE RÉCEPTION MOBILE MONEY (Admin)
+ */
+exports.updatePaymentAccounts = async (req, res) => {
+  try {
+    const {
+      titulaire,
+      mpesa_number,
+      mpesa_name,
+      airtel_number,
+      airtel_name,
+      orange_number,
+      orange_name,
+      whatsapp_number,
+      instructions
+    } = req.body;
+
+    monetizationStore.payment_accounts = {
+      ...monetizationStore.payment_accounts,
+      ...(titulaire ? { titulaire } : {}),
+      ...(mpesa_number ? { mpesa_number } : {}),
+      ...(mpesa_name ? { mpesa_name } : {}),
+      ...(airtel_number ? { airtel_number } : {}),
+      ...(airtel_name ? { airtel_name } : {}),
+      ...(orange_number ? { orange_number } : {}),
+      ...(orange_name ? { orange_name } : {}),
+      ...(whatsapp_number ? { whatsapp_number } : {}),
+      ...(instructions ? { instructions } : {})
+    };
+
+    res.json({
+      success: true,
+      message: "Paramètres des comptes de paiement mis à jour avec succès !",
+      payment_accounts: monetizationStore.payment_accounts
+    });
+  } catch (err) {
+    console.error('Erreur updatePaymentAccounts:', err);
+    res.status(500).json({ success: false, message: 'Erreur lors de la mise à jour des coordonnées de paiement' });
   }
 };
 

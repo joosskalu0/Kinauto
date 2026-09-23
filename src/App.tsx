@@ -1447,6 +1447,7 @@ export default function App() {
           <GarageDirectory
             garages={garages}
             onAddGarage={handleAddGarage}
+            onUpdateGarage={handleSaveGarage}
             onSubmitBreakdownRequest={handleBreakdownRequestSubmit}
             onNavigateHome={handleNavigateHome}
           />

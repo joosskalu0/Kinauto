@@ -37,6 +37,9 @@ router.post('/commander', authenticateJWT, monetizationController.createOrder);
 // Consulter le statut d'un paiement (public ou utilisateur pour polling)
 router.get('/payments/:id/status', optionalAuth, monetizationController.getPaymentStatus);
 
+// Soumettre une capture d'écran / preuve de paiement par l'utilisateur
+router.post('/payments/:id/proof', optionalAuth, monetizationController.submitPaymentProof);
+
 // Vérifier et valider un paiement côté serveur (sécurisé, active la mise à la une)
 router.post('/payments/:id/verify', optionalAuth, monetizationController.verifyPayment);
 
@@ -48,6 +51,9 @@ router.post('/payments/:id/confirm', authenticateJWT, authorizeRoles('admin', 's
 
 // Rejeter ou annuler un paiement -> N'ACTIVE RIEN
 router.post('/payments/:id/reject', authenticateJWT, authorizeRoles('admin', 'superadmin'), monetizationController.rejectPayment);
+
+// Mettre à jour les comptes de réception Mobile Money (Admin)
+router.put('/admin/payment-accounts', authenticateJWT, authorizeRoles('admin', 'superadmin'), monetizationController.updatePaymentAccounts);
 
 // =========================================================================
 // 6. SUIVI DES BOOSTS ACTIFS & RÉVOCATION (ADMIN)

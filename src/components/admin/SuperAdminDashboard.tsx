@@ -3341,6 +3341,12 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
           garage={garageForDetail}
           isOpen={!!garageForDetail}
           onClose={() => setGarageForDetail(null)}
+          onUpdateGarage={(updated) => {
+            setGarageForDetail(updated);
+            if (onSaveGarage) {
+              onSaveGarage(updated);
+            }
+          }}
           onRequestBreakdown={() => {
             setGarageForDetail(null);
             setGarageSubTab('sos-demandes');

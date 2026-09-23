@@ -518,6 +518,19 @@ const INITIAL_PAYMENTS = [
   }
 ];
 
+// COMPTES MARCHANDS / RÉCEPTION MOBILE MONEY (MANUEL)
+const ADMIN_PAYMENT_ACCOUNTS = {
+  titulaire: "AutoKin RDC / Direction Financière",
+  mpesa_number: "+243 82 555 0199",
+  mpesa_name: "AutoKin M-Pesa",
+  airtel_number: "+243 99 555 0199",
+  airtel_name: "AutoKin Airtel Money",
+  orange_number: "+243 89 555 0199",
+  orange_name: "AutoKin Orange Money",
+  whatsapp_number: "+243 82 555 0199",
+  instructions: "Effectuez votre transfert par M-Pesa, Airtel Money ou Orange Money sur les numéros ci-dessus, puis importez la capture d'écran du reçu/SMS confirmant la transaction pour validation instantanée par l'administrateur."
+};
+
 // INITIAL VEHICLE BOOSTS
 const INITIAL_VEHICLE_BOOSTS = [
   {
@@ -546,6 +559,7 @@ const INITIAL_VEHICLE_BOOSTS = [
 
 // IN-MEMORY STORE
 const monetizationStore = {
+  payment_accounts: { ...ADMIN_PAYMENT_ACCOUNTS },
   free_listings_config: FREE_LISTINGS_CONFIG,
   promotion_options: PROMOTION_OPTIONS,
   subscription_plans: SUBSCRIPTION_PLANS,
@@ -731,6 +745,7 @@ function handleMonetizationQuery(normalizedSql, sql, params, memoryStore) {
 }
 
 module.exports = {
+  ADMIN_PAYMENT_ACCOUNTS,
   FREE_LISTINGS_CONFIG,
   PROMOTION_OPTIONS,
   SUBSCRIPTION_PLANS,

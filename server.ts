@@ -23,18 +23,28 @@ async function startServer() {
   const app = express();
   const PORT = 3000;
 
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
+  app.use(express.json({ limit: '25mb' }));
+  app.use(express.urlencoded({ limit: '25mb', extended: true }));
 
-  // Initialize Gemini AI
-  const ai = new GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY,
-    httpOptions: {
-      headers: {
-        'User-Agent': 'aistudio-build',
+  // Initialize Gemini AI (Lazy initialization)
+  let aiClient: GoogleGenAI | null = null;
+  const getAi = () => {
+    if (!aiClient) {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        throw new Error("GEMINI_API_KEY non configurée.");
       }
+      aiClient = new GoogleGenAI({
+        apiKey,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build',
+          }
+        }
+      });
     }
-  });
+    return aiClient;
+  };
 
   // API Health check
   app.get("/api/health", (req, res) => {
@@ -155,7 +165,7 @@ Structure de l'annonce :
 
 Formate le résultat en texte clair avec des paragraphes aérés et des puces élégantes. Garde un ton professionnel, rassurant et dynamique.`;
 
-      const response = await ai.models.generateContent({
+      const response = await getAi().models.generateContent({
         model: "gemini-3.6-flash",
         contents: prompt,
         config: {
@@ -225,7 +235,7 @@ Génère une réponse au format JSON strict avec ce schéma :
   "seoAdvice": "Conseil d'optimisation SEO complémentaire (ex: ajouter 3 photos de l'intérieur, mentionner le contrôle technique)"
 }`;
 
-      const response = await ai.models.generateContent({
+      const response = await getAi().models.generateContent({
         model: "gemini-3.6-flash",
         contents: prompt,
         config: {
@@ -262,7 +272,7 @@ Réponds au format JSON strict avec ce schéma :
   "conseilsVente": ["conseil 1", "conseil 2"]
 }`;
 
-      const response = await ai.models.generateContent({
+      const response = await getAi().models.generateContent({
         model: "gemini-3.6-flash",
         contents: prompt,
         config: {

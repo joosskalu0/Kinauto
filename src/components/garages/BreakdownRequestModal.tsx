@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { GarageProfile, KinshasaCommune, BreakdownRequest } from '../../types';
 import { KINSHASA_COMMUNES } from '../../data/mockGarages';
+import { compressImageFile } from '../../lib/imageOptimization';
 
 interface BreakdownRequestModalProps {
   isOpen: boolean;
@@ -58,40 +59,24 @@ export const BreakdownRequestModal: React.FC<BreakdownRequestModalProps> = ({
     : null;
 
   // Handle phone file upload (camera / gallery)
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
     setIsProcessingPhoto(true);
-    const readers: Promise<string>[] = [];
+    try {
+      const compressionPromises = Array.from(files).map((file: File) => 
+        compressImageFile(file, 1600, 1200, 0.82)
+      );
 
-    Array.from(files).forEach((file: File) => {
-      const p = new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          if (event.target?.result) {
-            resolve(event.target.result as string);
-          } else {
-            reject('Erreur lecture');
-          }
-        };
-        reader.onerror = () => reject('Erreur');
-        reader.readAsDataURL(file);
-      });
-      readers.push(p);
-    });
-
-    Promise.all(readers)
-      .then((images) => {
-        setPhotosPanne((prev) => [...prev, ...images]);
-        setIsProcessingPhoto(false);
-      })
-      .catch((err) => {
-        console.error('Erreur photo:', err);
-        setIsProcessingPhoto(false);
-      });
-
-    if (e.target) e.target.value = '';
+      const images = await Promise.all(compressionPromises);
+      setPhotosPanne((prev) => [...prev, ...images]);
+    } catch (err) {
+      console.error('Erreur photo:', err);
+    } finally {
+      setIsProcessingPhoto(false);
+      if (e.target) e.target.value = '';
+    }
   };
 
   const handleRemovePhoto = (index: number) => {
