@@ -237,8 +237,8 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/85 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-fadeIn font-sans">
-      <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-3xl w-full text-slate-100 shadow-2xl overflow-hidden my-4 sm:my-8">
+    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-fadeIn font-sans">
+      <div className="bg-white border border-slate-200 rounded-3xl max-w-3xl w-full text-slate-900 shadow-2xl overflow-hidden my-4 sm:my-8">
         
         {/* Hidden inputs for phone uploads */}
         {/* 1. Phone Gallery / Multi-files */}
@@ -262,16 +262,16 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
         />
 
         {/* Modal Header */}
-        <div className="bg-gradient-to-r from-slate-950 via-indigo-950/80 to-slate-950 p-5 sm:p-6 border-b border-slate-800 relative">
+        <div className="bg-gradient-to-r from-slate-100 via-amber-50/50 to-slate-100 p-5 sm:p-6 border-b border-slate-200 relative">
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 sm:top-5 sm:right-5 text-slate-400 hover:text-white bg-slate-800/80 hover:bg-slate-800 p-2 rounded-full transition cursor-pointer"
+            className="absolute top-4 right-4 sm:top-5 sm:right-5 text-slate-500 hover:text-slate-800 bg-white hover:bg-slate-100 border border-slate-200 p-2 rounded-full transition cursor-pointer shadow-xs"
           >
             <X className="w-4 h-4" />
           </button>
 
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center shadow-lg shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 border border-amber-300 flex items-center justify-center shadow-xs shrink-0">
               <Wrench className="w-6 h-6" />
             </div>
             <div>
@@ -279,11 +279,11 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                 <span className="bg-amber-500 text-slate-950 font-black text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                   Répertoire Officiel Kinshasa
                 </span>
-                <span className="text-[11px] text-amber-400 font-bold hidden sm:inline">
+                <span className="text-[11px] text-amber-800 font-bold hidden sm:inline">
                   24 Communes Couvertes
                 </span>
               </div>
-              <h2 className="text-lg sm:text-xl font-black text-white mt-1">
+              <h2 className="text-lg sm:text-xl font-black text-slate-900 mt-1">
                 Fiche d'Inscription : Garage, Atelier & Mécanicien
               </h2>
             </div>
@@ -294,29 +294,29 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
         <div className="p-5 sm:p-7 max-h-[80vh] overflow-y-auto space-y-6">
           {isSuccess ? (
             <div className="text-center py-12 space-y-4 animate-fadeIn">
-              <div className="w-20 h-20 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 rounded-full flex items-center justify-center mx-auto shadow-xl">
+              <div className="w-20 h-20 bg-emerald-100 text-emerald-600 border border-emerald-300 rounded-full flex items-center justify-center mx-auto shadow-md">
                 <CheckCircle2 className="w-10 h-10" />
               </div>
-              <h3 className="text-2xl font-black text-white">Garage inscrit avec succès !</h3>
-              <p className="text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
-                Le profil de <strong className="text-amber-400">{nom}</strong> est maintenant actif et visible par les automobilistes de Kinshasa en quête d'entretien ou d'intervention en cas de panne.
+              <h3 className="text-2xl font-black text-slate-900">Garage inscrit avec succès !</h3>
+              <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+                Le profil de <strong className="text-amber-700">{nom}</strong> est maintenant actif et visible par les automobilistes de Kinshasa en quête d'entretien ou d'intervention en cas de panne.
               </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6 text-xs">
               
               {/* SECTION 1: IDENTITÉ & NOM DU GARAGE */}
-              <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b border-slate-800 text-amber-400 font-black uppercase text-[11px] tracking-wider">
-                  <Building2 className="w-4 h-4" />
+              <div className="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 space-y-4">
+                <div className="flex items-center gap-2 pb-2 border-b border-slate-200 text-amber-800 font-black uppercase text-[11px] tracking-wider">
+                  <Building2 className="w-4 h-4 text-amber-600" />
                   <span>1. Nom & Identité de l'Établissement</span>
                 </div>
 
                 {/* Garage Name - Highly Prominent */}
                 <div className="space-y-1.5">
-                  <label className="block text-slate-200 font-black text-sm flex items-center justify-between">
+                  <label className="block text-slate-800 font-black text-sm flex items-center justify-between">
                     <span>Nom du Garage / Nom de l'Atelier *</span>
-                    <span className="text-[10px] text-amber-400 font-bold uppercase">Requis</span>
+                    <span className="text-[10px] text-amber-700 font-bold uppercase">Requis</span>
                   </label>
                   <input
                     type="text"
@@ -324,13 +324,13 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                     placeholder="Ex: Garage Expert Limete 24/7, Atelier Mécanique Maître Dieudonné..."
                     value={nom}
                     onChange={(e) => setNom(e.target.value)}
-                    className="w-full bg-slate-900 border-2 border-slate-700 focus:border-amber-500 rounded-xl p-3 text-white text-sm font-bold placeholder-slate-500 focus:outline-none transition shadow-inner"
+                    className="w-full bg-white border-2 border-slate-300 focus:border-amber-500 rounded-xl p-3 text-slate-900 text-sm font-bold placeholder-slate-400 focus:outline-none transition shadow-xs"
                   />
                 </div>
 
                 {/* Slogan / Sous-titre */}
                 <div>
-                  <label className="block text-slate-300 font-bold mb-1">
+                  <label className="block text-slate-700 font-bold mb-1">
                     Slogan / Enseigne commerciale (Optionnel)
                   </label>
                   <input
@@ -338,14 +338,14 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                     placeholder="Ex: Spécialiste Injection Électronique & Climatisation Auto"
                     value={slogan}
                     onChange={(e) => setSlogan(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500"
                   />
                 </div>
 
                 {/* Responsable & Titre */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                   <div>
-                    <label className="block text-slate-300 font-bold mb-1">
+                    <label className="block text-slate-700 font-bold mb-1">
                       Nom et Prénom du Responsable / Garagiste en Chef *
                     </label>
                     <input
@@ -354,12 +354,12 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                       placeholder="Ex: Maître Dieudonné Kabwe"
                       value={responsable}
                       onChange={(e) => setResponsable(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500 font-medium"
+                      className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500 font-medium"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-300 font-bold mb-1">
+                    <label className="block text-slate-700 font-bold mb-1">
                       Titre / Rôle
                     </label>
                     <input
@@ -367,28 +367,28 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                       placeholder="Ex: Maître Chef d'Atelier, Électricien Auto Senior..."
                       value={titreResponsable}
                       onChange={(e) => setTitreResponsable(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500"
+                      className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500"
                     />
                   </div>
                 </div>
               </div>
 
               {/* SECTION 2: LOCALISATION À KINSHASA */}
-              <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b border-slate-800 text-amber-400 font-black uppercase text-[11px] tracking-wider">
-                  <MapPin className="w-4 h-4" />
+              <div className="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 space-y-4">
+                <div className="flex items-center gap-2 pb-2 border-b border-slate-200 text-amber-800 font-black uppercase text-[11px] tracking-wider">
+                  <MapPin className="w-4 h-4 text-amber-600" />
                   <span>2. Localisation Précise à Kinshasa</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-slate-200 font-bold mb-1">
+                    <label className="block text-slate-800 font-bold mb-1">
                       Commune de Kinshasa *
                     </label>
                     <select
                       value={commune}
                       onChange={(e) => setCommune(e.target.value as KinshasaCommune)}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white font-bold focus:outline-none focus:border-amber-500"
+                      className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-900 font-bold focus:outline-none focus:border-amber-500"
                     >
                       {KINSHASA_COMMUNES.map((c) => (
                         <option key={c} value={c}>📍 {c}</option>
@@ -397,7 +397,7 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-slate-300 font-bold mb-1">
+                    <label className="block text-slate-700 font-bold mb-1">
                       Quartier (Optionnel)
                     </label>
                     <input
@@ -405,13 +405,13 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                       placeholder="Ex: Quartier Industriel, Socimat, Basoko, Mombele..."
                       value={quartier}
                       onChange={(e) => setQuartier(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500"
+                      className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-bold mb-1">
+                  <label className="block text-slate-700 font-bold mb-1">
                     Avenue / Rue & Numéro de parcelle *
                   </label>
                   <input
@@ -420,14 +420,14 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                     placeholder="Ex: Avenue Colonel Mondjiba N° 45"
                     value={adresse}
                     onChange={(e) => setAdresse(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-200 font-bold mb-1 flex items-center justify-between">
+                  <label className="block text-slate-800 font-bold mb-1 flex items-center justify-between">
                     <span>Repère visuel pour retrouver facilement l'atelier *</span>
-                    <span className="text-[10px] text-amber-400 font-mono">Essentiel à Kinshasa</span>
+                    <span className="text-[10px] text-amber-700 font-mono font-bold">Essentiel à Kinshasa</span>
                   </label>
                   <input
                     type="text"
@@ -435,21 +435,21 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                     placeholder="Ex: En face de la station Total Socimat, à 50m du rond-point Mandela"
                     value={repere}
                     onChange={(e) => setRepere(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-amber-300 font-medium focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white border border-amber-300 rounded-xl p-2.5 text-amber-900 font-semibold focus:outline-none focus:border-amber-500"
                   />
                 </div>
               </div>
 
               {/* SECTION 3: CONTACTS & NUMÉROS DIRECTS */}
-              <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b border-slate-800 text-amber-400 font-black uppercase text-[11px] tracking-wider">
-                  <Phone className="w-4 h-4" />
+              <div className="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 space-y-4">
+                <div className="flex items-center gap-2 pb-2 border-b border-slate-200 text-amber-800 font-black uppercase text-[11px] tracking-wider">
+                  <Phone className="w-4 h-4 text-amber-600" />
                   <span>3. Contacts & WhatsApp Directs</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-slate-200 font-bold mb-1">
+                    <label className="block text-slate-800 font-bold mb-1">
                       Téléphone Principal (Appel Client) *
                     </label>
                     <input
@@ -458,28 +458,28 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                       placeholder="Ex: +243 829 000 111"
                       value={telephonePrincipal}
                       onChange={(e) => setTelephonePrincipal(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-amber-400 font-bold font-mono focus:outline-none focus:border-amber-500"
+                      className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-amber-800 font-bold font-mono focus:outline-none focus:border-amber-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-200 font-bold mb-1 flex items-center justify-between">
+                    <label className="block text-slate-800 font-bold mb-1 flex items-center justify-between">
                       <span>Numéro WhatsApp (Position GPS & Devis)</span>
-                      <span className="text-[10px] text-emerald-400 font-bold">1-Clic</span>
+                      <span className="text-[10px] text-emerald-700 font-bold">1-Clic</span>
                     </label>
                     <input
                       type="tel"
                       placeholder="Ex: 243829000111 ou 0829000111"
                       value={whatsapp}
                       onChange={(e) => setWhatsapp(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-emerald-400 font-mono focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-emerald-800 font-mono font-bold focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-slate-300 font-bold mb-1">
+                    <label className="block text-slate-700 font-bold mb-1">
                       Téléphone Dépannage Urgence Nuit 24h
                     </label>
                     <input
@@ -487,12 +487,12 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                       placeholder="Ex: +243 810 000 222"
                       value={telephoneUrgence}
                       onChange={(e) => setTelephoneUrgence(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white font-mono focus:outline-none focus:border-amber-500"
+                      className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-900 font-mono focus:outline-none focus:border-amber-500"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-300 font-bold mb-1">
+                    <label className="block text-slate-700 font-bold mb-1">
                       Email Professionnel (Optionnel)
                     </label>
                     <input
@@ -500,25 +500,25 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                       placeholder="contact@garagelimete.cd"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500"
+                      className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500"
                     />
                   </div>
                 </div>
               </div>
 
               {/* SECTION 4: PHOTOS DIRECTEMENT DEPUIS VOTRE TÉLÉPHONE */}
-              <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border-2 border-dashed border-amber-500/40 space-y-4">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-                  <div className="flex items-center gap-2 text-amber-400 font-black uppercase text-[11px] tracking-wider">
-                    <Camera className="w-4 h-4" />
+              <div className="bg-slate-50 p-4 sm:p-5 rounded-2xl border-2 border-dashed border-amber-300 space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                  <div className="flex items-center gap-2 text-amber-800 font-black uppercase text-[11px] tracking-wider">
+                    <Camera className="w-4 h-4 text-amber-600" />
                     <span>4. Photos de l'Atelier (Depuis votre Téléphone)</span>
                   </div>
-                  <span className="text-[10px] text-slate-400 font-medium">
+                  <span className="text-[10px] text-slate-500 font-medium">
                     {photos.length} photo{photos.length > 1 ? 's' : ''} ajoutée{photos.length > 1 ? 's' : ''}
                   </span>
                 </div>
 
-                <p className="text-[11px] text-slate-300 leading-relaxed">
+                <p className="text-[11px] text-slate-600 leading-relaxed">
                   Prenez une photo de votre devanture, de vos ponts élévateurs, outillage ou choisissez des images depuis votre galerie photo :
                 </p>
 
@@ -538,9 +538,9 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="bg-slate-800 hover:bg-slate-700 text-white font-bold p-3 rounded-xl border border-slate-700 flex items-center justify-center gap-2 transition cursor-pointer active:scale-98"
+                    className="bg-white hover:bg-slate-100 text-slate-800 font-bold p-3 rounded-xl border border-slate-200 flex items-center justify-center gap-2 transition cursor-pointer active:scale-98 shadow-xs"
                   >
-                    <ImageIcon className="w-4 h-4 text-amber-400 shrink-0" />
+                    <ImageIcon className="w-4 h-4 text-amber-600 shrink-0" />
                     <span>Galerie Téléphone</span>
                   </button>
 
@@ -548,35 +548,35 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                   <button
                     type="button"
                     onClick={() => setShowUrlInput(!showUrlInput)}
-                    className="bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold p-3 rounded-xl border border-slate-800 flex items-center justify-center gap-2 transition cursor-pointer"
+                    className="bg-white hover:bg-slate-100 text-slate-800 font-bold p-3 rounded-xl border border-slate-200 flex items-center justify-center gap-2 transition cursor-pointer shadow-xs"
                   >
-                    <UploadCloud className="w-4 h-4 text-slate-400 shrink-0" />
+                    <UploadCloud className="w-4 h-4 text-slate-500 shrink-0" />
                     <span>Lien URL / Modèles</span>
                   </button>
                 </div>
 
                 {isProcessingPhoto && (
-                  <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-300 text-center font-bold flex items-center justify-center gap-2 animate-pulse">
-                    <Sparkles className="w-4 h-4" />
+                  <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-center font-bold flex items-center justify-center gap-2 animate-pulse">
+                    <Sparkles className="w-4 h-4 text-amber-600" />
                     <span>Chargement des photos depuis le téléphone en cours...</span>
                   </div>
                 )}
 
                 {/* Optional URL Input */}
                 {showUrlInput && (
-                  <div className="space-y-2 pt-2 border-t border-slate-800">
+                  <div className="space-y-2 pt-2 border-t border-slate-200">
                     <div className="flex gap-2">
                       <input
                         type="url"
                         placeholder="Coller l'URL d'une photo https://..."
                         value={urlInput}
                         onChange={(e) => setUrlInput(e.target.value)}
-                        className="flex-1 bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500"
+                        className="flex-1 bg-white border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500"
                       />
                       <button
                         type="button"
                         onClick={handleAddUrlPhoto}
-                        className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-4 rounded-xl transition"
+                        className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-4 rounded-xl transition cursor-pointer"
                       >
                         Ajouter
                       </button>
@@ -584,13 +584,13 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
 
                     {/* Presets */}
                     <div className="flex items-center gap-2 pt-1 overflow-x-auto pb-1 no-scrollbar">
-                      <span className="text-[10px] text-slate-400 font-bold shrink-0">Modèles recommandés :</span>
+                      <span className="text-[10px] text-slate-500 font-bold shrink-0">Modèles recommandés :</span>
                       {PRESET_GARAGE_PHOTOS.map((presetUrl, idx) => (
                         <button
                           key={idx}
                           type="button"
                           onClick={() => setPhotos((prev) => [...prev, presetUrl])}
-                          className="h-10 w-14 rounded-lg overflow-hidden border border-slate-700 hover:border-amber-400 shrink-0"
+                          className="h-10 w-14 rounded-lg overflow-hidden border border-slate-200 hover:border-amber-500 shrink-0 cursor-pointer"
                         >
                           <img src={presetUrl} alt="Preset" className="w-full h-full object-cover" />
                         </button>
@@ -601,12 +601,12 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
 
                 {/* Photo Previews Gallery */}
                 <div className="pt-2">
-                  <span className="text-[11px] text-slate-400 font-bold block mb-2">
+                  <span className="text-[11px] text-slate-600 font-bold block mb-2">
                     Photos actuelles de votre fiche :
                   </span>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     {photos.map((pUrl, idx) => (
-                      <div key={idx} className="relative aspect-[4/3] rounded-xl overflow-hidden border border-slate-800 group shadow-md bg-slate-900">
+                      <div key={idx} className="relative aspect-[4/3] rounded-xl overflow-hidden border border-slate-200 group shadow-xs bg-slate-100">
                         <img src={pUrl} alt={`Atelier photo ${idx + 1}`} className="w-full h-full object-cover" />
                         
                         {/* Principal badge */}
@@ -632,13 +632,13 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
               </div>
 
               {/* SECTION 5: SPÉCIALITÉS TECHNIQUES */}
-              <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-4">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-                  <div className="flex items-center gap-2 text-amber-400 font-black uppercase text-[11px] tracking-wider">
-                    <Wrench className="w-4 h-4" />
+              <div className="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 space-y-4">
+                <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+                  <div className="flex items-center gap-2 text-amber-800 font-black uppercase text-[11px] tracking-wider">
+                    <Wrench className="w-4 h-4 text-amber-600" />
                     <span>5. Spécialités Techniques & Équipements</span>
                   </div>
-                  <span className="text-[10px] text-slate-400 font-bold">
+                  <span className="text-[10px] text-slate-500 font-bold">
                     {selectedSpecialties.length} sélectionnée{selectedSpecialties.length > 1 ? 's' : ''}
                   </span>
                 </div>
@@ -652,17 +652,17 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                         type="button"
                         key={spec}
                         onClick={() => toggleSpecialty(spec)}
-                        className={`p-2.5 rounded-xl text-left border transition cursor-pointer flex items-center justify-between ${
+                        className={`p-2.5 rounded-xl text-left border transition cursor-pointer flex items-center justify-between shadow-xs ${
                           isSelected
-                            ? 'bg-amber-500/20 border-amber-500 text-white font-bold'
-                            : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700'
+                            ? 'bg-amber-100 border-amber-500 text-amber-950 font-bold'
+                            : 'bg-white border-slate-200 text-slate-700 hover:text-slate-900 hover:border-slate-300'
                         }`}
                       >
                         <span className="text-[11px] truncate">{info.label}</span>
                         {isSelected ? (
-                          <span className="text-amber-400 font-black text-xs ml-1">✓</span>
+                          <span className="text-amber-700 font-black text-xs ml-1">✓</span>
                         ) : (
-                          <span className="text-slate-600 text-xs ml-1">+</span>
+                          <span className="text-slate-400 text-xs ml-1">+</span>
                         )}
                       </button>
                     );
@@ -671,7 +671,7 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
 
                 {/* Brands Expertise */}
                 <div className="pt-2">
-                  <label className="block text-slate-300 font-bold mb-1">
+                  <label className="block text-slate-700 font-bold mb-1">
                     Marques prises en charge (Séparées par des virgules)
                   </label>
                   <input
@@ -679,35 +679,35 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                     placeholder="Toyota, Mercedes-Benz, Hyundai, Nissan, Lexus, Kia, Land Rover, Peugeot..."
                     value={marquesExpertiseText}
                     onChange={(e) => setMarquesExpertiseText(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500"
                   />
                 </div>
               </div>
 
               {/* SECTION 6: GRILLE TARIFAIRE & PRIX DE VOS SERVICES (DONNEZ VOS PRIX) */}
-              <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border-2 border-emerald-500/40 space-y-4 shadow-lg shadow-emerald-950/20">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-800">
-                  <div className="flex items-center gap-2 text-emerald-400 font-black uppercase text-[11px] tracking-wider">
-                    <DollarSign className="w-4 h-4 text-emerald-400" />
+              <div className="bg-emerald-50/50 p-4 sm:p-5 rounded-2xl border-2 border-emerald-300 space-y-4 shadow-sm">
+                <div className="flex items-center justify-between pb-2 border-b border-emerald-200">
+                  <div className="flex items-center gap-2 text-emerald-800 font-black uppercase text-[11px] tracking-wider">
+                    <DollarSign className="w-4 h-4 text-emerald-600" />
                     <span>6. Grille Tarifaire & Prix de vos Services (Donnez vos Prix)</span>
                   </div>
-                  <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20">
+                  <span className="text-[10px] text-emerald-800 font-bold bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-300">
                     {tarifs.length} prestation{tarifs.length > 1 ? 's' : ''} active{tarifs.length > 1 ? 's' : ''}
                   </span>
                 </div>
 
-                <div className="bg-emerald-950/30 border border-emerald-500/20 p-3 rounded-xl text-slate-300 text-xs leading-relaxed space-y-1">
-                  <p className="font-bold text-white flex items-center gap-1.5">
-                    <Sparkles className="w-3.5 h-3.5 text-emerald-400" /> Renseignez vos tarifs en Dollars ($) ou Francs Congolais (FC)
+                <div className="bg-emerald-100/70 border border-emerald-200 p-3 rounded-xl text-emerald-950 text-xs leading-relaxed space-y-1">
+                  <p className="font-bold flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-emerald-600" /> Renseignez vos tarifs en Dollars ($) ou Francs Congolais (FC)
                   </p>
-                  <p className="text-[11px] text-slate-300">
+                  <p className="text-[11px] text-emerald-800">
                     À Kinshasa, les automobilistes choisissent en priorité les garages qui affichent des prix clairs pour le dépannage, le scanner ou la vidange. Cliquez sur les modèles fréquents ci-dessous ou ajoutez vos propres tarifs.
                   </p>
                 </div>
 
                 {/* Modèles rapides de prestations Kinshasa */}
                 <div className="space-y-1.5">
-                  <span className="text-[10px] text-slate-400 uppercase font-black block">
+                  <span className="text-[10px] text-slate-600 uppercase font-black block">
                     ⚡ Modèles de prestations courantes à Kinshasa (Cliquer pour ajouter au devis) :
                   </span>
                   <div className="flex flex-wrap gap-1.5">
@@ -716,25 +716,25 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                         key={idx}
                         type="button"
                         onClick={() => handleApplyPreset(preset)}
-                        className="bg-slate-900 hover:bg-slate-800 hover:border-emerald-500/60 border border-slate-800 text-[11px] px-2.5 py-1.5 rounded-xl text-slate-200 font-medium transition cursor-pointer flex items-center gap-1.5 active:scale-95"
+                        className="bg-white hover:bg-emerald-50 hover:border-emerald-300 border border-slate-200 text-[11px] px-2.5 py-1.5 rounded-xl text-slate-800 font-medium transition cursor-pointer flex items-center gap-1.5 active:scale-95 shadow-xs"
                       >
-                        <span className="text-emerald-400 font-bold">+</span>
+                        <span className="text-emerald-600 font-bold">+</span>
                         <span>{preset.prestation}</span>
-                        <span className="text-emerald-400 font-mono text-[10px] font-bold">({preset.prixEstime})</span>
+                        <span className="text-emerald-700 font-mono text-[10px] font-bold">({preset.prixEstime})</span>
                       </button>
                     ))}
                   </div>
                 </div>
 
                 {/* Formulaire d'ajout / saisie de prix personnalisé */}
-                <div className="bg-slate-900/90 p-3.5 rounded-xl border border-slate-800 space-y-3">
-                  <span className="text-[11px] font-bold text-slate-200 block">
+                <div className="bg-white p-3.5 rounded-xl border border-slate-200 space-y-3 shadow-xs">
+                  <span className="text-[11px] font-bold text-slate-800 block">
                     Ajouter ou ajuster un service avec votre prix :
                   </span>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5">
                     <div className="sm:col-span-6">
-                      <label className="block text-[10px] text-slate-400 font-bold mb-1">
+                      <label className="block text-[10px] text-slate-600 font-bold mb-1">
                         Nom de la prestation / Réparation *
                       </label>
                       <input
@@ -742,12 +742,12 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                         placeholder="Ex: Diagnostic Scanner Électronique OBD2"
                         value={prestationInput}
                         onChange={(e) => setPrestationInput(e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white text-xs focus:outline-none focus:border-emerald-500"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 text-xs focus:outline-none focus:border-emerald-500 focus:bg-white"
                       />
                     </div>
 
                     <div className="sm:col-span-3">
-                      <label className="block text-[10px] text-slate-400 font-bold mb-1">
+                      <label className="block text-[10px] text-slate-600 font-bold mb-1">
                         Votre Prix ($ ou FC) *
                       </label>
                       <input
@@ -755,7 +755,7 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                         placeholder="Ex: 25 $ ou 65.000 FC"
                         value={prixInput}
                         onChange={(e) => setPrixInput(e.target.value)}
-                        className="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-white font-mono font-bold text-xs focus:outline-none focus:border-emerald-500"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-slate-900 font-mono font-bold text-xs focus:outline-none focus:border-emerald-500 focus:bg-white"
                       />
                     </div>
 
@@ -763,7 +763,7 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                       <button
                         type="button"
                         onClick={handleAddTarif}
-                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black p-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 transition cursor-pointer shadow-md shadow-emerald-600/20 active:scale-95"
+                        className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black p-2.5 rounded-xl text-xs flex items-center justify-center gap-1.5 transition cursor-pointer shadow-sm shadow-emerald-600/20 active:scale-95"
                       >
                         <PlusCircle className="w-3.5 h-3.5" />
                         <span>Valider ce prix</span>
@@ -772,7 +772,7 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-[10px] text-slate-400 font-bold mb-1">
+                    <label className="block text-[10px] text-slate-600 font-bold mb-1">
                       Détail ou condition (Optionnel)
                     </label>
                     <input
@@ -780,19 +780,19 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                       placeholder="Ex: Main d'œuvre incluse, rapport papier fourni, déplacement inclus..."
                       value={descriptionInput}
                       onChange={(e) => setDescriptionInput(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-white text-xs focus:outline-none focus:border-emerald-500"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-slate-900 text-xs focus:outline-none focus:border-emerald-500 focus:bg-white"
                     />
                   </div>
                 </div>
 
                 {/* Liste des tarifs configurés */}
                 <div className="space-y-2">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
+                  <span className="text-[10px] text-slate-600 font-bold uppercase tracking-wider block">
                     Vos tarifs enregistrés ({tarifs.length}) :
                   </span>
 
                   {tarifs.length === 0 ? (
-                    <div className="p-4 bg-slate-900/60 rounded-xl border border-dashed border-slate-800 text-center text-slate-400 text-xs">
+                    <div className="p-4 bg-white rounded-xl border border-dashed border-slate-300 text-center text-slate-500 text-xs">
                       Aucun prix configuré pour le moment. Cliquez sur les modèles ci-dessus ou ajoutez un tarif manuellement.
                     </div>
                   ) : (
@@ -800,27 +800,27 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                       {tarifs.map((t, idx) => (
                         <div
                           key={idx}
-                          className="bg-slate-900 p-3 rounded-xl border border-slate-800 flex items-center justify-between gap-2.5 group hover:border-slate-700 transition"
+                          className="bg-white p-3 rounded-xl border border-slate-200 flex items-center justify-between gap-2.5 group hover:border-slate-300 transition shadow-xs"
                         >
                           <div className="space-y-0.5 min-w-0 flex-1">
-                            <span className="font-bold text-white block text-xs truncate">
+                            <span className="font-bold text-slate-900 block text-xs truncate">
                               {t.prestation}
                             </span>
                             {t.description && (
-                              <span className="text-[10px] text-slate-400 block truncate">
+                              <span className="text-[10px] text-slate-500 block truncate">
                                 {t.description}
                               </span>
                             )}
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <span className="bg-emerald-500/20 text-emerald-400 font-mono font-black text-xs px-2.5 py-1 rounded-lg border border-emerald-500/30">
+                            <span className="bg-emerald-100 text-emerald-800 font-mono font-black text-xs px-2.5 py-1 rounded-lg border border-emerald-300">
                               {t.prixEstime}
                             </span>
                             <button
                               type="button"
                               onClick={() => handleRemoveTarif(idx)}
-                              className="text-slate-500 hover:text-rose-400 p-1 rounded-lg transition cursor-pointer"
+                              className="text-slate-400 hover:text-rose-600 p-1 rounded-lg transition cursor-pointer"
                               title="Supprimer ce tarif"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -834,17 +834,17 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
               </div>
 
               {/* SECTION 7: HORAIRES & DÉPANNAGE 24/7 */}
-              <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b border-slate-800 text-amber-400 font-black uppercase text-[11px] tracking-wider">
-                  <Clock className="w-4 h-4" />
+              <div className="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 space-y-4">
+                <div className="flex items-center gap-2 pb-2 border-b border-slate-200 text-amber-800 font-black uppercase text-[11px] tracking-wider">
+                  <Clock className="w-4 h-4 text-amber-600" />
                   <span>7. Horaires & Dépannage d'Urgence</span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <label className="p-3.5 bg-slate-900 rounded-xl border border-slate-800 flex items-center justify-between cursor-pointer hover:border-slate-700 transition">
+                  <label className="p-3.5 bg-white rounded-xl border border-slate-200 flex items-center justify-between cursor-pointer hover:border-slate-300 transition shadow-xs">
                     <div>
-                      <span className="font-bold text-white block">Dépannage d'urgence mobile 24/7 ?</span>
-                      <span className="text-[10px] text-slate-400">Équipe capable de se déplacer sur lieu de panne</span>
+                      <span className="font-bold text-slate-900 block">Dépannage d'urgence mobile 24/7 ?</span>
+                      <span className="text-[10px] text-slate-500">Équipe capable de se déplacer sur lieu de panne</span>
                     </div>
                     <input
                       type="checkbox"
@@ -854,10 +854,10 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                     />
                   </label>
 
-                  <label className="p-3.5 bg-slate-900 rounded-xl border border-slate-800 flex items-center justify-between cursor-pointer hover:border-slate-700 transition">
+                  <label className="p-3.5 bg-white rounded-xl border border-slate-200 flex items-center justify-between cursor-pointer hover:border-slate-300 transition shadow-xs">
                     <div>
-                      <span className="font-bold text-white block">Ouvert / Permanence le Dimanche ?</span>
-                      <span className="text-[10px] text-slate-400">Pour les pannes du week-end</span>
+                      <span className="font-bold text-slate-900 block">Ouvert / Permanence le Dimanche ?</span>
+                      <span className="text-[10px] text-slate-500">Pour les pannes du week-end</span>
                     </div>
                     <input
                       type="checkbox"
@@ -869,7 +869,7 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-slate-300 font-bold mb-1">
+                  <label className="block text-slate-700 font-bold mb-1">
                     Horaires d'ouverture réguliers
                   </label>
                   <input
@@ -877,15 +877,15 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                     placeholder="Lun - Sam: 07h30 - 18h30 • Dépannage 24/7"
                     value={horaires}
                     onChange={(e) => setHoraires(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500"
                   />
                 </div>
               </div>
 
               {/* SECTION 8: DESCRIPTION & OUTILLAGES */}
-              <div className="bg-slate-950 p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-3">
-                <div className="flex items-center gap-2 pb-2 border-b border-slate-800 text-amber-400 font-black uppercase text-[11px] tracking-wider">
-                  <Sparkles className="w-4 h-4" />
+              <div className="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 space-y-3">
+                <div className="flex items-center gap-2 pb-2 border-b border-slate-200 text-amber-800 font-black uppercase text-[11px] tracking-wider">
+                  <Sparkles className="w-4 h-4 text-amber-600" />
                   <span>8. Présentation de l'Atelier & Outillages</span>
                 </div>
 
@@ -894,14 +894,14 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                   placeholder="Décrivez vos compétences clés, vos équipements (ex: scanner OBD2 multimarques, pont élévateur, banc de géométrie, cabine de peinture au four, compresseur de climatisation) et vos garanties..."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-amber-500 leading-relaxed"
+                  className="w-full bg-white border border-slate-200 rounded-xl p-3 text-slate-900 focus:outline-none focus:border-amber-500 leading-relaxed"
                 ></textarea>
               </div>
 
               {/* ACTION BUTTONS */}
-              <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div className="flex items-center gap-2 text-slate-400 text-[11px]">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" />
+              <div className="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="flex items-center gap-2 text-slate-600 text-[11px]">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" />
                   <span>Validation instantanée et publication sur le réseau Kinshasa</span>
                 </div>
 
@@ -909,14 +909,14 @@ export const RegisterGarageModal: React.FC<RegisterGarageModalProps> = ({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="flex-1 sm:flex-none bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-5 py-3 rounded-xl transition cursor-pointer text-center"
+                    className="flex-1 sm:flex-none bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-5 py-3 rounded-xl transition cursor-pointer text-center"
                   >
                     Annuler
                   </button>
 
                   <button
                     type="submit"
-                    className="flex-1 sm:flex-none bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black px-7 py-3 rounded-xl shadow-lg shadow-amber-500/25 flex items-center justify-center gap-2 transition transform active:scale-95 cursor-pointer text-sm"
+                    className="flex-1 sm:flex-none bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-black px-7 py-3 rounded-xl shadow-md shadow-amber-500/20 flex items-center justify-center gap-2 transition transform active:scale-95 cursor-pointer text-sm"
                   >
                     <PlusCircle className="w-4 h-4" />
                     <span>Enregistrer mon Garage</span>

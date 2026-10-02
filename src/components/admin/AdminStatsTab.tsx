@@ -46,7 +46,7 @@ export const AdminStatsTab: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-12 text-center text-slate-400 space-y-3">
+      <div className="bg-white border border-slate-200 rounded-3xl p-12 text-center text-slate-500 space-y-3 shadow-xs">
         <RefreshCw className="w-8 h-8 text-amber-500 animate-spin mx-auto" />
         <p className="font-semibold text-sm">Chargement des statistiques globales en direct...</p>
       </div>
@@ -55,12 +55,12 @@ export const AdminStatsTab: React.FC = () => {
 
   if (error || !stats) {
     return (
-      <div className="bg-slate-900 border border-rose-900/40 rounded-2xl p-8 text-center text-rose-300 space-y-3">
+      <div className="bg-white border border-rose-200 rounded-3xl p-8 text-center text-rose-700 space-y-3 shadow-xs">
         <AlertTriangle className="w-8 h-8 text-rose-500 mx-auto" />
         <p className="font-bold text-sm">Erreur : {error || 'Données indisponibles'}</p>
         <button
           onClick={fetchStats}
-          className="bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold px-4 py-2 rounded-xl transition inline-flex items-center gap-2 cursor-pointer"
+          className="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 text-xs font-bold px-4 py-2 rounded-xl transition inline-flex items-center gap-2 cursor-pointer"
         >
           <RefreshCw className="w-3.5 h-3.5" />
           <span>Réessayer</span>
@@ -83,23 +83,23 @@ export const AdminStatsTab: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <div className="space-y-6 animate-fadeIn font-sans">
       {/* Top Banner with Refresh */}
-      <div className="flex flex-wrap items-center justify-between gap-4 bg-slate-900 p-4 rounded-2xl border border-slate-800">
+      <div className="flex flex-wrap items-center justify-between gap-4 bg-white p-5 rounded-3xl border border-slate-200 shadow-xs">
         <div>
-          <h3 className="text-white font-black text-lg flex items-center gap-2">
-            <BarChart3 className="w-5 h-5 text-amber-500" />
+          <h3 className="text-slate-900 font-black text-lg flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-amber-600" />
             Tableau de Bord Exécutif & Métriques Clés
           </h3>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-500">
             Aperçu centralisé de l'activité, de la modération et des finances du réseau CONGOCAR.
           </p>
         </div>
         <button
           onClick={fetchStats}
-          className="bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl border border-slate-700 transition flex items-center gap-2 cursor-pointer"
+          className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs px-3.5 py-2 rounded-xl border border-slate-200 transition flex items-center gap-2 cursor-pointer shadow-2xs"
         >
-          <RefreshCw className="w-3.5 h-3.5 text-amber-400" />
+          <RefreshCw className="w-3.5 h-3.5 text-amber-600" />
           <span>Actualiser</span>
         </button>
       </div>
@@ -107,82 +107,82 @@ export const AdminStatsTab: React.FC = () => {
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3.5">
         {/* Total Utilisateurs */}
-        <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-1.5 shadow-sm">
-          <div className="flex items-center justify-between text-slate-400">
+        <div className="bg-white border border-slate-200 p-4 rounded-2xl space-y-1.5 shadow-xs">
+          <div className="flex items-center justify-between text-slate-500">
             <span className="text-[11px] font-bold uppercase">Utilisateurs</span>
-            <Users className="w-4 h-4 text-blue-400" />
+            <Users className="w-4 h-4 text-blue-600" />
           </div>
-          <p className="text-2xl font-black text-white">{stats.totalUsers || 0}</p>
+          <p className="text-2xl font-black text-slate-900">{stats.totalUsers || 0}</p>
           <p className="text-[10px] text-slate-500">Inscrits tous rôles</p>
         </div>
 
         {/* Total Véhicules */}
-        <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-1.5 shadow-sm">
-          <div className="flex items-center justify-between text-slate-400">
+        <div className="bg-white border border-slate-200 p-4 rounded-2xl space-y-1.5 shadow-xs">
+          <div className="flex items-center justify-between text-slate-500">
             <span className="text-[11px] font-bold uppercase">Véhicules</span>
-            <Car className="w-4 h-4 text-amber-400" />
+            <Car className="w-4 h-4 text-amber-600" />
           </div>
-          <p className="text-2xl font-black text-white">{stats.vehicles?.total || 0}</p>
-          <p className="text-[10px] text-emerald-400 font-bold">{stats.vehicles?.approved || 0} validés en ligne</p>
+          <p className="text-2xl font-black text-slate-900">{stats.vehicles?.total || 0}</p>
+          <p className="text-[10px] text-emerald-700 font-bold">{stats.vehicles?.approved || 0} validés en ligne</p>
         </div>
 
         {/* Validation en attente */}
-        <div className="bg-slate-900 border border-amber-500/30 p-4 rounded-xl space-y-1.5 shadow-sm">
-          <div className="flex items-center justify-between text-slate-400">
-            <span className="text-[11px] font-bold uppercase text-amber-400">À Modérer</span>
-            <Clock className="w-4 h-4 text-amber-400" />
+        <div className="bg-white border border-amber-300 p-4 rounded-2xl space-y-1.5 shadow-xs">
+          <div className="flex items-center justify-between text-amber-800">
+            <span className="text-[11px] font-bold uppercase text-amber-800">À Modérer</span>
+            <Clock className="w-4 h-4 text-amber-600" />
           </div>
-          <p className="text-2xl font-black text-amber-400">{stats.vehicles?.pending || 0}</p>
-          <p className="text-[10px] text-amber-300/80 font-medium">Annonces en attente</p>
+          <p className="text-2xl font-black text-amber-700">{stats.vehicles?.pending || 0}</p>
+          <p className="text-[10px] text-amber-800 font-medium">Annonces en attente</p>
         </div>
 
         {/* Garages */}
-        <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-1.5 shadow-sm">
-          <div className="flex items-center justify-between text-slate-400">
+        <div className="bg-white border border-slate-200 p-4 rounded-2xl space-y-1.5 shadow-xs">
+          <div className="flex items-center justify-between text-slate-500">
             <span className="text-[11px] font-bold uppercase">Garages</span>
-            <Wrench className="w-4 h-4 text-rose-400" />
+            <Wrench className="w-4 h-4 text-rose-600" />
           </div>
-          <p className="text-2xl font-black text-white">{stats.garages?.total || 0}</p>
+          <p className="text-2xl font-black text-slate-900">{stats.garages?.total || 0}</p>
           <p className="text-[10px] text-slate-500">{stats.garages?.pending || 0} en attente</p>
         </div>
 
         {/* Abonnements Actifs & MRR */}
-        <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-1.5 shadow-sm">
-          <div className="flex items-center justify-between text-slate-400">
+        <div className="bg-white border border-slate-200 p-4 rounded-2xl space-y-1.5 shadow-xs">
+          <div className="flex items-center justify-between text-slate-500">
             <span className="text-[11px] font-bold uppercase">MRR Récurrent</span>
-            <DollarSign className="w-4 h-4 text-emerald-400" />
+            <DollarSign className="w-4 h-4 text-emerald-600" />
           </div>
-          <p className="text-xl font-black text-emerald-400">${stats.subscriptions?.mrrUsd || 0}</p>
+          <p className="text-xl font-black text-emerald-700">${stats.subscriptions?.mrrUsd || 0}</p>
           <p className="text-[10px] text-slate-500">{stats.subscriptions?.activeCount || 0} abonnés actifs</p>
         </div>
 
         {/* Signalements */}
-        <div className="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-1.5 shadow-sm">
-          <div className="flex items-center justify-between text-slate-400">
+        <div className="bg-white border border-slate-200 p-4 rounded-2xl space-y-1.5 shadow-xs">
+          <div className="flex items-center justify-between text-slate-500">
             <span className="text-[11px] font-bold uppercase">Signalements</span>
-            <AlertTriangle className="w-4 h-4 text-amber-400" />
+            <AlertTriangle className="w-4 h-4 text-amber-600" />
           </div>
-          <p className="text-2xl font-black text-white">{stats.reports?.total || 0}</p>
-          <p className="text-[10px] text-rose-400 font-bold">{stats.reports?.pending || 0} non traités</p>
+          <p className="text-2xl font-black text-slate-900">{stats.reports?.total || 0}</p>
+          <p className="text-[10px] text-rose-700 font-bold">{stats.reports?.pending || 0} non traités</p>
         </div>
       </div>
 
       {/* Visual Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Marques Graph */}
-        <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4">
-          <h4 className="text-white font-bold text-sm flex items-center justify-between">
+        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs space-y-4">
+          <h4 className="text-slate-900 font-bold text-sm flex items-center justify-between">
             <span>Parc Automobile par Marque</span>
             <span className="text-xs text-slate-500 font-normal">Top 8</span>
           </h4>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={stats.marqueStats || []} layout="vertical" margin={{ left: 20, right: 20, top: 10, bottom: 10 }}>
-                <XAxis type="number" stroke="#64748b" tick={{ fontSize: 11 }} />
-                <YAxis dataKey="marque" type="category" stroke="#94a3b8" tick={{ fontSize: 11 }} width={80} />
+                <XAxis type="number" stroke="#94a3b8" tick={{ fontSize: 11 }} />
+                <YAxis dataKey="marque" type="category" stroke="#64748b" tick={{ fontSize: 11 }} width={80} />
                 <Tooltip 
-                  contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '12px', fontSize: '12px' }}
-                  itemStyle={{ color: '#fbbf24' }}
+                  contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '12px', fontSize: '12px', color: '#0f172a' }}
+                  itemStyle={{ color: '#d97706' }}
                 />
                 <Bar dataKey="count" fill="#f59e0b" radius={[0, 6, 6, 0]} name="Véhicules" />
               </BarChart>
@@ -191,14 +191,14 @@ export const AdminStatsTab: React.FC = () => {
         </div>
 
         {/* Vehicle Status Pie & Users Pie */}
-        <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4">
-          <h4 className="text-white font-bold text-sm">
+        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs space-y-4">
+          <h4 className="text-slate-900 font-bold text-sm">
             Statut de Modération & Répartition Rôles
           </h4>
           <div className="grid grid-cols-2 h-64">
             {/* Statut Annonces */}
             <div className="flex flex-col items-center justify-center">
-              <p className="text-[11px] font-bold text-slate-400 mb-2">Annonces Véhicules</p>
+              <p className="text-[11px] font-bold text-slate-600 mb-2">Annonces Véhicules</p>
               <ResponsiveContainer width="100%" height={180}>
                 <PieChart>
                   <Pie data={vehicleStatusData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={55} innerRadius={30}>
@@ -206,14 +206,14 @@ export const AdminStatsTab: React.FC = () => {
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '11px' }} />
+                  <Tooltip contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '8px', fontSize: '11px', color: '#0f172a' }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
 
             {/* Rôles Utilisateurs */}
             <div className="flex flex-col items-center justify-center">
-              <p className="text-[11px] font-bold text-slate-400 mb-2">Comptes Utilisateurs</p>
+              <p className="text-[11px] font-bold text-slate-600 mb-2">Comptes Utilisateurs</p>
               <ResponsiveContainer width="100%" height={180}>
                 <PieChart>
                   <Pie data={roleData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={55} innerRadius={30}>
@@ -221,12 +221,12 @@ export const AdminStatsTab: React.FC = () => {
                       <Cell key={`role-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip contentStyle={{ backgroundColor: '#0f172a', borderColor: '#334155', borderRadius: '8px', fontSize: '11px' }} />
+                  <Tooltip contentStyle={{ backgroundColor: '#ffffff', borderColor: '#e2e8f0', borderRadius: '8px', fontSize: '11px', color: '#0f172a' }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           </div>
-          <div className="flex flex-wrap items-center justify-center gap-3 text-[10px] text-slate-400 pt-2 border-t border-slate-800">
+          <div className="flex flex-wrap items-center justify-center gap-3 text-[10px] text-slate-600 pt-2 border-t border-slate-100">
             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-emerald-500"></span> Validés</span>
             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-amber-500"></span> En Attente</span>
             <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-rose-500"></span> Rejetés</span>
@@ -237,23 +237,23 @@ export const AdminStatsTab: React.FC = () => {
       {/* Latest Activity Tables */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Derniers Utilisateurs Inscrits */}
-        <div className="bg-slate-900 rounded-2xl border border-slate-800 p-5 space-y-3">
-          <h4 className="text-white font-bold text-sm flex items-center justify-between">
+        <div className="bg-white rounded-3xl border border-slate-200 p-6 space-y-3 shadow-xs">
+          <h4 className="text-slate-900 font-bold text-sm flex items-center justify-between">
             <span>Dernières Inscriptions</span>
-            <Users className="w-4 h-4 text-slate-400" />
+            <Users className="w-4 h-4 text-slate-500" />
           </h4>
-          <div className="divide-y divide-slate-800 text-xs">
+          <div className="divide-y divide-slate-100 text-xs">
             {(stats.latestUsers || []).map((u: any) => (
               <div key={u.id} className="py-2.5 flex items-center justify-between">
                 <div>
-                  <p className="font-bold text-white">{u.name}</p>
-                  <p className="text-[11px] text-slate-400">{u.email}</p>
+                  <p className="font-bold text-slate-900">{u.name}</p>
+                  <p className="text-[11px] text-slate-500">{u.email}</p>
                 </div>
                 <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                  u.role === 'admin' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' :
-                  u.role === 'dealer' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' :
-                  u.role === 'garage' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' :
-                  'bg-slate-800 text-slate-300'
+                  u.role === 'admin' ? 'bg-rose-100 text-rose-800 border border-rose-300' :
+                  u.role === 'dealer' ? 'bg-amber-100 text-amber-900 border border-amber-300' :
+                  u.role === 'garage' ? 'bg-blue-100 text-blue-800 border border-blue-300' :
+                  'bg-slate-100 text-slate-700'
                 }`}>
                   {u.role}
                 </span>
@@ -263,25 +263,25 @@ export const AdminStatsTab: React.FC = () => {
         </div>
 
         {/* Derniers Signalements */}
-        <div className="bg-slate-900 rounded-2xl border border-slate-800 p-5 space-y-3">
-          <h4 className="text-white font-bold text-sm flex items-center justify-between">
+        <div className="bg-white rounded-3xl border border-slate-200 p-6 space-y-3 shadow-xs">
+          <h4 className="text-slate-900 font-bold text-sm flex items-center justify-between">
             <span>Signalements Récents</span>
-            <AlertTriangle className="w-4 h-4 text-amber-400" />
+            <AlertTriangle className="w-4 h-4 text-amber-600" />
           </h4>
-          <div className="divide-y divide-slate-800 text-xs">
+          <div className="divide-y divide-slate-100 text-xs">
             {(stats.recentReports || []).length === 0 ? (
               <p className="text-slate-500 text-center py-4">Aucun signalement en attente.</p>
             ) : (
               (stats.recentReports || []).map((r: any) => (
                 <div key={r.id} className="py-2.5 flex items-center justify-between">
                   <div>
-                    <p className="font-bold text-white flex items-center gap-1.5">
-                      <span className="text-amber-400">[{r.target_type}]</span> {r.target_title}
+                    <p className="font-bold text-slate-900 flex items-center gap-1.5">
+                      <span className="text-amber-700 font-bold">[{r.target_type}]</span> {r.target_title}
                     </p>
-                    <p className="text-[11px] text-slate-400 truncate max-w-xs">{r.description || r.reason}</p>
+                    <p className="text-[11px] text-slate-500 truncate max-w-xs">{r.description || r.reason}</p>
                   </div>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    r.status === 'en_attente' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30 animate-pulse' : 'bg-emerald-500/20 text-emerald-400'
+                    r.status === 'en_attente' ? 'bg-amber-100 text-amber-900 border border-amber-300 animate-pulse' : 'bg-emerald-100 text-emerald-800'
                   }`}>
                     {r.status === 'en_attente' ? 'En attente' : 'Traité'}
                   </span>

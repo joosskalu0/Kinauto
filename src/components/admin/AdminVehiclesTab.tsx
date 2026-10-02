@@ -152,9 +152,9 @@ export const AdminVehiclesTab: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 animate-fadeIn">
+    <div className="space-y-6 animate-fadeIn font-sans">
       {/* Control bar */}
-      <div className="bg-slate-900 p-4 rounded-2xl border border-slate-800 flex flex-wrap items-center justify-between gap-3 text-xs">
+      <div className="bg-white p-4 rounded-3xl border border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs shadow-xs">
         <form onSubmit={handleSearchSubmit} className="relative flex-1 min-w-[240px]">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -162,17 +162,17 @@ export const AdminVehiclesTab: React.FC = () => {
             placeholder="Rechercher par marque, modèle, concession, carburant..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-white focus:outline-none focus:border-amber-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-slate-900 focus:outline-none focus:border-amber-500 focus:bg-white"
           />
         </form>
 
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-slate-400 font-medium">Modération :</span>
+            <span className="text-slate-600 font-medium">Modération :</span>
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-slate-950 border border-slate-800 text-white font-medium rounded-xl px-3 py-2 focus:outline-none cursor-pointer"
+              className="bg-slate-50 border border-slate-200 text-slate-900 font-medium rounded-xl px-3 py-2 focus:outline-none cursor-pointer"
             >
               <option value="all">Toutes les annonces</option>
               <option value="pending">⏳ En attente de validation</option>
@@ -183,7 +183,7 @@ export const AdminVehiclesTab: React.FC = () => {
 
           <button
             onClick={fetchVehicles}
-            className="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-3.5 py-2 rounded-xl border border-slate-700 transition flex items-center gap-1.5 cursor-pointer"
+            className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3.5 py-2 rounded-xl border border-slate-200 transition flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             <span>Actualiser</span>
@@ -192,11 +192,11 @@ export const AdminVehiclesTab: React.FC = () => {
       </div>
 
       {/* Table of Vehicles */}
-      <div className="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+      <div className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[900px]">
             <thead>
-              <tr className="bg-slate-950 text-slate-400 text-[11px] font-bold uppercase border-b border-slate-800">
+              <tr className="bg-slate-50 text-slate-500 text-[11px] font-bold uppercase border-b border-slate-200">
                 <th className="p-4">Véhicule & Année</th>
                 <th className="p-4">Concessionnaire / Vendeur</th>
                 <th className="p-4">Prix & Kilométrage</th>
@@ -204,7 +204,7 @@ export const AdminVehiclesTab: React.FC = () => {
                 <th className="p-4 text-right">Actions Modérateur</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800 text-xs text-slate-200">
+            <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
               {loading ? (
                 <tr>
                   <td colSpan={5} className="p-8 text-center text-slate-400">
@@ -225,56 +225,56 @@ export const AdminVehiclesTab: React.FC = () => {
                   const isRejected = ['rejected', 'rejete'].includes(String(v.validation_status || v.status).toLowerCase());
 
                   return (
-                    <tr key={v.id} className="hover:bg-slate-800/50 transition">
+                    <tr key={v.id} className="hover:bg-slate-50/80 transition">
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           <img
                             src={v.primary_image || 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=300&q=80'}
                             alt={`${v.marque} ${v.modele}`}
-                            className="w-14 h-11 object-cover rounded-lg border border-slate-800 shrink-0"
+                            className="w-14 h-11 object-cover rounded-lg border border-slate-200 shrink-0"
                           />
                           <div>
-                            <p className="font-extrabold text-white text-sm">
-                              {v.marque} {v.modele} <span className="text-slate-400 text-xs font-normal">({v.annee})</span>
+                            <p className="font-extrabold text-slate-900 text-sm">
+                              {v.marque} {v.modele} <span className="text-slate-500 text-xs font-normal">({v.annee})</span>
                             </p>
-                            <p className="text-[11px] text-slate-400">{v.carburant} • {v.transmission}</p>
+                            <p className="text-[11px] text-slate-500">{v.carburant} • {v.transmission}</p>
                           </div>
                         </div>
                       </td>
 
                       <td className="p-4">
-                        <div className="font-bold text-white flex items-center gap-1.5">
-                          <Building2 className="w-3.5 h-3.5 text-amber-400" />
+                        <div className="font-bold text-slate-900 flex items-center gap-1.5">
+                          <Building2 className="w-3.5 h-3.5 text-amber-500" />
                           <span>{v.dealership_nom || 'Vendeur Pro'}</span>
                         </div>
-                        <p className="text-[11px] text-slate-400 flex items-center gap-1">
-                          <MapPin className="w-3 h-3 text-slate-500" /> {v.dealership_ville || 'Kinshasa'}
+                        <p className="text-[11px] text-slate-500 flex items-center gap-1">
+                          <MapPin className="w-3 h-3 text-slate-400" /> {v.dealership_ville || 'Kinshasa'}
                         </p>
                       </td>
 
                       <td className="p-4">
-                        <p className="font-black text-emerald-400 text-sm">${v.prix?.toLocaleString('fr-FR')}</p>
-                        <p className="text-[11px] text-slate-400">{v.kilometrage?.toLocaleString('fr-FR')} km</p>
+                        <p className="font-black text-emerald-600 text-sm">${v.prix?.toLocaleString('fr-FR')}</p>
+                        <p className="text-[11px] text-slate-500">{v.kilometrage?.toLocaleString('fr-FR')} km</p>
                       </td>
 
                       <td className="p-4">
                         {isPending && (
-                          <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-1 w-fit animate-pulse">
-                            <Clock className="w-3 h-3" /> En attente de validation
+                          <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-100 text-amber-800 border border-amber-300 flex items-center gap-1 w-fit animate-pulse">
+                            <Clock className="w-3 h-3 text-amber-600" /> En attente de validation
                           </span>
                         )}
                         {isApproved && (
-                          <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1 w-fit">
-                            <CheckCircle className="w-3 h-3" /> Validée / En Ligne
+                          <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1 w-fit">
+                            <CheckCircle className="w-3 h-3 text-emerald-600" /> Validée / En Ligne
                           </span>
                         )}
                         {isRejected && (
                           <div>
-                            <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center gap-1 w-fit">
-                              <XCircle className="w-3 h-3" /> Rejetée
+                            <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-rose-100 text-rose-800 border border-rose-300 flex items-center gap-1 w-fit">
+                              <XCircle className="w-3 h-3 text-rose-600" /> Rejetée
                             </span>
                             {v.rejection_reason && (
-                              <p className="text-[10px] text-rose-400 mt-1 truncate max-w-[180px]" title={v.rejection_reason}>
+                              <p className="text-[10px] text-rose-600 mt-1 truncate max-w-[180px]" title={v.rejection_reason}>
                                 Motif : {v.rejection_reason}
                               </p>
                             )}
@@ -286,7 +286,7 @@ export const AdminVehiclesTab: React.FC = () => {
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => setPreviewVehicle(v)}
-                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition cursor-pointer"
+                            className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition cursor-pointer shadow-xs"
                             title="Aperçu de la fiche annonce"
                           >
                             <Eye className="w-3.5 h-3.5" />
@@ -296,10 +296,10 @@ export const AdminVehiclesTab: React.FC = () => {
                           <button
                             onClick={() => handleApprove(v)}
                             disabled={isApproved || actionLoading}
-                            className={`p-1.5 rounded-lg border transition cursor-pointer ${
+                            className={`p-2 rounded-xl border transition cursor-pointer shadow-xs ${
                               isApproved
-                                ? 'bg-slate-800/40 text-slate-600 border-slate-800 cursor-not-allowed'
-                                : 'bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border-emerald-500/40'
+                                ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
+                                : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border-emerald-300'
                             }`}
                             title="Valider l'annonce pour affichage public"
                           >
@@ -313,10 +313,10 @@ export const AdminVehiclesTab: React.FC = () => {
                               setRejectionReason('');
                             }}
                             disabled={isRejected || actionLoading}
-                            className={`p-1.5 rounded-lg border transition cursor-pointer ${
+                            className={`p-2 rounded-xl border transition cursor-pointer shadow-xs ${
                               isRejected
-                                ? 'bg-slate-800/40 text-slate-600 border-slate-800 cursor-not-allowed'
-                                : 'bg-rose-500/20 hover:bg-rose-500/30 text-rose-400 border-rose-500/40'
+                                ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
+                                : 'bg-rose-50 hover:bg-rose-100 text-rose-700 border-rose-300'
                             }`}
                             title="Rejeter l'annonce avec motif"
                           >
@@ -326,7 +326,7 @@ export const AdminVehiclesTab: React.FC = () => {
                           {/* Delete button */}
                           <button
                             onClick={() => handleDelete(v.id)}
-                            className="p-1.5 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 border border-slate-700 transition cursor-pointer"
+                            className="p-2 rounded-xl bg-slate-100 hover:bg-rose-100 text-slate-500 hover:text-rose-700 border border-slate-200 transition cursor-pointer shadow-xs"
                             title="Supprimer définitivement"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -344,27 +344,27 @@ export const AdminVehiclesTab: React.FC = () => {
 
       {/* Modal Motif de Rejet */}
       {rejectingVehicle && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl relative animate-fadeIn">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-md w-full p-6 space-y-4 shadow-xl relative animate-fadeIn">
             <button
               onClick={() => setRejectingVehicle(null)}
-              className="absolute right-4 top-4 text-slate-400 hover:text-white p-1"
+              className="absolute right-4 top-4 text-slate-400 hover:text-slate-700 p-1"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <h3 className="text-white font-extrabold text-lg flex items-center gap-2 text-rose-400">
+            <h3 className="text-slate-900 font-extrabold text-lg flex items-center gap-2 text-rose-600">
               <ShieldAlert className="w-5 h-5" />
               Rejeter l'annonce de véhicule
             </h3>
 
-            <p className="text-xs text-slate-400">
-              Véhicule ciblé : <strong className="text-white">{rejectingVehicle.marque} {rejectingVehicle.modele} ({rejectingVehicle.annee})</strong>
+            <p className="text-xs text-slate-600">
+              Véhicule ciblé : <strong className="text-slate-900">{rejectingVehicle.marque} {rejectingVehicle.modele} ({rejectingVehicle.annee})</strong>
             </p>
 
             <form onSubmit={handleConfirmReject} className="space-y-4 text-xs">
               <div>
-                <label className="block text-slate-300 font-bold mb-1">
+                <label className="block text-slate-700 font-bold mb-1">
                   Motif officiel de refus (transmis au vendeur) :
                 </label>
                 <textarea
@@ -373,7 +373,7 @@ export const AdminVehiclesTab: React.FC = () => {
                   value={rejectionReason}
                   onChange={(e) => setRejectionReason(e.target.value)}
                   placeholder="Ex : Photos floues, prix manifestement erroné, numéro de châssis ou documents manquants..."
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white focus:outline-none focus:border-rose-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-900 focus:outline-none focus:border-rose-500 focus:bg-white"
                 />
               </div>
 
@@ -381,7 +381,7 @@ export const AdminVehiclesTab: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setRejectingVehicle(null)}
-                  className="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2.5 rounded-xl font-bold transition cursor-pointer"
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2.5 rounded-xl font-bold transition cursor-pointer"
                 >
                   Annuler
                 </button>
@@ -400,11 +400,11 @@ export const AdminVehiclesTab: React.FC = () => {
 
       {/* Modal Aperçu Fiche Véhicule */}
       {previewVehicle && (
-        <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full overflow-hidden shadow-2xl relative animate-fadeIn">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 rounded-3xl max-w-lg w-full overflow-hidden shadow-xl relative animate-fadeIn">
             <button
               onClick={() => setPreviewVehicle(null)}
-              className="absolute right-4 top-4 text-slate-400 hover:text-white p-1 bg-slate-950/60 rounded-full z-10"
+              className="absolute right-4 top-4 text-slate-700 hover:text-black p-1.5 bg-white/90 rounded-full shadow-md z-10"
             >
               <X className="w-5 h-5" />
             </button>
@@ -418,33 +418,33 @@ export const AdminVehiclesTab: React.FC = () => {
             <div className="p-6 space-y-4 text-xs">
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <h3 className="text-xl font-black text-white">
+                  <h3 className="text-xl font-black text-slate-900">
                     {previewVehicle.marque} {previewVehicle.modele}
                   </h3>
-                  <p className="text-slate-400">{previewVehicle.finition || 'Standard'} • Année {previewVehicle.annee}</p>
+                  <p className="text-slate-500">{previewVehicle.finition || 'Standard'} • Année {previewVehicle.annee}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xl font-black text-emerald-400">${previewVehicle.prix?.toLocaleString('fr-FR')}</p>
-                  <p className="text-slate-500">{previewVehicle.kilometrage?.toLocaleString('fr-FR')} km</p>
+                  <p className="text-xl font-black text-emerald-600">${previewVehicle.prix?.toLocaleString('fr-FR')}</p>
+                  <p className="text-slate-400">{previewVehicle.kilometrage?.toLocaleString('fr-FR')} km</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <div className="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
                 <div>
-                  <span className="text-slate-500 block text-[10px]">Concession</span>
-                  <span className="text-white font-bold">{previewVehicle.dealership_nom || 'Particulier'}</span>
+                  <span className="text-slate-400 block text-[10px]">Concession</span>
+                  <span className="text-slate-800 font-bold">{previewVehicle.dealership_nom || 'Particulier'}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-[10px]">Ville</span>
-                  <span className="text-white font-bold">{previewVehicle.dealership_ville || 'Kinshasa'}</span>
+                  <span className="text-slate-400 block text-[10px]">Ville</span>
+                  <span className="text-slate-800 font-bold">{previewVehicle.dealership_ville || 'Kinshasa'}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-[10px]">Carburant</span>
-                  <span className="text-white font-bold">{previewVehicle.carburant}</span>
+                  <span className="text-slate-400 block text-[10px]">Carburant</span>
+                  <span className="text-slate-800 font-bold">{previewVehicle.carburant}</span>
                 </div>
                 <div>
-                  <span className="text-slate-500 block text-[10px]">Boîte</span>
-                  <span className="text-white font-bold">{previewVehicle.transmission}</span>
+                  <span className="text-slate-400 block text-[10px]">Boîte</span>
+                  <span className="text-slate-800 font-bold">{previewVehicle.transmission}</span>
                 </div>
               </div>
 
@@ -452,7 +452,7 @@ export const AdminVehiclesTab: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setPreviewVehicle(null)}
-                  className="bg-slate-800 hover:bg-slate-700 text-slate-200 px-5 py-2.5 rounded-xl font-bold transition cursor-pointer"
+                  className="bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2.5 rounded-xl font-bold transition cursor-pointer"
                 >
                   Fermer
                 </button>

@@ -310,20 +310,20 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-fadeIn font-sans">
-      <div className="bg-slate-900 border border-slate-700/80 rounded-3xl max-w-4xl w-full text-slate-100 shadow-2xl overflow-hidden my-6">
+    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-fadeIn font-sans">
+      <div className="bg-white border border-slate-200 rounded-3xl max-w-4xl w-full text-slate-900 shadow-2xl overflow-hidden my-6">
         
         {/* Modal Header */}
-        <div className="bg-slate-950 px-6 py-5 border-b border-slate-800 flex items-center justify-between">
+        <div className="bg-slate-50 px-6 py-5 border-b border-slate-200 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center justify-center font-bold">
+            <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 border border-amber-300 flex items-center justify-center font-bold shadow-xs">
               <Wrench className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-lg sm:text-xl font-black text-white">
+              <h2 className="text-lg sm:text-xl font-black text-slate-900">
                 {garageToEdit ? `Modifier : ${garageToEdit.nom}` : 'Ajouter un Nouveau Garage Partenaire'}
               </h2>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Gestion complète du profil d'atelier, coordonnées Kinshasa, services et dépannage SOS
               </p>
             </div>
@@ -331,7 +331,7 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white rounded-full bg-slate-900 border border-slate-800 transition cursor-pointer"
+            className="p-2 text-slate-500 hover:text-slate-900 rounded-full bg-white border border-slate-200 transition cursor-pointer shadow-xs"
           >
             <X className="w-5 h-5" />
           </button>
@@ -359,15 +359,15 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
         <form onSubmit={handleSubmit} className="p-6 space-y-6 max-h-[80vh] overflow-y-auto text-xs">
           
           {/* SECTION 1: INFORMATIONS GÉNÉRALES & RESPONSABLE */}
-          <div className="space-y-4 bg-slate-950 p-5 rounded-2xl border border-slate-800">
-            <h3 className="text-amber-400 font-bold uppercase tracking-wider flex items-center gap-2">
-              <User className="w-4 h-4" /> Identification & Direction de l'Atelier
+          <div className="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+            <h3 className="text-amber-800 font-bold uppercase tracking-wider flex items-center gap-2">
+              <User className="w-4 h-4 text-amber-600" /> Identification & Direction de l'Atelier
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1 sm:col-span-2">
-                <label className="block text-slate-300 font-bold">
-                  Nom Officiel de l'Atelier / Garage <span className="text-rose-400">*</span>
+                <label className="block text-slate-700 font-bold">
+                  Nom Officiel de l'Atelier / Garage <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -375,13 +375,13 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
                   placeholder="Ex: Garage Mécanique Pro Socimat, Expert Auto Kin..."
                   value={nom}
                   onChange={(e) => setNom(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white placeholder-slate-500 font-bold"
+                  className="w-full bg-white border border-slate-200 rounded-xl p-3 text-slate-900 placeholder-slate-400 font-bold focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="block text-slate-300 font-bold">
-                  Nom & Prénom du Maître Responsable <span className="text-rose-400">*</span>
+                <label className="block text-slate-700 font-bold">
+                  Nom & Prénom du Maître Responsable <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -389,12 +389,12 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
                   placeholder="Ex: Dieudonné Kabwe, Jean-Paul Tshimanga..."
                   value={responsable}
                   onChange={(e) => setResponsable(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white placeholder-slate-500"
+                  className="w-full bg-white border border-slate-200 rounded-xl p-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="block text-slate-300 font-bold">
+                <label className="block text-slate-700 font-bold">
                   Titre Professionnel / Rôle
                 </label>
                 <input
@@ -402,27 +402,27 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
                   placeholder="Ex: Chef d’Atelier & Électricien Diagnostic, Maître Mécanicien..."
                   value={titreResponsable}
                   onChange={(e) => setTitreResponsable(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white placeholder-slate-500"
+                  className="w-full bg-white border border-slate-200 rounded-xl p-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-500"
                 />
               </div>
             </div>
           </div>
 
           {/* SECTION 2: LOCALISATION PRÉCISE À KINSHASA */}
-          <div className="space-y-4 bg-slate-950 p-5 rounded-2xl border border-slate-800">
-            <h3 className="text-amber-400 font-bold uppercase tracking-wider flex items-center gap-2">
-              <MapPin className="w-4 h-4" /> Localisation & Repères Kinshasa
+          <div className="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+            <h3 className="text-amber-800 font-bold uppercase tracking-wider flex items-center gap-2">
+              <MapPin className="w-4 h-4 text-amber-600" /> Localisation & Repères Kinshasa
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="block text-slate-300 font-bold">
-                  Commune de Kinshasa <span className="text-rose-400">*</span>
+                <label className="block text-slate-700 font-bold">
+                  Commune de Kinshasa <span className="text-rose-500">*</span>
                 </label>
                 <select
                   value={commune}
                   onChange={(e) => setCommune(e.target.value as KinshasaCommune)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white"
+                  className="w-full bg-white border border-slate-200 rounded-xl p-3 text-slate-900 font-bold focus:outline-none focus:border-amber-500"
                 >
                   {KINSHASA_COMMUNES.map((c) => (
                     <option key={c} value={c}>
@@ -433,8 +433,8 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
               </div>
 
               <div className="space-y-1">
-                <label className="block text-slate-300 font-bold">
-                  Repère Visuel Clé (Crucial pour les clients) <span className="text-rose-400">*</span>
+                <label className="block text-slate-700 font-bold">
+                  Repère Visuel Clé (Crucial pour les clients) <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -442,13 +442,13 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
                   placeholder="Ex: En face de la station Total Socimat, Réf. Rond-point Ngaba..."
                   value={repere}
                   onChange={(e) => setRepere(e.target.value)}
-                  className="w-full bg-slate-900 border border-amber-500/40 rounded-xl p-3 text-amber-200 placeholder-slate-500 font-semibold"
+                  className="w-full bg-white border border-amber-300 rounded-xl p-3 text-amber-900 placeholder-slate-400 font-semibold focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div className="space-y-1 sm:col-span-2">
-                <label className="block text-slate-300 font-bold">
-                  Adresse Complète (Avenue, Numéro, Quartier) <span className="text-rose-400">*</span>
+                <label className="block text-slate-700 font-bold">
+                  Adresse Complète (Avenue, Numéro, Quartier) <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -456,22 +456,22 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
                   placeholder="Ex: 45 Avenue de la Justice, Quartier Batetela, Kinshasa"
                   value={adresse}
                   onChange={(e) => setAdresse(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white placeholder-slate-500"
+                  className="w-full bg-white border border-slate-200 rounded-xl p-3 text-slate-900 placeholder-slate-400 focus:outline-none focus:border-amber-500"
                 />
               </div>
             </div>
           </div>
 
           {/* SECTION 3: CONTACTS DIRECTS & WHATSAPP */}
-          <div className="space-y-4 bg-slate-950 p-5 rounded-2xl border border-slate-800">
-            <h3 className="text-amber-400 font-bold uppercase tracking-wider flex items-center gap-2">
-              <Phone className="w-4 h-4" /> Contacts Directs & Dépannage
+          <div className="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+            <h3 className="text-amber-800 font-bold uppercase tracking-wider flex items-center gap-2">
+              <Phone className="w-4 h-4 text-amber-600" /> Contacts Directs & Dépannage
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="block text-slate-300 font-bold">
-                  Téléphone Principal d'Appel <span className="text-rose-400">*</span>
+                <label className="block text-slate-700 font-bold">
+                  Téléphone Principal d'Appel <span className="text-rose-500">*</span>
                 </label>
                 <input
                   type="tel"
@@ -479,26 +479,26 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
                   placeholder="+243 81 234 5678"
                   value={telephonePrincipal}
                   onChange={(e) => setTelephonePrincipal(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white font-mono"
+                  className="w-full bg-white border border-slate-200 rounded-xl p-3 text-amber-800 font-mono font-bold focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="block text-slate-300 font-bold flex items-center justify-between">
+                <label className="block text-slate-700 font-bold flex items-center justify-between">
                   <span>Numéro WhatsApp Direct</span>
-                  <span className="text-[10px] text-emerald-400 font-normal">Devis & GPS</span>
+                  <span className="text-[10px] text-emerald-700 font-bold">Devis & GPS</span>
                 </label>
                 <input
                   type="tel"
                   placeholder="+243 89 123 4567"
                   value={whatsapp}
                   onChange={(e) => setWhatsapp(e.target.value)}
-                  className="w-full bg-slate-900 border border-emerald-500/40 rounded-xl p-3 text-emerald-300 font-mono"
+                  className="w-full bg-white border border-emerald-300 rounded-xl p-3 text-emerald-800 font-mono font-bold focus:outline-none focus:border-emerald-500"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="block text-slate-300 font-bold">
+                <label className="block text-slate-700 font-bold">
                   Téléphone Urgence Nuit (Optionnel)
                 </label>
                 <input
@@ -506,12 +506,12 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
                   placeholder="+243 99 000 1122"
                   value={telephoneUrgence}
                   onChange={(e) => setTelephoneUrgence(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white font-mono"
+                  className="w-full bg-white border border-slate-200 rounded-xl p-3 text-slate-900 font-mono focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="block text-slate-300 font-bold">
+                <label className="block text-slate-700 font-bold">
                   Email de Contact (Optionnel)
                 </label>
                 <input
@@ -519,32 +519,32 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
                   placeholder="contact@garage-kinshasa.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white"
+                  className="w-full bg-white border border-slate-200 rounded-xl p-3 text-slate-900 focus:outline-none focus:border-amber-500"
                 />
               </div>
             </div>
           </div>
 
           {/* SECTION 4: HORAIRES & OPTIONS STATUT EN 1 CLIC */}
-          <div className="space-y-4 bg-slate-950 p-5 rounded-2xl border border-slate-800">
-            <h3 className="text-amber-400 font-bold uppercase tracking-wider flex items-center gap-2">
-              <Clock className="w-4 h-4" /> Horaires & Statuts de Service
+          <div className="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+            <h3 className="text-amber-800 font-bold uppercase tracking-wider flex items-center gap-2">
+              <Clock className="w-4 h-4 text-amber-600" /> Horaires & Statuts de Service
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="block text-slate-300 font-bold">Horaires d'Ouverture d'Atelier</label>
+                <label className="block text-slate-700 font-bold">Horaires d'Ouverture d'Atelier</label>
                 <input
                   type="text"
                   placeholder="Lun - Sam: 07h30 - 18h00"
                   value={horaires}
                   onChange={(e) => setHoraires(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white"
+                  className="w-full bg-white border border-slate-200 rounded-xl p-3 text-slate-900 focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="block text-slate-300 font-bold">Note Globale d'Avis (sur 5.0)</label>
+                <label className="block text-slate-700 font-bold">Note Globale d'Avis (sur 5.0)</label>
                 <input
                   type="number"
                   step="0.1"
@@ -552,21 +552,21 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
                   max="5"
                   value={noteGlobale}
                   onChange={(e) => setNoteGlobale(parseFloat(e.target.value) || 5.0)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white font-mono"
+                  className="w-full bg-white border border-slate-200 rounded-xl p-3 text-slate-900 font-mono focus:outline-none focus:border-amber-500"
                 />
               </div>
             </div>
 
             {/* Toggle Badges */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
-              <label className={`p-3.5 rounded-2xl border flex items-center gap-3 cursor-pointer transition ${
-                estCertifie ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-300' : 'bg-slate-900 border-slate-800 text-slate-400'
+              <label className={`p-3.5 rounded-2xl border flex items-center gap-3 cursor-pointer transition shadow-xs ${
+                estCertifie ? 'bg-emerald-50 border-emerald-300 text-emerald-900 font-bold' : 'bg-white border-slate-200 text-slate-600'
               }`}>
                 <input
                   type="checkbox"
                   checked={estCertifie}
                   onChange={(e) => setEstCertifie(e.target.checked)}
-                  className="w-4 h-4 text-emerald-500 rounded"
+                  className="w-4 h-4 accent-emerald-600 rounded"
                 />
                 <div className="space-y-0.5">
                   <span className="font-black text-xs block">Atelier Certifié & Vérifié</span>
@@ -574,14 +574,14 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
                 </div>
               </label>
 
-              <label className={`p-3.5 rounded-2xl border flex items-center gap-3 cursor-pointer transition ${
-                estDepannageMobile24h ? 'bg-rose-500/15 border-rose-500/40 text-rose-300' : 'bg-slate-900 border-slate-800 text-slate-400'
+              <label className={`p-3.5 rounded-2xl border flex items-center gap-3 cursor-pointer transition shadow-xs ${
+                estDepannageMobile24h ? 'bg-rose-50 border-rose-300 text-rose-900 font-bold' : 'bg-white border-slate-200 text-slate-600'
               }`}>
                 <input
                   type="checkbox"
                   checked={estDepannageMobile24h}
                   onChange={(e) => setEstDepannageMobile24h(e.target.checked)}
-                  className="w-4 h-4 text-rose-500 rounded"
+                  className="w-4 h-4 accent-rose-600 rounded"
                 />
                 <div className="space-y-0.5">
                   <span className="font-black text-xs block">Dépannage Mobile SOS 24/7</span>
@@ -589,14 +589,14 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
                 </div>
               </label>
 
-              <label className={`p-3.5 rounded-2xl border flex items-center gap-3 cursor-pointer transition ${
-                ouvertDimanche ? 'bg-amber-500/15 border-amber-500/40 text-amber-300' : 'bg-slate-900 border-slate-800 text-slate-400'
+              <label className={`p-3.5 rounded-2xl border flex items-center gap-3 cursor-pointer transition shadow-xs ${
+                ouvertDimanche ? 'bg-amber-50 border-amber-300 text-amber-900 font-bold' : 'bg-white border-slate-200 text-slate-600'
               }`}>
                 <input
                   type="checkbox"
                   checked={ouvertDimanche}
                   onChange={(e) => setOuvertDimanche(e.target.checked)}
-                  className="w-4 h-4 text-amber-500 rounded"
+                  className="w-4 h-4 accent-amber-600 rounded"
                 />
                 <div className="space-y-0.5">
                   <span className="font-black text-xs block">Ouvert le Dimanche</span>
@@ -607,12 +607,12 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
           </div>
 
           {/* SECTION 5: PHOTOS (TÉLÉPHONE OU URL) */}
-          <div className="space-y-4 bg-slate-950 p-5 rounded-2xl border border-slate-800">
+          <div className="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
             <div className="flex items-center justify-between">
-              <h3 className="text-amber-400 font-bold uppercase tracking-wider flex items-center gap-2">
-                <Camera className="w-4 h-4" /> Photos de l'Atelier ({photos.length})
+              <h3 className="text-amber-800 font-bold uppercase tracking-wider flex items-center gap-2">
+                <Camera className="w-4 h-4 text-amber-600" /> Photos de l'Atelier ({photos.length})
               </h3>
-              <span className="text-[11px] text-slate-400">Devanture, matériel, équipement</span>
+              <span className="text-[11px] text-slate-500">Devanture, matériel, équipement</span>
             </div>
 
             {/* Direct Phone Upload Buttons */}
@@ -620,7 +620,7 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
               <button
                 type="button"
                 onClick={() => cameraInputRef.current?.click()}
-                className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black p-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer active:scale-98"
+                className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black p-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer active:scale-98 shadow-xs"
               >
                 <Camera className="w-4 h-4" />
                 <span>Prendre une photo (Appareil Smartphone)</span>
@@ -629,15 +629,15 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="bg-slate-900 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold p-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer active:scale-98"
+                className="bg-white hover:bg-slate-100 border border-slate-200 text-slate-800 font-bold p-3 rounded-xl flex items-center justify-center gap-2 transition cursor-pointer active:scale-98 shadow-xs"
               >
-                <ImageIcon className="w-4 h-4 text-amber-400" />
+                <ImageIcon className="w-4 h-4 text-amber-600" />
                 <span>Galerie du Téléphone</span>
               </button>
             </div>
 
             {isProcessingPhoto && (
-              <p className="text-amber-400 text-center animate-pulse">
+              <p className="text-amber-700 text-center animate-pulse">
                 Traitement des photos en cours...
               </p>
             )}
@@ -649,12 +649,12 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
                 placeholder="Ou coller une URL d'image web (https://...)..."
                 value={newImageUrl}
                 onChange={(e) => setNewImageUrl(e.target.value)}
-                className="flex-1 bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white"
+                className="flex-1 bg-white border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500"
               />
               <button
                 type="button"
                 onClick={handleAddPhotoUrl}
-                className="bg-slate-800 hover:bg-slate-700 text-white font-bold px-4 rounded-xl flex items-center gap-1.5 transition cursor-pointer"
+                className="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 font-bold px-4 rounded-xl flex items-center gap-1.5 transition cursor-pointer"
               >
                 <Plus className="w-4 h-4" /> Ajouter
               </button>
@@ -664,17 +664,17 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
             {photos.length > 0 && (
               <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 pt-2">
                 {photos.map((url, idx) => (
-                  <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-slate-800 bg-slate-900 group">
+                  <div key={idx} className="relative aspect-video rounded-xl overflow-hidden border border-slate-200 bg-white group shadow-xs">
                     <img src={url} alt={`Photo ${idx}`} className="w-full h-full object-cover" />
                     {idx === 0 && (
-                      <span className="absolute bottom-1 left-1 bg-amber-500 text-slate-950 font-black text-[8px] px-1 py-0.5 rounded">
+                      <span className="absolute bottom-1 left-1 bg-amber-500 text-slate-950 font-black text-[8px] px-1 py-0.5 rounded shadow">
                         Principale
                       </span>
                     )}
                     <button
                       type="button"
                       onClick={() => handleRemovePhoto(idx)}
-                      className="absolute top-1 right-1 p-1 bg-rose-600/90 text-white rounded-md opacity-80 group-hover:opacity-100 transition cursor-pointer"
+                      className="absolute top-1 right-1 p-1 bg-rose-600/90 text-white rounded-md opacity-80 group-hover:opacity-100 transition cursor-pointer shadow"
                       title="Supprimer la photo"
                     >
                       <Trash2 className="w-3 h-3" />
@@ -686,9 +686,9 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
           </div>
 
           {/* SECTION 6: SPÉCIALITÉS TECHNIQUES */}
-          <div className="space-y-3 bg-slate-950 p-5 rounded-2xl border border-slate-800">
-            <h3 className="text-amber-400 font-bold uppercase tracking-wider flex items-center gap-2">
-              <Wrench className="w-4 h-4" /> Spécialités Techniques & Compétences
+          <div className="space-y-3 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+            <h3 className="text-amber-800 font-bold uppercase tracking-wider flex items-center gap-2">
+              <Wrench className="w-4 h-4 text-amber-600" /> Spécialités Techniques & Compétences
             </h3>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -700,13 +700,13 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
                     key={spec}
                     type="button"
                     onClick={() => toggleSpecialty(spec)}
-                    className={`p-2.5 rounded-xl border text-left flex items-center gap-2 transition cursor-pointer ${
+                    className={`p-2.5 rounded-xl border text-left flex items-center gap-2 transition cursor-pointer shadow-xs ${
                       isSelected
-                        ? 'bg-amber-500/20 border-amber-500 text-amber-200 font-bold'
-                        : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                        ? 'bg-amber-100 border-amber-500 text-amber-950 font-bold'
+                        : 'bg-white border-slate-200 text-slate-700 hover:text-slate-900 hover:border-slate-300'
                     }`}
                   >
-                    <span className={`w-2 h-2 rounded-full ${isSelected ? 'bg-amber-400' : 'bg-slate-600'}`}></span>
+                    <span className={`w-2 h-2 rounded-full ${isSelected ? 'bg-amber-600' : 'bg-slate-300'}`}></span>
                     <span className="line-clamp-1">{info?.label || spec}</span>
                   </button>
                 );
@@ -715,9 +715,9 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
           </div>
 
           {/* SECTION 7: MARQUES MAÎTRISÉES */}
-          <div className="space-y-3 bg-slate-950 p-5 rounded-2xl border border-slate-800">
-            <h3 className="text-amber-400 font-bold uppercase tracking-wider flex items-center gap-2">
-              <Award className="w-4 h-4" /> Marques Automobiles Maîtrisées
+          <div className="space-y-3 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+            <h3 className="text-amber-800 font-bold uppercase tracking-wider flex items-center gap-2">
+              <Award className="w-4 h-4 text-amber-600" /> Marques Automobiles Maîtrisées
             </h3>
 
             <div className="flex flex-wrap gap-2">
@@ -728,10 +728,10 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
                     key={brand}
                     type="button"
                     onClick={() => toggleBrand(brand)}
-                    className={`px-3 py-1.5 rounded-lg border text-xs transition cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-lg border text-xs transition cursor-pointer shadow-xs ${
                       isSelected
-                        ? 'bg-sky-500/20 border-sky-400 text-sky-200 font-bold'
-                        : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
+                        ? 'bg-blue-100 border-blue-400 text-blue-950 font-bold'
+                        : 'bg-white border-slate-200 text-slate-700 hover:text-slate-900 hover:border-slate-300'
                     }`}
                   >
                     {brand}
@@ -746,12 +746,12 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
                 placeholder="Ajouter une autre marque (ex: Volvo, Jeep)..."
                 value={newBrandInput}
                 onChange={(e) => setNewBrandInput(e.target.value)}
-                className="flex-1 bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white"
+                className="flex-1 bg-white border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500"
               />
               <button
                 type="button"
                 onClick={handleAddCustomBrand}
-                className="bg-slate-800 hover:bg-slate-700 text-white font-bold px-4 rounded-xl flex items-center gap-1.5 transition cursor-pointer"
+                className="bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 font-bold px-4 rounded-xl flex items-center gap-1.5 transition cursor-pointer"
               >
                 <Plus className="w-4 h-4" /> Ajouter
               </button>
@@ -759,27 +759,70 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
           </div>
 
           {/* SECTION 8: TARIFS INDICATIFS */}
-          <div className="space-y-3 bg-slate-950 p-5 rounded-2xl border border-slate-800">
-            <h3 className="text-amber-400 font-bold uppercase tracking-wider flex items-center gap-2">
-              <DollarSign className="w-4 h-4" /> Grille Tarifaire Indicative Kinshasa
-            </h3>
+          <div className="space-y-3 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+            <div className="flex items-center justify-between">
+              <h3 className="text-amber-800 font-bold uppercase tracking-wider flex items-center gap-2">
+                <DollarSign className="w-4 h-4 text-amber-600" /> Grille Tarifaire Indicative Kinshasa
+              </h3>
+              <span className="text-[10px] text-slate-500 font-semibold">
+                {tarifs.length} prestation{tarifs.length > 1 ? 's' : ''} configurée{tarifs.length > 1 ? 's' : ''}
+              </span>
+            </div>
 
-            <div className="space-y-2">
-              {tarifs.map((t, idx) => (
-                <div key={idx} className="bg-slate-900 p-2.5 rounded-xl border border-slate-800 flex items-center justify-between gap-3">
-                  <span className="font-bold text-white flex-1">{t.prestation}</span>
-                  <span className="bg-emerald-500/20 text-emerald-400 font-mono font-bold px-2.5 py-1 rounded-lg border border-emerald-500/30">
-                    {t.prixEstime}
-                  </span>
+            {/* Suggestions en 1 clic */}
+            <div className="space-y-1 pt-1">
+              <span className="text-[10px] text-slate-500 font-bold block">
+                ⚡ Suggestions rapides de prix (cliquer pour ajouter directement à l'atelier) :
+              </span>
+              <div className="flex flex-wrap gap-1.5">
+                {[
+                  { prestation: 'Diagnostic Scanner Électronique', prixEstime: '25 $ (65.000 FC)' },
+                  { prestation: 'Vidange Moteur + Filtre à Huile', prixEstime: '35 $ (90.000 FC)' },
+                  { prestation: 'Recharge Climatisation (R134a)', prixEstime: '40 $ (100.000 FC)' },
+                  { prestation: 'Dépannage Batterie & Démarrage SOS', prixEstime: '20 $ (50.000 FC)' },
+                  { prestation: 'Remplacement Plaquettes de Frein', prixEstime: '25 $ (65.000 FC)' },
+                  { prestation: 'Remorquage Dépanneuse Plateau', prixEstime: '50 $ (130.000 FC)' }
+                ].map((p, idx) => (
                   <button
+                    key={idx}
                     type="button"
-                    onClick={() => handleRemoveTarif(idx)}
-                    className="p-1 text-slate-500 hover:text-rose-400 transition"
+                    onClick={() => {
+                      if (!tarifs.some(item => item.prestation.toLowerCase() === p.prestation.toLowerCase())) {
+                        setTarifs([...tarifs, p]);
+                      }
+                    }}
+                    className="bg-white hover:bg-emerald-50 text-[10px] text-slate-700 hover:text-emerald-900 border border-slate-200 hover:border-emerald-300 px-2.5 py-1 rounded-lg transition cursor-pointer flex items-center gap-1 shadow-xs active:scale-95"
                   >
-                    <Trash2 className="w-4 h-4" />
+                    <span className="text-emerald-600 font-bold">+</span>
+                    <span>{p.prestation}</span>
+                    <span className="font-mono text-emerald-700 font-bold">({p.prixEstime})</span>
                   </button>
-                </div>
-              ))}
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-2 pt-2">
+              {tarifs.length === 0 ? (
+                <p className="text-xs text-slate-400 italic p-3 bg-white rounded-xl border border-dashed border-slate-200 text-center">
+                  Aucun tarif n'a encore été défini. Ajoutez-en ci-dessous ou cliquez sur les suggestions rapides.
+                </p>
+              ) : (
+                tarifs.map((t, idx) => (
+                  <div key={idx} className="bg-white p-2.5 rounded-xl border border-slate-200 flex items-center justify-between gap-3 shadow-xs">
+                    <span className="font-bold text-slate-900 flex-1 text-xs">{t.prestation}</span>
+                    <span className="bg-emerald-100 text-emerald-800 font-mono font-bold px-2.5 py-1 rounded-lg border border-emerald-300 text-xs">
+                      {t.prixEstime}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTarif(idx)}
+                      className="p-1 text-slate-400 hover:text-rose-600 transition cursor-pointer"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))
+              )}
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2">
@@ -788,7 +831,7 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
                 placeholder="Prestation (ex: Changement Plaquettes)"
                 value={newPrestation}
                 onChange={(e) => setNewPrestation(e.target.value)}
-                className="sm:col-span-2 bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white"
+                className="sm:col-span-2 bg-white border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500"
               />
               <div className="flex gap-2">
                 <input
@@ -796,12 +839,12 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
                   placeholder="Prix (ex: 20 $ - 35 $)"
                   value={newPrix}
                   onChange={(e) => setNewPrix(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white"
+                  className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500"
                 />
                 <button
                   type="button"
                   onClick={handleAddTarif}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3.5 rounded-xl transition cursor-pointer shrink-0"
+                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3.5 rounded-xl transition cursor-pointer shrink-0 shadow-xs"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
@@ -810,10 +853,10 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
           </div>
 
           {/* SECTION 9: TARIFICATION SAAS & FORMULE D'ABONNEMENT */}
-          <div className="space-y-4 bg-slate-950 p-5 rounded-2xl border border-slate-800">
+          <div className="space-y-4 bg-slate-50 p-5 rounded-2xl border border-slate-200">
             <div className="flex items-center justify-between">
-              <h3 className="text-amber-400 font-bold uppercase tracking-wider flex items-center gap-2">
-                <CreditCard className="w-4 h-4" /> Formule SaaS & Statut d'Abonnement de l'Atelier
+              <h3 className="text-amber-800 font-bold uppercase tracking-wider flex items-center gap-2">
+                <CreditCard className="w-4 h-4 text-amber-600" /> Formule SaaS & Statut d'Abonnement de l'Atelier
               </h3>
               <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider">
                 Administration Centrale
@@ -830,21 +873,21 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
                       setPlanId(plan.id);
                       setPrixFactureMensuel(plan.prixMensuel);
                     }}
-                    className={`p-3.5 rounded-xl border transition cursor-pointer flex flex-col justify-between ${
+                    className={`p-3.5 rounded-xl border transition cursor-pointer flex flex-col justify-between shadow-xs ${
                       isSelected
-                        ? 'bg-amber-500/10 border-amber-500 text-white shadow-lg shadow-amber-500/10'
-                        : 'bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700'
+                        ? 'bg-amber-50 border-amber-500 text-slate-900 shadow-sm'
+                        : 'bg-white border-slate-200 text-slate-700 hover:border-slate-300'
                     }`}
                   >
                     <div>
                       <div className="flex items-center justify-between">
-                        <span className="font-black text-xs text-white">{plan.nom}</span>
-                        {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-amber-400" />}
+                        <span className="font-black text-xs text-slate-900">{plan.nom}</span>
+                        {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-amber-600" />}
                       </div>
-                      <p className="text-[10px] text-slate-400 mt-1 line-clamp-2">{plan.description}</p>
+                      <p className="text-[10px] text-slate-500 mt-1 line-clamp-2">{plan.description}</p>
                     </div>
-                    <div className="mt-3 pt-2 border-t border-slate-800/80">
-                      <span className="text-xs font-black text-amber-400 font-mono">
+                    <div className="mt-3 pt-2 border-t border-slate-100">
+                      <span className="text-xs font-black text-amber-800 font-mono">
                         {plan.prixMensuel.toLocaleString('fr-FR')} FC
                       </span>
                       <span className="text-[10px] text-slate-500"> / mois</span>
@@ -856,7 +899,7 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
               <div className="space-y-1">
-                <label className="block text-[11px] font-bold text-slate-300">
+                <label className="block text-[11px] font-bold text-slate-700">
                   Tarif Mensuel Facturé (FC) *
                 </label>
                 <input
@@ -864,18 +907,18 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
                   required
                   value={prixFactureMensuel}
                   onChange={(e) => setPrixFactureMensuel(Number(e.target.value))}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-amber-400 font-mono font-bold"
+                  className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-amber-800 font-mono font-bold focus:outline-none focus:border-amber-500"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[11px] font-bold text-slate-300">
+                <label className="block text-[11px] font-bold text-slate-700">
                   Statut de l'Abonnement *
                 </label>
                 <select
                   value={statutAbonnement}
                   onChange={(e) => setStatutAbonnement(e.target.value as SubscriptionStatus)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white"
+                  className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-900 font-medium focus:outline-none focus:border-amber-500"
                 >
                   <option value="essai_gratuit">🟡 Essai Gratuit Actif</option>
                   <option value="actif">🟢 Actif (Abonnement Payé)</option>
@@ -886,27 +929,27 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
               </div>
 
               <div className="space-y-1">
-                <label className="block text-[11px] font-bold text-slate-300">
+                <label className="block text-[11px] font-bold text-slate-700">
                   Fin Période d'Essai / Échéance
                 </label>
                 <input
                   type="date"
                   value={finEssaiGratuit}
                   onChange={(e) => setFinEssaiGratuit(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white font-mono"
+                  className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-900 font-mono focus:outline-none focus:border-amber-500"
                 />
               </div>
             </div>
 
-            <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between">
+            <div className="pt-2 border-t border-slate-200 flex items-center justify-between">
               <label className="flex items-center gap-2 cursor-pointer text-xs">
                 <input
                   type="checkbox"
                   checked={estMasque}
                   onChange={(e) => setEstMasque(e.target.checked)}
-                  className="w-4 h-4 rounded text-amber-500 focus:ring-amber-500 border-slate-700 bg-slate-900"
+                  className="w-4 h-4 rounded text-amber-600 focus:ring-amber-500 border-slate-300"
                 />
-                <span className="text-slate-300 font-bold">
+                <span className="text-slate-700 font-bold">
                   Masquer cet atelier du portail public (invisible pour les automobilistes)
                 </span>
               </label>
@@ -914,32 +957,32 @@ export const GarageFormModal: React.FC<GarageFormModalProps> = ({
           </div>
 
           {/* SECTION 10: DESCRIPTION DÉTAILLÉE */}
-          <div className="space-y-2 bg-slate-950 p-5 rounded-2xl border border-slate-800">
-            <h3 className="text-amber-400 font-bold uppercase tracking-wider flex items-center gap-2">
-              <Sparkles className="w-4 h-4" /> Présentation & Historique de l'Atelier
+          <div className="space-y-2 bg-slate-50 p-5 rounded-2xl border border-slate-200">
+            <h3 className="text-amber-800 font-bold uppercase tracking-wider flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-amber-600" /> Présentation & Historique de l'Atelier
             </h3>
             <textarea
               rows={4}
               placeholder="Décrivez l'historique du garage, les équipements clés, l'expérience des techniciens..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-white placeholder-slate-500 leading-relaxed"
+              className="w-full bg-white border border-slate-200 rounded-xl p-3 text-slate-900 placeholder-slate-400 leading-relaxed focus:outline-none focus:border-amber-500"
             ></textarea>
           </div>
 
           {/* Footer Submit Buttons */}
-          <div className="pt-4 border-t border-slate-800 flex items-center justify-end gap-3">
+          <div className="pt-4 border-t border-slate-200 flex items-center justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-5 py-3 rounded-xl transition cursor-pointer"
+              className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-5 py-3 rounded-xl transition cursor-pointer"
             >
               Annuler
             </button>
 
             <button
               type="submit"
-              className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-7 py-3 rounded-xl transition cursor-pointer shadow-lg shadow-amber-500/20 active:scale-98 flex items-center gap-2"
+              className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-7 py-3 rounded-xl transition cursor-pointer shadow-md shadow-amber-500/20 active:scale-98 flex items-center gap-2"
             >
               <CheckCircle2 className="w-4 h-4" />
               <span>{garageToEdit ? 'Enregistrer les Modifications' : 'Créer le Profil Garage'}</span>

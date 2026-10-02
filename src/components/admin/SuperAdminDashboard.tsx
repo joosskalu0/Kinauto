@@ -22,6 +22,7 @@ import { generateAnalyticsReport, initGoogleAnalytics, trackCustomEvent } from '
 import { DealershipGTM } from './DealershipGTM';
 import { GarageFormModal } from './GarageFormModal';
 import { GarageDetailModal } from '../garages/GarageDetailModal';
+import { GarageTarifsModal } from '../garages/GarageTarifsModal';
 import { AdminStatsTab } from './AdminStatsTab';
 import { AdminUsersTab } from './AdminUsersTab';
 import { AdminVehiclesTab } from './AdminVehiclesTab';
@@ -124,6 +125,7 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
   const [garageToEdit, setGarageToEdit] = useState<GarageProfile | null>(null);
   const [garageToDelete, setGarageToDelete] = useState<GarageProfile | null>(null);
   const [garageForDetail, setGarageForDetail] = useState<GarageProfile | null>(null);
+  const [garageForTarifs, setGarageForTarifs] = useState<GarageProfile | null>(null);
 
   // Edit Garage Custom Price Modal State
   const [editingGaragePrice, setEditingGaragePrice] = useState<GarageProfile | null>(null);
@@ -2552,6 +2554,14 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
                                   </button>
 
                                   <button
+                                    onClick={() => setGarageForTarifs(garage)}
+                                    className="p-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500 text-emerald-300 hover:text-slate-950 border border-emerald-500/40 transition cursor-pointer"
+                                    title="Donner / Gérer les tarifs & prix des prestations du garagiste"
+                                  >
+                                    <DollarSign className="w-3.5 h-3.5" />
+                                  </button>
+
+                                  <button
                                     onClick={() => setGarageForDetail(garage)}
                                     className="p-1.5 rounded-lg bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 transition cursor-pointer"
                                     title="Voir la fiche technique complète"
@@ -3354,40 +3364,54 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
         />
       )}
 
+      {/* GARAGE TARIFS & PRICES MODAL */}
+      <GarageTarifsModal
+        isOpen={Boolean(garageForTarifs)}
+        onClose={() => setGarageForTarifs(null)}
+        garage={garageForTarifs}
+        garagesList={garages}
+        onSaveTarifs={(updatedGarage) => {
+          if (onSaveGarage) {
+            onSaveGarage(updatedGarage);
+          }
+          setGarageForTarifs(null);
+        }}
+      />
+
       {/* DELETE GARAGE CONFIRMATION MODAL */}
       {garageToDelete && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-rose-500/40 text-slate-100 max-w-md w-full rounded-2xl shadow-2xl p-6 space-y-4">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-200 text-slate-900 max-w-md w-full rounded-3xl shadow-xl p-6 space-y-4">
             <div className="flex items-start gap-3">
-              <div className="p-3 bg-rose-500/20 text-rose-400 rounded-2xl border border-rose-500/30 shrink-0">
+              <div className="p-3 bg-rose-100 text-rose-600 rounded-2xl border border-rose-200 shrink-0">
                 <Trash2 className="w-6 h-6" />
               </div>
               <div className="space-y-1 flex-1">
-                <h3 className="text-lg font-black text-white">
+                <h3 className="text-lg font-black text-slate-900">
                   Supprimer définitivement l'atelier ?
                 </h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-500 leading-relaxed">
                   Cette action retirera ce garage du catalogue et de l'annuaire d'assistance Kinshasa.
                 </p>
               </div>
             </div>
 
-            <div className="p-3.5 bg-slate-950 rounded-xl border border-slate-800 text-xs space-y-1.5 font-sans">
+            <div className="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-1.5 font-sans">
               <div className="flex justify-between">
-                <span className="text-slate-400">Atelier :</span>
-                <span className="font-bold text-white">{garageToDelete.nom}</span>
+                <span className="text-slate-500">Atelier :</span>
+                <span className="font-bold text-slate-900">{garageToDelete.nom}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Responsable :</span>
-                <span className="text-slate-300">{garageToDelete.responsable}</span>
+                <span className="text-slate-500">Responsable :</span>
+                <span className="text-slate-700">{garageToDelete.responsable}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Commune :</span>
-                <span className="font-bold text-amber-400">{garageToDelete.commune}</span>
+                <span className="text-slate-500">Commune :</span>
+                <span className="font-bold text-amber-700">{garageToDelete.commune}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-400">Téléphone :</span>
-                <span className="text-slate-300 font-mono">{garageToDelete.telephonePrincipal}</span>
+                <span className="text-slate-500">Téléphone :</span>
+                <span className="text-slate-700 font-mono">{garageToDelete.telephonePrincipal}</span>
               </div>
             </div>
 
@@ -3395,7 +3419,7 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
               <button
                 type="button"
                 onClick={() => setGarageToDelete(null)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs cursor-pointer"
+                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs cursor-pointer shadow-xs"
               >
                 Annuler
               </button>
@@ -3407,7 +3431,7 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
                   }
                   setGarageToDelete(null);
                 }}
-                className="px-5 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-lg shadow-rose-600/30 cursor-pointer"
+                className="px-5 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow-md shadow-rose-600/20 cursor-pointer active:scale-95"
               >
                 <Trash2 className="w-3.5 h-3.5" /> Confirmer la Suppression
               </button>

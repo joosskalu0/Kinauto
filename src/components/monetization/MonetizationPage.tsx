@@ -59,18 +59,18 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 pb-20">
+    <div className="min-h-screen bg-[#f8fafc] text-slate-900 pb-20 font-sans">
       {/* Hero Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-b from-blue-950/60 via-slate-900 to-slate-950 border-b border-slate-800 pt-10 pb-16 px-4 sm:px-6 lg:px-8">
+      <div className="relative overflow-hidden bg-gradient-to-b from-slate-100 via-blue-50/20 to-[#f8fafc] border-b border-slate-200 pt-10 pb-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto text-center space-y-4 relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-bold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold uppercase tracking-wider shadow-xs">
+            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
             <span>Modèles Économiques & Monétisation de la Plateforme</span>
           </div>
-          <h1 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
+          <h1 className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight">
             Tarifs Transparents & Solutions de Visibilité
           </h1>
-          <p className="text-sm sm:text-base text-slate-300 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 max-w-3xl mx-auto leading-relaxed">
             Que vous soyez un particulier vendeur, un concessionnaire professionnel, un atelier de réparation ou un annonceur, accédez à des offres adaptées au marché automobile de Kinshasa et de la RDC.
           </p>
 
@@ -81,10 +81,10 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
               className={`px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'annonces'
                   ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30'
-                  : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                  : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-xs'
               }`}
             >
-              <Car className="w-4 h-4 text-blue-300" />
+              <Car className="w-4 h-4 text-blue-500" />
               <span>1. Annonces & Visibilité</span>
             </button>
 
@@ -93,10 +93,10 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
               className={`px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'concessions'
                   ? 'bg-amber-600 text-white shadow-lg shadow-amber-600/30'
-                  : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                  : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-xs'
               }`}
             >
-              <Crown className="w-4 h-4 text-amber-300" />
+              <Crown className="w-4 h-4 text-amber-500" />
               <span>2. Abonnements Concessions</span>
             </button>
 
@@ -105,10 +105,10 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
               className={`px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'garages'
                   ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-600/30'
-                  : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                  : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-xs'
               }`}
             >
-              <Wrench className="w-4 h-4 text-emerald-300" />
+              <Wrench className="w-4 h-4 text-emerald-500" />
               <span>3. Abonnements Garages</span>
             </button>
 
@@ -117,10 +117,10 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
               className={`px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'publicite'
                   ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/30'
-                  : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                  : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-xs'
               }`}
             >
-              <Megaphone className="w-4 h-4 text-purple-300" />
+              <Megaphone className="w-4 h-4 text-purple-500" />
               <span>4. Régie Publicitaire</span>
             </button>
 
@@ -129,10 +129,10 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
               className={`px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'paiements'
                   ? 'bg-slate-800 text-white shadow-lg border border-slate-700'
-                  : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800'
+                  : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-xs'
               }`}
             >
-              <CreditCard className="w-4 h-4 text-cyan-400" />
+              <CreditCard className="w-4 h-4 text-cyan-600" />
               <span>5. Architecture de Paiement</span>
             </button>
           </div>
@@ -165,46 +165,46 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
           <div className="space-y-12">
             <div>
               <div className="text-center max-w-2xl mx-auto mb-8 space-y-2">
-                <h2 className="text-2xl sm:text-3xl font-black text-white">Formules de Publication de Véhicules</h2>
-                <p className="text-xs sm:text-sm text-slate-400">
+                <h2 className="text-2xl sm:text-3xl font-black text-slate-900">Formules de Publication de Véhicules</h2>
+                <p className="text-xs sm:text-sm text-slate-600">
                   Choisissez le niveau d’exposition pour vendre votre véhicule rapidement aux meilleurs acheteurs de Kinshasa.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* 1. ANNONCE GRATUITE (STANDARD) */}
-                <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 flex flex-col justify-between hover:border-slate-700 transition">
+                <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 flex flex-col justify-between hover:border-slate-300 transition shadow-xs">
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-black uppercase tracking-wider text-slate-400 bg-slate-800 px-3 py-1 rounded-full">
+                      <span className="text-xs font-black uppercase tracking-wider text-slate-600 bg-slate-100 px-3 py-1 rounded-full">
                         Standard
                       </span>
                       <span className="text-xs text-slate-500">Valable 30 jours</span>
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-white">Annonce Gratuite</h3>
-                      <p className="text-xs text-slate-400 mt-1">L’essentiel pour vendre son véhicule sans engagement financier.</p>
+                      <h3 className="text-xl font-bold text-slate-900">Annonce Gratuite</h3>
+                      <p className="text-xs text-slate-500 mt-1">L’essentiel pour vendre son véhicule sans engagement financier.</p>
                     </div>
                     <div className="pt-2">
-                      <span className="text-4xl font-black text-white">0 $</span>
-                      <span className="text-xs text-slate-400 ml-2">/ annonce</span>
+                      <span className="text-4xl font-black text-slate-900">0 $</span>
+                      <span className="text-xs text-slate-500 ml-2">/ annonce</span>
                     </div>
 
-                    <div className="pt-4 border-t border-slate-800/80 space-y-3">
-                      <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                        <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <div className="pt-4 border-t border-slate-200 space-y-3">
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                         <span>Visibilité standard dans les filtres</span>
                       </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                        <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                         <span>Jusqu’à <strong>5 photos</strong> du véhicule</span>
                       </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                        <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                         <span>Contact WhatsApp & Appel direct</span>
                       </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                        <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                         <span>Fiche descriptive complète</span>
                       </div>
                     </div>
@@ -213,7 +213,7 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
                   <div className="pt-6">
                     <button
                       onClick={onOpenAddVehicleModal || onBackToPublic}
-                      className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition cursor-pointer"
+                      className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 rounded-xl text-xs font-bold transition cursor-pointer shadow-xs"
                     >
                       Publier gratuitement
                     </button>
@@ -221,46 +221,46 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
                 </div>
 
                 {/* 2. ANNONCE PREMIUM (POPULAIRE) */}
-                <div className="bg-gradient-to-b from-slate-900 to-amber-950/30 border-2 border-amber-500/70 rounded-3xl p-6 sm:p-7 flex flex-col justify-between relative shadow-xl shadow-amber-500/5">
+                <div className="bg-gradient-to-b from-white to-amber-50/40 border-2 border-amber-400 rounded-3xl p-6 sm:p-7 flex flex-col justify-between relative shadow-lg shadow-amber-500/5">
                   <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-amber-500 text-slate-950 text-[11px] font-black uppercase tracking-wider px-3.5 py-0.5 rounded-full shadow-md">
                     ⭐ Recommandé • Vente 2x plus rapide
                   </div>
 
                   <div className="space-y-4">
                     <div className="flex items-center justify-between pt-1">
-                      <span className="text-xs font-black uppercase tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full">
+                      <span className="text-xs font-black uppercase tracking-wider text-amber-700 bg-amber-100 border border-amber-300 px-3 py-1 rounded-full">
                         Premium
                       </span>
-                      <span className="text-xs text-amber-300/80">Valable 60 jours</span>
+                      <span className="text-xs text-amber-800">Valable 60 jours</span>
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-white">Annonce Premium</h3>
-                      <p className="text-xs text-slate-300 mt-1">Mise en avant dorée, priorité de tri et album complet.</p>
+                      <h3 className="text-xl font-bold text-slate-900">Annonce Premium</h3>
+                      <p className="text-xs text-slate-600 mt-1">Mise en avant dorée, priorité de tri et album complet.</p>
                     </div>
                     <div className="pt-2">
-                      <span className="text-4xl font-black text-amber-400">{formatPrice(15)}</span>
-                      <span className="text-xs text-slate-400 ml-2">/ annonce unique</span>
+                      <span className="text-4xl font-black text-amber-700">{formatPrice(15)}</span>
+                      <span className="text-xs text-slate-500 ml-2">/ annonce unique</span>
                     </div>
 
-                    <div className="pt-4 border-t border-slate-800/80 space-y-3">
-                      <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                        <Check className="w-4 h-4 text-amber-400 shrink-0" />
+                    <div className="pt-4 border-t border-slate-200 space-y-3">
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Check className="w-4 h-4 text-amber-600 shrink-0" />
                         <span><strong>Badge « ⭐ PREMIUM »</strong> et liseré doré</span>
                       </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                        <Check className="w-4 h-4 text-amber-400 shrink-0" />
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Check className="w-4 h-4 text-amber-600 shrink-0" />
                         <span>Priorité de position au-dessus des annonces gratuites</span>
                       </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                        <Check className="w-4 h-4 text-amber-400 shrink-0" />
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Check className="w-4 h-4 text-amber-600 shrink-0" />
                         <span>Jusqu’à <strong>15 photos</strong> haute résolution</span>
                       </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                        <Check className="w-4 h-4 text-amber-400 shrink-0" />
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Check className="w-4 h-4 text-amber-600 shrink-0" />
                         <span>Durée doublée : <strong>60 jours</strong> d’affichage</span>
                       </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                        <Check className="w-4 h-4 text-amber-400 shrink-0" />
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Check className="w-4 h-4 text-amber-600 shrink-0" />
                         <span>Statistiques de consultations et de clics</span>
                       </div>
                     </div>
@@ -269,7 +269,7 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
                   <div className="pt-6">
                     <button
                       onClick={() => handleSimulateOrder('Annonce Premium (Option 15$)', 15, 'listing_tier')}
-                      className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs sm:text-sm transition shadow-lg cursor-pointer flex items-center justify-center gap-2"
+                      className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs sm:text-sm transition shadow-md cursor-pointer flex items-center justify-center gap-2"
                     >
                       <Sparkles className="w-4 h-4" />
                       <span>Choisir la Formule Premium</span>
@@ -278,42 +278,42 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
                 </div>
 
                 {/* 3. ANNONCE À LA UNE / EN VEDETTE */}
-                <div className="bg-gradient-to-b from-slate-900 to-purple-950/30 border border-purple-800/60 rounded-3xl p-6 sm:p-7 flex flex-col justify-between hover:border-purple-500 transition">
+                <div className="bg-gradient-to-b from-white to-purple-50/40 border border-purple-200 rounded-3xl p-6 sm:p-7 flex flex-col justify-between hover:border-purple-300 transition shadow-xs">
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-black uppercase tracking-wider text-purple-400 bg-purple-500/10 border border-purple-500/30 px-3 py-1 rounded-full flex items-center gap-1">
+                      <span className="text-xs font-black uppercase tracking-wider text-purple-700 bg-purple-100 border border-purple-200 px-3 py-1 rounded-full flex items-center gap-1">
                         <Flame className="w-3.5 h-3.5" /> À La Une VIP
                       </span>
-                      <span className="text-xs text-purple-300/80">Valable 30 jours</span>
+                      <span className="text-xs text-purple-700">Valable 30 jours</span>
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-white">Annonce En Vedette</h3>
-                      <p className="text-xs text-slate-300 mt-1">L’impact maximal : carrousel d’accueil et x5 contacts garantis.</p>
+                      <h3 className="text-xl font-bold text-slate-900">Annonce En Vedette</h3>
+                      <p className="text-xs text-slate-600 mt-1">L’impact maximal : carrousel d’accueil et x5 contacts garantis.</p>
                     </div>
                     <div className="pt-2">
-                      <span className="text-4xl font-black text-purple-400">{formatPrice(29)}</span>
-                      <span className="text-xs text-slate-400 ml-2">/ annonce</span>
+                      <span className="text-4xl font-black text-purple-700">{formatPrice(29)}</span>
+                      <span className="text-xs text-slate-500 ml-2">/ annonce</span>
                     </div>
 
-                    <div className="pt-4 border-t border-slate-800/80 space-y-3">
-                      <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                        <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                    <div className="pt-4 border-t border-slate-200 space-y-3">
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Check className="w-4 h-4 text-purple-600 shrink-0" />
                         <span><strong>Carrousel « À la Une »</strong> sur la page d'accueil</span>
                       </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                        <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Check className="w-4 h-4 text-purple-600 shrink-0" />
                         <span>Badge flamboyant <strong>« 🔥 À LA UNE »</strong></span>
                       </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                        <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Check className="w-4 h-4 text-purple-600 shrink-0" />
                         <span>Tête de liste garantie dans toutes les recherches</span>
                       </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                        <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Check className="w-4 h-4 text-purple-600 shrink-0" />
                         <span>Jusqu’à <strong>30 photos + vidéo</strong></span>
                       </div>
-                      <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                        <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                      <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                        <Check className="w-4 h-4 text-purple-600 shrink-0" />
                         <span>Relai sur les canaux officiels WhatsApp</span>
                       </div>
                     </div>
@@ -322,7 +322,7 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
                   <div className="pt-6">
                     <button
                       onClick={() => handleSimulateOrder('Annonce À la Une Vedette (29$)', 29, 'listing_tier')}
-                      className="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs sm:text-sm transition shadow-lg cursor-pointer"
+                      className="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs sm:text-sm transition shadow-md cursor-pointer"
                     >
                       Mettre À la Une (29 $)
                     </button>
@@ -332,93 +332,93 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
             </div>
 
             {/* OPTIONS DE VISIBILITÉ À LA CARTE */}
-            <div className="pt-6 border-t border-slate-800/80 space-y-6">
+            <div className="pt-6 border-t border-slate-200 space-y-6">
               <div>
-                <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-amber-400" />
+                <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-amber-500" />
                   <span>Options de Visibilité à la Carte (Micro-Boosts)</span>
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-400 mt-1">
+                <p className="text-xs sm:text-sm text-slate-600 mt-1">
                   Activez un coup de pouce ponctuel sur une annonce existante à tout moment.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* Micro Boost 1 */}
-                <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition">
+                <div className="bg-white border border-slate-200 p-4 rounded-2xl flex flex-col justify-between hover:border-slate-300 transition shadow-xs">
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-black text-blue-400">7 Jours</span>
-                      <span className="text-base font-black text-white">{formatPrice(5)}</span>
+                      <span className="text-xs font-black text-blue-600">7 Jours</span>
+                      <span className="text-base font-black text-slate-900">{formatPrice(5)}</span>
                     </div>
-                    <h4 className="text-sm font-bold text-white">Remontée en tête</h4>
-                    <p className="text-xs text-slate-400 leading-snug">
+                    <h4 className="text-sm font-bold text-slate-900">Remontée en tête</h4>
+                    <p className="text-xs text-slate-600 leading-snug">
                       Repositionne instantanément votre véhicule en 1ère position des résultats.
                     </p>
                   </div>
                   <button
                     onClick={() => handleSimulateOrder('Remontée en tête de recherche', 5, 'visibility_boost')}
-                    className="mt-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
+                    className="mt-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
                   >
                     Activer (5 $)
                   </button>
                 </div>
 
                 {/* Micro Boost 2 */}
-                <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition">
+                <div className="bg-white border border-slate-200 p-4 rounded-2xl flex flex-col justify-between hover:border-slate-300 transition shadow-xs">
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-black text-rose-400">14 Jours</span>
-                      <span className="text-base font-black text-white">{formatPrice(3)}</span>
+                      <span className="text-xs font-black text-rose-600">14 Jours</span>
+                      <span className="text-base font-black text-slate-900">{formatPrice(3)}</span>
                     </div>
-                    <h4 className="text-sm font-bold text-white">Badge « 🚨 Urgent »</h4>
-                    <p className="text-xs text-slate-400 leading-snug">
+                    <h4 className="text-sm font-bold text-slate-900">Badge « 🚨 Urgent »</h4>
+                    <p className="text-xs text-slate-600 leading-snug">
                       Signale un prix négociable ou une vente rapide aux acheteurs réactifs.
                     </p>
                   </div>
                   <button
                     onClick={() => handleSimulateOrder('Badge Vente Urgente', 3, 'visibility_boost')}
-                    className="mt-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
+                    className="mt-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
                   >
                     Activer (3 $)
                   </button>
                 </div>
 
                 {/* Micro Boost 3 */}
-                <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition">
+                <div className="bg-white border border-slate-200 p-4 rounded-2xl flex flex-col justify-between hover:border-slate-300 transition shadow-xs">
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-black text-emerald-400">30 Jours</span>
-                      <span className="text-base font-black text-white">{formatPrice(7)}</span>
+                      <span className="text-xs font-black text-emerald-600">30 Jours</span>
+                      <span className="text-base font-black text-slate-900">{formatPrice(7)}</span>
                     </div>
-                    <h4 className="text-sm font-bold text-white">Badge « 🛡️ Certifié »</h4>
-                    <p className="text-xs text-slate-400 leading-snug">
+                    <h4 className="text-sm font-bold text-slate-900">Badge « 🛡️ Certifié »</h4>
+                    <p className="text-xs text-slate-600 leading-snug">
                       Label de confiance après contrôle du carnet d’entretien et du châssis VIN.
                     </p>
                   </div>
                   <button
                     onClick={() => handleSimulateOrder('Badge Véhicule Certifié & Garanti', 7, 'visibility_boost')}
-                    className="mt-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
+                    className="mt-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
                   >
                     Activer (7 $)
                   </button>
                 </div>
 
                 {/* Micro Boost 4 */}
-                <div className="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition">
+                <div className="bg-white border border-slate-200 p-4 rounded-2xl flex flex-col justify-between hover:border-slate-300 transition shadow-xs">
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-black text-purple-400">14 Jours</span>
-                      <span className="text-base font-black text-white">{formatPrice(12)}</span>
+                      <span className="text-xs font-black text-purple-600">14 Jours</span>
+                      <span className="text-base font-black text-slate-900">{formatPrice(12)}</span>
                     </div>
-                    <h4 className="text-sm font-bold text-white">Carrousel Accueil</h4>
-                    <p className="text-xs text-slate-400 leading-snug">
+                    <h4 className="text-sm font-bold text-slate-900">Carrousel Accueil</h4>
+                    <p className="text-xs text-slate-600 leading-snug">
                       Présence dans le bandeau supérieur de l’accueil avec les véhicules stars.
                     </p>
                   </div>
                   <button
                     onClick={() => handleSimulateOrder('Encart Carrousel Accueil 14j', 12, 'visibility_boost')}
-                    className="mt-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
+                    className="mt-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-200 rounded-xl text-xs font-semibold transition cursor-pointer"
                   >
                     Activer (12 $)
                   </button>
@@ -434,66 +434,66 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
         {activeTab === 'concessions' && (
           <div className="space-y-8">
             <div className="text-center max-w-2xl mx-auto space-y-2">
-              <h2 className="text-2xl sm:text-3xl font-black text-white">Abonnements Concessions Automobiles</h2>
-              <p className="text-xs sm:text-sm text-slate-400">
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900">Abonnements Concessions Automobiles</h2>
+              <p className="text-xs sm:text-sm text-slate-600">
                 Gérez tout votre stock, collectez des leads qualifiés WhatsApp et développez votre notoriété à Kinshasa.
               </p>
 
               {/* Billing Cycle Switch */}
               <div className="pt-4 flex items-center justify-center gap-3">
-                <span className={`text-xs font-bold ${billingCycle === 'monthly' ? 'text-white' : 'text-slate-500'}`}>
+                <span className={`text-xs font-bold ${billingCycle === 'monthly' ? 'text-slate-900' : 'text-slate-500'}`}>
                   Facturation Mensuelle
                 </span>
                 <button
                   onClick={() => setBillingCycle(prev => prev === 'monthly' ? 'annual' : 'monthly')}
-                  className="w-12 h-6 bg-slate-800 rounded-full p-1 border border-slate-700 relative transition cursor-pointer"
+                  className="w-12 h-6 bg-slate-200 rounded-full p-1 border border-slate-300 relative transition cursor-pointer"
                 >
-                  <div className={`w-4 h-4 bg-amber-400 rounded-full transition-transform ${billingCycle === 'annual' ? 'translate-x-6' : 'translate-x-0'}`} />
+                  <div className={`w-4 h-4 bg-amber-500 rounded-full transition-transform ${billingCycle === 'annual' ? 'translate-x-6' : 'translate-x-0'}`} />
                 </button>
-                <span className={`text-xs font-bold flex items-center gap-1 ${billingCycle === 'annual' ? 'text-white' : 'text-slate-500'}`}>
+                <span className={`text-xs font-bold flex items-center gap-1 ${billingCycle === 'annual' ? 'text-slate-900' : 'text-slate-500'}`}>
                   <span>Facturation Annuelle</span>
-                  <span className="bg-emerald-500/20 text-emerald-400 text-[10px] px-2 py-0.5 rounded-full font-bold">2 mois offerts</span>
+                  <span className="bg-emerald-100 text-emerald-700 text-[10px] px-2 py-0.5 rounded-full font-bold">2 mois offerts</span>
                 </span>
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* DEALER 1: STARTER */}
-              <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 flex flex-col justify-between hover:border-slate-700 transition">
+              <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 flex flex-col justify-between hover:border-slate-300 shadow-xs transition">
                 <div className="space-y-4">
-                  <span className="text-xs font-black uppercase tracking-wider text-slate-400 bg-slate-800 px-3 py-1 rounded-full">
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-700 bg-slate-100 px-3 py-1 rounded-full">
                     Starter Parc
                   </span>
                   <div>
-                    <h3 className="text-xl font-bold text-white">Formule Découverte</h3>
-                    <p className="text-xs text-slate-400 mt-1">Idéal pour démarrer avec un stock de 15 véhicules.</p>
+                    <h3 className="text-xl font-bold text-slate-900">Formule Découverte</h3>
+                    <p className="text-xs text-slate-500 mt-1">Idéal pour démarrer avec un stock de 15 véhicules.</p>
                   </div>
                   <div className="pt-2">
-                    <span className="text-4xl font-black text-white">
+                    <span className="text-4xl font-black text-slate-900">
                       {formatPrice(billingCycle === 'annual' ? 40 : 49)}
                     </span>
-                    <span className="text-xs text-slate-400 ml-2">/ mois</span>
+                    <span className="text-xs text-slate-500 ml-2">/ mois</span>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-800/80 space-y-3">
-                    <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <div className="pt-4 border-t border-slate-100 space-y-3">
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span>Jusqu’à <strong>15 véhicules</strong> en ligne</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span><strong>1 annonce À la Une</strong> offerte / mois</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span>Vitrine personnalisée avec logo & contact</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span>Générateur d’annonces avec IA Gemini</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span>Commission sur les ventes : <strong>0%</strong></span>
                     </div>
                   </div>
@@ -502,7 +502,7 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
                 <div className="pt-6">
                   <button
                     onClick={() => handleSimulateOrder('Abonnement Concession Starter (49$/mois)', 49, 'dealership_subscription')}
-                    className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition cursor-pointer"
+                    className="w-full py-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 rounded-xl text-xs font-bold transition cursor-pointer"
                   >
                     Souscrire Starter
                   </button>
@@ -510,49 +510,49 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
               </div>
 
               {/* DEALER 2: PRO (BEST-SELLER) */}
-              <div className="bg-gradient-to-b from-slate-900 to-amber-950/40 border-2 border-amber-500 rounded-3xl p-6 sm:p-7 flex flex-col justify-between relative shadow-xl">
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-amber-500 text-slate-950 text-[11px] font-black uppercase tracking-wider px-3.5 py-0.5 rounded-full shadow-md">
+              <div className="bg-gradient-to-b from-white to-amber-50/40 border-2 border-amber-500 rounded-3xl p-6 sm:p-7 flex flex-col justify-between relative shadow-md">
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-amber-500 text-slate-950 text-[11px] font-black uppercase tracking-wider px-3.5 py-0.5 rounded-full shadow-sm">
                   Le Choix des Concessions Actives
                 </div>
 
                 <div className="space-y-4">
-                  <span className="text-xs font-black uppercase tracking-wider text-amber-400 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full">
+                  <span className="text-xs font-black uppercase tracking-wider text-amber-700 bg-amber-100 border border-amber-200 px-3 py-1 rounded-full">
                     Concessionnaire Pro
                   </span>
                   <div>
-                    <h3 className="text-xl font-bold text-white">Formule Pro Kinshasa</h3>
-                    <p className="text-xs text-slate-300 mt-1">Rotation accélérée et gestion avancée de la clientèle.</p>
+                    <h3 className="text-xl font-bold text-slate-900">Formule Pro Kinshasa</h3>
+                    <p className="text-xs text-slate-600 mt-1">Rotation accélérée et gestion avancée de la clientèle.</p>
                   </div>
                   <div className="pt-2">
-                    <span className="text-4xl font-black text-amber-400">
+                    <span className="text-4xl font-black text-amber-600">
                       {formatPrice(billingCycle === 'annual' ? 82 : 99)}
                     </span>
-                    <span className="text-xs text-slate-400 ml-2">/ mois</span>
+                    <span className="text-xs text-slate-500 ml-2">/ mois</span>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-800/80 space-y-3">
-                    <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                      <Check className="w-4 h-4 text-amber-400 shrink-0" />
+                  <div className="pt-4 border-t border-amber-100 space-y-3">
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-amber-600 shrink-0" />
                       <span>Jusqu’à <strong>50 véhicules</strong> en simultané</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                      <Check className="w-4 h-4 text-amber-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-amber-600 shrink-0" />
                       <span><strong>5 annonces À la Une</strong> offertes / mois</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                      <Check className="w-4 h-4 text-amber-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-amber-600 shrink-0" />
                       <span>Toutes les annonces en statut <strong>⭐ PREMIUM</strong></span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                      <Check className="w-4 h-4 text-amber-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-amber-600 shrink-0" />
                       <span>CRM de gestion des leads et demandes d’essais</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                      <Check className="w-4 h-4 text-amber-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-amber-600 shrink-0" />
                       <span>Badge officiel « Concession Vérifiée »</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                      <Check className="w-4 h-4 text-amber-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-amber-600 shrink-0" />
                       <span>Statistiques détaillées de fréquentation</span>
                     </div>
                   </div>
@@ -561,7 +561,7 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
                 <div className="pt-6">
                   <button
                     onClick={() => handleSimulateOrder('Abonnement Concession Pro (99$/mois)', 99, 'dealership_subscription')}
-                    className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs sm:text-sm transition shadow-lg cursor-pointer"
+                    className="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs sm:text-sm transition shadow-sm cursor-pointer"
                   >
                     Souscrire Concession Pro
                   </button>
@@ -569,41 +569,41 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
               </div>
 
               {/* DEALER 3: ELITE */}
-              <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 flex flex-col justify-between hover:border-slate-700 transition">
+              <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 flex flex-col justify-between hover:border-slate-300 shadow-xs transition">
                 <div className="space-y-4">
-                  <span className="text-xs font-black uppercase tracking-wider text-purple-400 bg-purple-500/10 border border-purple-500/30 px-3 py-1 rounded-full">
+                  <span className="text-xs font-black uppercase tracking-wider text-purple-700 bg-purple-100 border border-purple-200 px-3 py-1 rounded-full">
                     Élite Multi-Sites
                   </span>
                   <div>
-                    <h3 className="text-xl font-bold text-white">Formule Groupe & Réseau</h3>
-                    <p className="text-xs text-slate-400 mt-1">Pour grands groupes, importateurs et concessions multi-adresses.</p>
+                    <h3 className="text-xl font-bold text-slate-900">Formule Groupe & Réseau</h3>
+                    <p className="text-xs text-slate-500 mt-1">Pour grands groupes, importateurs et concessions multi-adresses.</p>
                   </div>
                   <div className="pt-2">
-                    <span className="text-4xl font-black text-purple-400">
+                    <span className="text-4xl font-black text-purple-600">
                       {formatPrice(billingCycle === 'annual' ? 165 : 199)}
                     </span>
-                    <span className="text-xs text-slate-400 ml-2">/ mois</span>
+                    <span className="text-xs text-slate-500 ml-2">/ mois</span>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-800/80 space-y-3">
-                    <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                      <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                  <div className="pt-4 border-t border-slate-100 space-y-3">
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-purple-600 shrink-0" />
                       <span>Véhicules <strong>ILLIMITÉS</strong></span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                      <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-purple-600 shrink-0" />
                       <span><strong>15 annonces À la Une</strong> chaque mois</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                      <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-purple-600 shrink-0" />
                       <span>Import automatique de votre catalogue (API / CSV)</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                      <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-purple-600 shrink-0" />
                       <span>Chargé de compte dédié à Kinshasa</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                      <Check className="w-4 h-4 text-purple-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-purple-600 shrink-0" />
                       <span>Bannière publicitaire partenaire offerte</span>
                     </div>
                   </div>
@@ -612,7 +612,7 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
                 <div className="pt-6">
                   <button
                     onClick={() => handleSimulateOrder('Abonnement Élite Réseau (199$/mois)', 199, 'dealership_subscription')}
-                    className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition cursor-pointer"
+                    className="w-full py-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 rounded-xl text-xs font-bold transition cursor-pointer"
                   >
                     Souscrire Élite
                   </button>
@@ -628,39 +628,39 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
         {activeTab === 'garages' && (
           <div className="space-y-8">
             <div className="text-center max-w-2xl mx-auto space-y-2">
-              <h2 className="text-2xl sm:text-3xl font-black text-white">Abonnements Garages & Dépannage SOS</h2>
-              <p className="text-xs sm:text-sm text-slate-400">
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900">Abonnements Garages & Dépannage SOS</h2>
+              <p className="text-xs sm:text-sm text-slate-600">
                 Recevez directement les alertes de pannes par commune et captez une clientèle d’automobilistes fidèles.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* GARAGE 1: DÉCOUVERTE */}
-              <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 flex flex-col justify-between hover:border-slate-700 transition">
+              <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 flex flex-col justify-between hover:border-slate-300 shadow-xs transition">
                 <div className="space-y-4">
-                  <span className="text-xs font-black uppercase tracking-wider text-slate-400 bg-slate-800 px-3 py-1 rounded-full">
+                  <span className="text-xs font-black uppercase tracking-wider text-slate-700 bg-slate-100 px-3 py-1 rounded-full">
                     Atelier Standard
                   </span>
                   <div>
-                    <h3 className="text-xl font-bold text-white">Référencement Découverte</h3>
-                    <p className="text-xs text-slate-400 mt-1">Présence essentielle dans l’annuaire des 24 communes.</p>
+                    <h3 className="text-xl font-bold text-slate-900">Référencement Découverte</h3>
+                    <p className="text-xs text-slate-500 mt-1">Présence essentielle dans l’annuaire des 24 communes.</p>
                   </div>
                   <div className="pt-2">
-                    <span className="text-4xl font-black text-white">0 $</span>
-                    <span className="text-xs text-slate-400 ml-2">/ gratuit à vie</span>
+                    <span className="text-4xl font-black text-slate-900">0 $</span>
+                    <span className="text-xs text-slate-500 ml-2">/ gratuit à vie</span>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-800/80 space-y-3">
-                    <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <div className="pt-4 border-t border-slate-100 space-y-3">
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span>Fiche dans l’annuaire par commune</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span>Numéro de téléphone et repère géographique</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span>Spécialités principales (électricité, freinage)</span>
                     </div>
                   </div>
@@ -669,7 +669,7 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
                 <div className="pt-6">
                   <button
                     onClick={onBackToPublic}
-                    className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition cursor-pointer"
+                    className="w-full py-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 rounded-xl text-xs font-bold transition cursor-pointer"
                   >
                     Référencement Gratuit
                   </button>
@@ -677,43 +677,43 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
               </div>
 
               {/* GARAGE 2: GARAGE PRO AGRÉÉ */}
-              <div className="bg-gradient-to-b from-slate-900 to-emerald-950/40 border-2 border-emerald-500 rounded-3xl p-6 sm:p-7 flex flex-col justify-between relative shadow-xl">
-                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-emerald-500 text-slate-950 text-[11px] font-black uppercase tracking-wider px-3.5 py-0.5 rounded-full shadow-md">
+              <div className="bg-gradient-to-b from-white to-emerald-50/40 border-2 border-emerald-500 rounded-3xl p-6 sm:p-7 flex flex-col justify-between relative shadow-md">
+                <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-emerald-600 text-white text-[11px] font-black uppercase tracking-wider px-3.5 py-0.5 rounded-full shadow-sm">
                   Le Plus Choisi par les Garages
                 </div>
 
                 <div className="space-y-4">
-                  <span className="text-xs font-black uppercase tracking-wider text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full">
+                  <span className="text-xs font-black uppercase tracking-wider text-emerald-700 bg-emerald-100 border border-emerald-200 px-3 py-1 rounded-full">
                     Garage Agréé & SOS
                   </span>
                   <div>
-                    <h3 className="text-xl font-bold text-white">Formule Garage Pro</h3>
-                    <p className="text-xs text-slate-300 mt-1">Recevez les demandes de dépannage directement sur votre téléphone.</p>
+                    <h3 className="text-xl font-bold text-slate-900">Formule Garage Pro</h3>
+                    <p className="text-xs text-slate-600 mt-1">Recevez les demandes de dépannage directement sur votre téléphone.</p>
                   </div>
                   <div className="pt-2">
-                    <span className="text-4xl font-black text-emerald-400">{formatPrice(39)}</span>
-                    <span className="text-xs text-slate-400 ml-2">/ mois</span>
+                    <span className="text-4xl font-black text-emerald-600">{formatPrice(39)}</span>
+                    <span className="text-xs text-slate-500 ml-2">/ mois</span>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-800/80 space-y-3">
-                    <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <div className="pt-4 border-t border-emerald-100 space-y-3">
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span>Badge de confiance <strong>« 🛡️ Atelier Agréé »</strong></span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span><strong>Alertes SOS Pannes en direct</strong> par WhatsApp</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span>Bouton d’appel d’urgence prioritaire</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span>Galerie photos de l'atelier & ponts élévateurs</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-200">
-                      <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-emerald-600 shrink-0" />
                       <span>Grille tarifaire et forfaits révisions détaillés</span>
                     </div>
                   </div>
@@ -722,7 +722,7 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
                 <div className="pt-6">
                   <button
                     onClick={() => handleSimulateOrder('Abonnement Garage Pro SOS (39$/mois)', 39, 'garage_subscription')}
-                    className="w-full py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs sm:text-sm transition shadow-lg cursor-pointer"
+                    className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-black rounded-xl text-xs sm:text-sm transition shadow-sm cursor-pointer"
                   >
                     Devenir Garage Agréé (39 $)
                   </button>
@@ -730,35 +730,35 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
               </div>
 
               {/* GARAGE 3: FLOTTE MOBILE 24/7 */}
-              <div className="bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-7 flex flex-col justify-between hover:border-slate-700 transition">
+              <div className="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 flex flex-col justify-between hover:border-slate-300 shadow-xs transition">
                 <div className="space-y-4">
-                  <span className="text-xs font-black uppercase tracking-wider text-cyan-400 bg-cyan-500/10 border border-cyan-500/30 px-3 py-1 rounded-full">
+                  <span className="text-xs font-black uppercase tracking-wider text-cyan-700 bg-cyan-100 border border-cyan-200 px-3 py-1 rounded-full">
                     Centre Auto & Flotte Mobile
                   </span>
                   <div>
-                    <h3 className="text-xl font-bold text-white">Formule Dépannage 24/7</h3>
-                    <p className="text-xs text-slate-400 mt-1">Pour les flottes mobiles d’intervention et les remorqueuses.</p>
+                    <h3 className="text-xl font-bold text-slate-900">Formule Dépannage 24/7</h3>
+                    <p className="text-xs text-slate-500 mt-1">Pour les flottes mobiles d’intervention et les remorqueuses.</p>
                   </div>
                   <div className="pt-2">
-                    <span className="text-4xl font-black text-cyan-400">{formatPrice(89)}</span>
-                    <span className="text-xs text-slate-400 ml-2">/ mois</span>
+                    <span className="text-4xl font-black text-cyan-600">{formatPrice(89)}</span>
+                    <span className="text-xs text-slate-500 ml-2">/ mois</span>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-800/80 space-y-3">
-                    <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                      <Check className="w-4 h-4 text-cyan-400 shrink-0" />
+                  <div className="pt-4 border-t border-slate-100 space-y-3">
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-cyan-600 shrink-0" />
                       <span>Positionnement <strong>N°1 en tête de liste</strong> pour les pannes</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                      <Check className="w-4 h-4 text-cyan-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-cyan-600 shrink-0" />
                       <span>Gestion de plusieurs dépanneuses mobiles</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                      <Check className="w-4 h-4 text-cyan-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-cyan-600 shrink-0" />
                       <span>Encart sponsorisé permanent dans l’onglet SOS</span>
                     </div>
-                    <div className="flex items-center gap-2.5 text-xs text-slate-300">
-                      <Check className="w-4 h-4 text-cyan-400 shrink-0" />
+                    <div className="flex items-center gap-2.5 text-xs text-slate-700">
+                      <Check className="w-4 h-4 text-cyan-600 shrink-0" />
                       <span>Support prioritaire et mise en relation VIP</span>
                     </div>
                   </div>
@@ -767,7 +767,7 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
                 <div className="pt-6">
                   <button
                     onClick={() => handleSimulateOrder('Abonnement Flotte Mobile 24/7 (89$/mois)', 89, 'garage_subscription')}
-                    className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-bold transition cursor-pointer"
+                    className="w-full py-3 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 rounded-xl text-xs font-bold transition cursor-pointer"
                   >
                     Souscrire Flotte 24/7 (89 $)
                   </button>
@@ -783,47 +783,47 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
         {activeTab === 'publicite' && (
           <div className="space-y-8">
             <div className="text-center max-w-2xl mx-auto space-y-2">
-              <h2 className="text-2xl sm:text-3xl font-black text-white">Régie Publicitaire & Bannières Partenaires</h2>
-              <p className="text-xs sm:text-sm text-slate-400">
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900">Régie Publicitaire & Bannières Partenaires</h2>
+              <p className="text-xs sm:text-sm text-slate-600">
                 Placez votre marque au cœur de l'écosystème automobile congolais auprès d’un public qualifié à fort pouvoir d’achat.
               </p>
             </div>
 
             {/* Audience stats */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-center">
-                <span className="text-2xl sm:text-3xl font-black text-white">65 000+</span>
-                <p className="text-xs text-slate-400 mt-1">Visiteurs mensuels uniques</p>
+              <div className="p-4 bg-white border border-slate-200 rounded-2xl text-center shadow-xs">
+                <span className="text-2xl sm:text-3xl font-black text-slate-900">65 000+</span>
+                <p className="text-xs text-slate-500 mt-1">Visiteurs mensuels uniques</p>
               </div>
-              <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-center">
-                <span className="text-2xl sm:text-3xl font-black text-amber-400">92%</span>
-                <p className="text-xs text-slate-400 mt-1">Trafic local Kinshasa & RDC</p>
+              <div className="p-4 bg-white border border-slate-200 rounded-2xl text-center shadow-xs">
+                <span className="text-2xl sm:text-3xl font-black text-amber-600">92%</span>
+                <p className="text-xs text-slate-500 mt-1">Trafic local Kinshasa & RDC</p>
               </div>
-              <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-center">
-                <span className="text-2xl sm:text-3xl font-black text-emerald-400">4,8 min</span>
-                <p className="text-xs text-slate-400 mt-1">Temps moyen par session</p>
+              <div className="p-4 bg-white border border-slate-200 rounded-2xl text-center shadow-xs">
+                <span className="text-2xl sm:text-3xl font-black text-emerald-600">4,8 min</span>
+                <p className="text-xs text-slate-500 mt-1">Temps moyen par session</p>
               </div>
-              <div className="p-4 bg-slate-900 border border-slate-800 rounded-2xl text-center">
-                <span className="text-2xl sm:text-3xl font-black text-purple-400">3,2%</span>
-                <p className="text-xs text-slate-400 mt-1">Taux de clic moyen (CTR)</p>
+              <div className="p-4 bg-white border border-slate-200 rounded-2xl text-center shadow-xs">
+                <span className="text-2xl sm:text-3xl font-black text-purple-600">3,2%</span>
+                <p className="text-xs text-slate-500 mt-1">Taux de clic moyen (CTR)</p>
               </div>
             </div>
 
             {/* Ad Placements Table */}
             <div className="space-y-4">
-              <h3 className="text-lg font-bold text-white">Grille Tarifaire des Encarts Publicitaires</h3>
+              <h3 className="text-lg font-bold text-slate-900">Grille Tarifaire des Encarts Publicitaires</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Placement 1 */}
-                <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col justify-between space-y-3">
+                <div className="p-5 bg-white border border-slate-200 rounded-2xl flex flex-col justify-between space-y-3 shadow-xs">
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-black uppercase text-blue-400 bg-blue-500/10 px-2.5 py-0.5 rounded-full">
+                      <span className="text-xs font-black uppercase text-blue-700 bg-blue-100 px-2.5 py-0.5 rounded-full">
                         Leaderboard Header (728x90)
                       </span>
-                      <span className="text-lg font-black text-white">{formatPrice(150)}/mois</span>
+                      <span className="text-lg font-black text-slate-900">{formatPrice(150)}/mois</span>
                     </div>
-                    <h4 className="text-sm font-bold text-white">Bannière Haut de Page sous Navigation</h4>
-                    <p className="text-xs text-slate-400 leading-relaxed">
+                    <h4 className="text-sm font-bold text-slate-900">Bannière Haut de Page sous Navigation</h4>
+                    <p className="text-xs text-slate-600 leading-relaxed">
                       Visible dès l’ouverture du site par 100% des visiteurs. Recommandé pour les banques, assurances et concessions.
                     </p>
                   </div>
@@ -836,16 +836,16 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
                 </div>
 
                 {/* Placement 2 */}
-                <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col justify-between space-y-3">
+                <div className="p-5 bg-white border border-slate-200 rounded-2xl flex flex-col justify-between space-y-3 shadow-xs">
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-black uppercase text-amber-400 bg-amber-500/10 px-2.5 py-0.5 rounded-full">
+                      <span className="text-xs font-black uppercase text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full">
                         Native In-Feed (970x250)
                       </span>
-                      <span className="text-lg font-black text-white">{formatPrice(120)}/mois</span>
+                      <span className="text-lg font-black text-slate-900">{formatPrice(120)}/mois</span>
                     </div>
-                    <h4 className="text-sm font-bold text-white">Bannière Intégrée au Catalogue Auto</h4>
-                    <p className="text-xs text-slate-400 leading-relaxed">
+                    <h4 className="text-sm font-bold text-slate-900">Bannière Intégrée au Catalogue Auto</h4>
+                    <p className="text-xs text-slate-600 leading-relaxed">
                       Intercalée harmonieusement tous les 6 véhicules dans les résultats de recherche. Taux de clic maximal.
                     </p>
                   </div>
@@ -858,44 +858,44 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
                 </div>
 
                 {/* Placement 3 */}
-                <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col justify-between space-y-3">
+                <div className="p-5 bg-white border border-slate-200 rounded-2xl flex flex-col justify-between space-y-3 shadow-xs">
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-black uppercase text-emerald-400 bg-emerald-500/10 px-2.5 py-0.5 rounded-full">
+                      <span className="text-xs font-black uppercase text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full">
                         Pavé Carré Fiche (300x250)
                       </span>
-                      <span className="text-lg font-black text-white">{formatPrice(80)}/mois</span>
+                      <span className="text-lg font-black text-slate-900">{formatPrice(80)}/mois</span>
                     </div>
-                    <h4 className="text-sm font-bold text-white">Colonne Latérale Détail Véhicule</h4>
-                    <p className="text-xs text-slate-400 leading-relaxed">
+                    <h4 className="text-sm font-bold text-slate-900">Colonne Latérale Détail Véhicule</h4>
+                    <p className="text-xs text-slate-600 leading-relaxed">
                       S'affiche aux acheteurs au moment précis où ils étudient un véhicule à acheter. Idéal pour crédits & assurances.
                     </p>
                   </div>
                   <button
                     onClick={onOpenAdInquiry}
-                    className="w-full py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs transition cursor-pointer"
+                    className="w-full py-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 font-bold rounded-xl text-xs transition cursor-pointer"
                   >
                     Réserver cet emplacement
                   </button>
                 </div>
 
                 {/* Placement 4 */}
-                <div className="p-5 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col justify-between space-y-3">
+                <div className="p-5 bg-white border border-slate-200 rounded-2xl flex flex-col justify-between space-y-3 shadow-xs">
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs font-black uppercase text-purple-400 bg-purple-500/10 px-2.5 py-0.5 rounded-full">
+                      <span className="text-xs font-black uppercase text-purple-700 bg-purple-100 px-2.5 py-0.5 rounded-full">
                         Espace SOS & Garages
                       </span>
-                      <span className="text-lg font-black text-white">{formatPrice(95)}/mois</span>
+                      <span className="text-lg font-black text-slate-900">{formatPrice(95)}/mois</span>
                     </div>
-                    <h4 className="text-sm font-bold text-white">Encart Exclusif Entretien & Pièces</h4>
-                    <p className="text-xs text-slate-400 leading-relaxed">
+                    <h4 className="text-sm font-bold text-slate-900">Encart Exclusif Entretien & Pièces</h4>
+                    <p className="text-xs text-slate-600 leading-relaxed">
                       Cible les automobilistes en quête de pièces détachées, batteries, pneus, lubrifiants ou d’assistance panne.
                     </p>
                   </div>
                   <button
                     onClick={onOpenAdInquiry}
-                    className="w-full py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs transition cursor-pointer"
+                    className="w-full py-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 font-bold rounded-xl text-xs transition cursor-pointer"
                   >
                     Réserver cet emplacement
                   </button>
@@ -903,14 +903,14 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
               </div>
             </div>
 
-            <div className="p-6 bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-800/40 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="p-6 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-xs">
               <div>
-                <h4 className="text-base font-bold text-white">Campagne Sur-Mesure ou Sponsoring de Marque ?</h4>
-                <p className="text-xs text-slate-300">Habillage de site, opérations spéciales, notifications ciblées...</p>
+                <h4 className="text-base font-bold text-slate-900">Campagne Sur-Mesure ou Sponsoring de Marque ?</h4>
+                <p className="text-xs text-slate-600">Habillage de site, opérations spéciales, notifications ciblées...</p>
               </div>
               <button
                 onClick={onOpenAdInquiry}
-                className="px-6 py-3 bg-white text-slate-950 font-black rounded-xl text-xs sm:text-sm hover:bg-slate-100 transition shadow-lg shrink-0 cursor-pointer"
+                className="px-6 py-3 bg-slate-900 text-white font-bold rounded-xl text-xs sm:text-sm hover:bg-slate-800 transition shadow-sm shrink-0 cursor-pointer"
               >
                 Contacter la Régie Commerciale
               </button>
@@ -924,89 +924,89 @@ export const MonetizationPage: React.FC<MonetizationPageProps> = ({
         {activeTab === 'paiements' && (
           <div className="space-y-8">
             <div className="text-center max-w-2xl mx-auto space-y-2">
-              <h2 className="text-2xl sm:text-3xl font-black text-white">Architecture & Moyens de Paiement</h2>
-              <p className="text-xs sm:text-sm text-slate-400">
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900">Architecture & Moyens de Paiement</h2>
+              <p className="text-xs sm:text-sm text-slate-600">
                 Conçue selon les directives : architecture prête à accueillir les passerelles automatisées (M-Pesa, Orange Money, Airtel Money, Stripe, virement bancaire) sans complexité prématurée.
               </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* CANAL 1: MOBILE MONEY RDC */}
-              <div className="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-4">
-                <div className="p-3 bg-emerald-500/10 text-emerald-400 rounded-2xl w-fit">
+              <div className="bg-white border border-slate-200 p-6 rounded-3xl space-y-4 shadow-xs">
+                <div className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl w-fit">
                   <Smartphone className="w-6 h-6" />
                 </div>
-                <h3 className="text-lg font-bold text-white">Mobile Money RDC</h3>
-                <p className="text-xs text-slate-300 leading-relaxed">
+                <h3 className="text-lg font-bold text-slate-900">Mobile Money RDC</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
                   Le moyen le plus accessible et rapide en République Démocratique du Congo :
                 </p>
                 <div className="space-y-2 text-xs">
-                  <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
-                    <span className="font-bold text-rose-400">Vodacom M-Pesa</span>
-                    <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded">Prêt</span>
+                  <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+                    <span className="font-bold text-rose-600">Vodacom M-Pesa</span>
+                    <span className="text-[10px] text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded">Prêt</span>
                   </div>
-                  <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
-                    <span className="font-bold text-amber-400">Orange Money RDC</span>
-                    <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded">Prêt</span>
+                  <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+                    <span className="font-bold text-amber-700">Orange Money RDC</span>
+                    <span className="text-[10px] text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded">Prêt</span>
                   </div>
-                  <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
-                    <span className="font-bold text-red-400">Airtel Money</span>
-                    <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded">Prêt</span>
+                  <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+                    <span className="font-bold text-red-600">Airtel Money</span>
+                    <span className="text-[10px] text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded">Prêt</span>
                   </div>
                 </div>
               </div>
 
               {/* CANAL 2: VIREMENT & BANQUES LOCALES */}
-              <div className="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-4">
-                <div className="p-3 bg-blue-500/10 text-blue-400 rounded-2xl w-fit">
+              <div className="bg-white border border-slate-200 p-6 rounded-3xl space-y-4 shadow-xs">
+                <div className="p-3 bg-blue-50 text-blue-600 rounded-2xl w-fit">
                   <Building2 className="w-6 h-6" />
                 </div>
-                <h3 className="text-lg font-bold text-white">Virement & Factures Pro</h3>
-                <p className="text-xs text-slate-300 leading-relaxed">
+                <h3 className="text-lg font-bold text-slate-900">Virement & Factures Pro</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
                   Pour les concessions, flottes et annonceurs institutionnels avec émission de facture proforma :
                 </p>
                 <div className="space-y-2 text-xs">
-                  <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
-                    <span className="font-bold text-slate-200">Rawbank RDC</span>
-                    <p className="text-[11px] text-slate-400">Compte USD & CDF avec rapprochement par référence</p>
+                  <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <span className="font-bold text-slate-800">Rawbank RDC</span>
+                    <p className="text-[11px] text-slate-500">Compte USD & CDF avec rapprochement par référence</p>
                   </div>
-                  <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
-                    <span className="font-bold text-slate-200">EquityBCDC</span>
-                    <p className="text-[11px] text-slate-400">Virement interbancaire ou dépôt guichet</p>
+                  <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <span className="font-bold text-slate-800">EquityBCDC</span>
+                    <p className="text-[11px] text-slate-500">Virement interbancaire ou dépôt guichet</p>
                   </div>
                 </div>
               </div>
 
               {/* CANAL 3: CARTES INTERNATIONALES */}
-              <div className="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-4">
-                <div className="p-3 bg-purple-500/10 text-purple-400 rounded-2xl w-fit">
+              <div className="bg-white border border-slate-200 p-6 rounded-3xl space-y-4 shadow-xs">
+                <div className="p-3 bg-purple-50 text-purple-600 rounded-2xl w-fit">
                   <CreditCard className="w-6 h-6" />
                 </div>
-                <h3 className="text-lg font-bold text-white">Cartes Bancaires & Stripe</h3>
-                <p className="text-xs text-slate-300 leading-relaxed">
+                <h3 className="text-lg font-bold text-slate-900">Cartes Bancaires & Stripe</h3>
+                <p className="text-xs text-slate-600 leading-relaxed">
                   Pour la diaspora congolaise et les règlements par cartes de débit ou de crédit :
                 </p>
                 <div className="space-y-2 text-xs">
-                  <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between">
-                    <span className="font-bold text-slate-200">Visa / Mastercard</span>
-                    <span className="text-[10px] text-purple-400 font-bold bg-purple-500/10 px-2 py-0.5 rounded">Connecteur Prêt</span>
+                  <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
+                    <span className="font-bold text-slate-800">Visa / Mastercard</span>
+                    <span className="text-[10px] text-purple-700 font-bold bg-purple-100 px-2 py-0.5 rounded">Connecteur Prêt</span>
                   </div>
-                  <div className="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
-                    <span className="font-bold text-slate-200">Stripe / Passerelle SDK</span>
-                    <p className="text-[11px] text-slate-400">Points d'API `/api/monetization/order` prêts à recevoir le webhook</p>
+                  <div className="p-2.5 bg-slate-50 rounded-xl border border-slate-200">
+                    <span className="font-bold text-slate-800">Stripe / Passerelle SDK</span>
+                    <p className="text-[11px] text-slate-500">Points d'API `/api/monetization/order` prêts à recevoir le webhook</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Architecture Explanation Box */}
-            <div className="p-6 bg-slate-900/60 border border-slate-800 rounded-3xl space-y-3">
-              <h4 className="text-sm font-bold text-amber-400 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4" />
+            <div className="p-6 bg-amber-50/70 border border-amber-200 rounded-3xl space-y-3">
+              <h4 className="text-sm font-bold text-amber-800 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-amber-600" />
                 <span>Respect Strict des Directives Architecturales</span>
               </h4>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Le système enregistre chaque intention d’achat (Boost, Annonce Premium, Abonnement, Bannière Pub) sous le format unifié <code className="text-amber-300 bg-slate-950 px-1.5 py-0.5 rounded">MonetizationOrder</code> avec suivi du statut (<code className="text-slate-200">pending</code>, <code className="text-emerald-400">completed</code>, <code className="text-rose-400">failed</code>). Cela permet aux administrateurs de valider manuellement les paiements sans retarder le lancement, tout en permettant le branchement futur d'un Webhook M-Pesa ou Stripe en une seule fonction.
+              <p className="text-xs text-slate-700 leading-relaxed">
+                Le système enregistre chaque intention d’achat (Boost, Annonce Premium, Abonnement, Bannière Pub) sous le format unifié <code className="text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded font-mono font-semibold">MonetizationOrder</code> avec suivi du statut (<code className="text-slate-700">pending</code>, <code className="text-emerald-700 font-semibold">completed</code>, <code className="text-rose-700 font-semibold">failed</code>). Cela permet aux administrateurs de valider manuellement les paiements sans retarder le lancement, tout en permettant le branchement futur d'un Webhook M-Pesa ou Stripe en une seule fonction.
               </p>
             </div>
           </div>

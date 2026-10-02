@@ -292,7 +292,7 @@ export const DealershipGTM: React.FC<DealershipGTMProps> = ({
       )}
 
       {/* Main Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950/80 to-slate-900 p-6 sm:p-8 rounded-3xl border border-indigo-500/30 shadow-2xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-indigo-50 via-blue-50 to-white p-6 sm:p-8 rounded-3xl border border-blue-200 shadow-xs relative overflow-hidden">
         <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-amber-500/5 blur-3xl pointer-events-none"></div>
 
         <div className="relative z-10 flex flex-wrap items-center justify-between gap-6">
@@ -310,19 +310,19 @@ export const DealershipGTM: React.FC<DealershipGTMProps> = ({
               <span className="p-2 bg-indigo-600 text-white rounded-xl font-black text-xs flex items-center gap-1.5 shadow-md">
                 <Layers className="w-4 h-4" /> Marketing & Tracking Hub
               </span>
-              <span className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span className="bg-emerald-100 text-emerald-800 border border-emerald-300 text-[10px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                 GTM • Meta Pixel • TikTok • Google Ads
               </span>
-              <span className="text-xs text-slate-400 font-mono bg-slate-950/80 px-2 py-0.5 rounded-md border border-slate-800">
+              <span className="text-xs text-slate-700 font-mono bg-white px-2 py-0.5 rounded-md border border-slate-200">
                 {dealership.nom}
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-3">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
               Google Tag Manager, Meta Pixel, TikTok & Google Ads
             </h1>
-            <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
+            <p className="text-xs text-slate-600 max-w-2xl leading-relaxed">
               Gérez l'ensemble de vos balises publicitaires et de conversion en un point central. Chaque interaction (consultation, demande d'essai, lead, devis, partage) est synchronisée automatiquement sur <strong>Google Tag Manager</strong>, <strong>Meta Pixel (Facebook/Instagram)</strong>, <strong>TikTok Pixel</strong> et <strong>Google Ads</strong>.
             </p>
           </div>
@@ -333,34 +333,34 @@ export const DealershipGTM: React.FC<DealershipGTMProps> = ({
               href="https://adsmanager.facebook.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-blue-950/70 hover:bg-blue-900 text-blue-200 border border-blue-600/40 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition shadow"
+              className="bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-200 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition shadow-xs"
             >
-              <ExternalLink className="w-3 h-3 text-blue-400" />
+              <ExternalLink className="w-3 h-3 text-blue-600" />
               <span>Meta Ads</span>
             </a>
             <a
               href="https://ads.tiktok.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-slate-950 hover:bg-slate-800 text-pink-300 border border-pink-500/30 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition shadow"
+              className="bg-pink-50 hover:bg-pink-100 text-pink-900 border border-pink-200 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition shadow-xs"
             >
-              <ExternalLink className="w-3 h-3 text-pink-400" />
+              <ExternalLink className="w-3 h-3 text-pink-600" />
               <span>TikTok Ads</span>
             </a>
             <a
               href="https://ads.google.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-slate-950 hover:bg-slate-800 text-amber-300 border border-amber-500/30 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition shadow"
+              className="bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition shadow-xs"
             >
-              <ExternalLink className="w-3 h-3 text-amber-400" />
+              <ExternalLink className="w-3 h-3 text-amber-600" />
               <span>Google Ads</span>
             </a>
             <a
               href="https://tagmanager.google.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition shadow"
+              className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 transition shadow-xs"
             >
               <ExternalLink className="w-3 h-3 text-indigo-200" />
               <span>Tag Manager</span>
@@ -370,13 +370,13 @@ export const DealershipGTM: React.FC<DealershipGTMProps> = ({
       </div>
 
       {/* Navigation Tabs */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-slate-800 pb-3 text-xs font-bold">
+      <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-3 text-xs font-bold">
         <button
           onClick={() => setActiveTab('stream')}
-          className={`px-4 py-2.5 rounded-xl flex items-center gap-2 transition cursor-pointer ${
+          className={`px-4 py-2.5 rounded-xl flex items-center gap-2 transition cursor-pointer shadow-xs ${
             activeTab === 'stream'
-              ? 'bg-amber-500 text-slate-950 font-black shadow-lg'
-              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+              ? 'bg-amber-500 text-slate-950 font-black shadow-md'
+              : 'bg-white text-slate-600 hover:text-slate-900 border border-slate-200'
           }`}
         >
           <Activity className="w-4 h-4" />
@@ -385,10 +385,10 @@ export const DealershipGTM: React.FC<DealershipGTMProps> = ({
 
         <button
           onClick={() => setActiveTab('pixels')}
-          className={`px-4 py-2.5 rounded-xl flex items-center gap-2 transition cursor-pointer ${
+          className={`px-4 py-2.5 rounded-xl flex items-center gap-2 transition cursor-pointer shadow-xs ${
             activeTab === 'pixels'
-              ? 'bg-amber-500 text-slate-950 font-black shadow-lg'
-              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+              ? 'bg-amber-500 text-slate-950 font-black shadow-md'
+              : 'bg-white text-slate-600 hover:text-slate-900 border border-slate-200'
           }`}
         >
           <Target className="w-4 h-4" />
@@ -397,10 +397,10 @@ export const DealershipGTM: React.FC<DealershipGTMProps> = ({
 
         <button
           onClick={() => setActiveTab('triggers')}
-          className={`px-4 py-2.5 rounded-xl flex items-center gap-2 transition cursor-pointer ${
+          className={`px-4 py-2.5 rounded-xl flex items-center gap-2 transition cursor-pointer shadow-xs ${
             activeTab === 'triggers'
-              ? 'bg-amber-500 text-slate-950 font-black shadow-lg'
-              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+              ? 'bg-amber-500 text-slate-950 font-black shadow-md'
+              : 'bg-white text-slate-600 hover:text-slate-900 border border-slate-200'
           }`}
         >
           <Tag className="w-4 h-4" />
@@ -409,10 +409,10 @@ export const DealershipGTM: React.FC<DealershipGTMProps> = ({
 
         <button
           onClick={() => setActiveTab('stats')}
-          className={`px-4 py-2.5 rounded-xl flex items-center gap-2 transition cursor-pointer ${
+          className={`px-4 py-2.5 rounded-xl flex items-center gap-2 transition cursor-pointer shadow-xs ${
             activeTab === 'stats'
-              ? 'bg-amber-500 text-slate-950 font-black shadow-lg'
-              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+              ? 'bg-amber-500 text-slate-950 font-black shadow-md'
+              : 'bg-white text-slate-600 hover:text-slate-900 border border-slate-200'
           }`}
         >
           <Sparkles className="w-4 h-4" />
@@ -421,10 +421,10 @@ export const DealershipGTM: React.FC<DealershipGTMProps> = ({
 
         <button
           onClick={() => setActiveTab('setup')}
-          className={`px-4 py-2.5 rounded-xl flex items-center gap-2 transition cursor-pointer ${
+          className={`px-4 py-2.5 rounded-xl flex items-center gap-2 transition cursor-pointer shadow-xs ${
             activeTab === 'setup'
-              ? 'bg-amber-500 text-slate-950 font-black shadow-lg'
-              : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+              ? 'bg-amber-500 text-slate-950 font-black shadow-md'
+              : 'bg-white text-slate-600 hover:text-slate-900 border border-slate-200'
           }`}
         >
           <Code2 className="w-4 h-4" />

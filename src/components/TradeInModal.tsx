@@ -44,25 +44,25 @@ export const TradeInModal: React.FC<TradeInModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-slate-900 border border-slate-800 text-slate-100 max-w-lg w-full rounded-2xl shadow-2xl overflow-hidden my-auto p-6 space-y-6">
+    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto font-sans">
+      <div className="bg-white border border-slate-200 text-slate-900 max-w-lg w-full rounded-3xl shadow-2xl overflow-hidden my-auto p-6 space-y-6">
         
         {/* Header */}
-        <div className="flex flex-wrap items-center justify-between border-b border-slate-800 pb-4 gap-3">
+        <div className="flex flex-wrap items-center justify-between border-b border-slate-200 pb-4 gap-3">
           <div className="flex items-center gap-2">
-            <div className="p-2 bg-emerald-500/20 text-emerald-400 rounded-xl">
+            <div className="p-2 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-200">
               <RefreshCw className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Demande d'estimation de reprise</h2>
-              <p className="text-xs text-slate-400">Pour l'achat de : {targetVehicle.marque} {targetVehicle.modele}</p>
+              <h2 className="text-lg font-bold text-slate-900">Demande d'estimation de reprise</h2>
+              <p className="text-xs text-slate-500">Pour l'achat de : {targetVehicle.marque} {targetVehicle.modele}</p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               onClick={onClose}
-              className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow transition cursor-pointer"
+              className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-xs transition cursor-pointer"
               title="Retourner à l'accueil"
             >
               <Home className="w-3.5 h-3.5" />
@@ -70,10 +70,10 @@ export const TradeInModal: React.FC<TradeInModalProps> = ({
             </button>
             <button
               onClick={onClose}
-              className="bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white border border-slate-700 font-bold text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition cursor-pointer"
+              className="bg-white hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200 font-bold text-xs px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition cursor-pointer shadow-xs"
               title="Fermer"
             >
-              <X className="w-3.5 h-3.5 text-rose-400" />
+              <X className="w-3.5 h-3.5 text-rose-500" />
               <span>Fermer</span>
             </button>
           </div>
@@ -81,24 +81,24 @@ export const TradeInModal: React.FC<TradeInModalProps> = ({
 
         {isSubmitted ? (
           <div className="text-center py-8 space-y-4">
-            <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto">
+            <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto border border-emerald-200">
               <CheckCircle2 className="w-10 h-10" />
             </div>
-            <h3 className="text-xl font-bold text-white">Demande de reprise enregistrée !</h3>
-            <p className="text-xs text-slate-300 max-w-sm mx-auto">
-              Notre expert côte d'occasion étudiera votre véhicule <strong className="text-amber-400">{marqueAncien} {modeleAncien}</strong> et vous contactera rapidement avec une offre ferme de reprise.
+            <h3 className="text-xl font-bold text-slate-900">Demande de reprise enregistrée !</h3>
+            <p className="text-xs text-slate-600 max-w-sm mx-auto">
+              Notre expert côte d'occasion étudiera votre véhicule <strong className="text-amber-600">{marqueAncien} {modeleAncien}</strong> et vous contactera rapidement avec une offre ferme de reprise.
             </p>
             <div className="flex items-center justify-center gap-3 pt-2">
               <button
                 onClick={onClose}
-                className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-6 py-2.5 rounded-xl text-sm flex items-center gap-2 transition cursor-pointer shadow-md"
+                className="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-6 py-2.5 rounded-xl text-sm flex items-center gap-2 transition cursor-pointer shadow-xs"
               >
                 <Home className="w-4 h-4" />
                 <span>Retour à l'Accueil</span>
               </button>
               <button
                 onClick={onClose}
-                className="bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-4 py-2.5 rounded-xl text-sm transition cursor-pointer"
+                className="bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-bold px-4 py-2.5 rounded-xl text-sm transition cursor-pointer shadow-xs"
               >
                 Fermer
               </button>
@@ -108,32 +108,32 @@ export const TradeInModal: React.FC<TradeInModalProps> = ({
           <form onSubmit={handleSubmit} className="space-y-4 text-xs">
             
             {/* Ancient vehicle specs */}
-            <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-              <h3 className="font-bold text-slate-200 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
-                <Car className="w-3.5 h-3.5 text-amber-400" /> Votre véhicule actuel à reprendre
+            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
+              <h3 className="font-bold text-slate-800 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+                <Car className="w-3.5 h-3.5 text-amber-600" /> Votre véhicule actuel à reprendre
               </h3>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-slate-400 mb-1">Marque *</label>
+                  <label className="block text-slate-700 mb-1">Marque *</label>
                   <input
                     type="text"
                     placeholder="Ex: Renault, Golf, Audi"
                     value={marqueAncien}
                     onChange={(e) => setMarqueAncien(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500 shadow-xs"
                     required
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-400 mb-1">Modèle *</label>
+                  <label className="block text-slate-700 mb-1">Modèle *</label>
                   <input
                     type="text"
                     placeholder="Ex: Clio 5, A3, Golf 7"
                     value={modeleAncien}
                     onChange={(e) => setModeleAncien(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500 shadow-xs"
                     required
                   />
                 </div>
@@ -141,31 +141,31 @@ export const TradeInModal: React.FC<TradeInModalProps> = ({
 
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-slate-400 mb-1">Année</label>
+                  <label className="block text-slate-700 mb-1">Année</label>
                   <input
                     type="number"
                     value={anneeAncien}
                     onChange={(e) => setAnneeAncien(Number(e.target.value))}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500 shadow-xs"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-400 mb-1">Kilométrage</label>
+                  <label className="block text-slate-700 mb-1">Kilométrage</label>
                   <input
                     type="number"
                     value={kmAncien}
                     onChange={(e) => setKmAncien(Number(e.target.value))}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500 shadow-xs"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-slate-400 mb-1">État Général</label>
+                  <label className="block text-slate-700 mb-1">État Général</label>
                   <select
                     value={etatAncien}
                     onChange={(e) => setEtatAncien(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500 shadow-xs"
                   >
                     <option value="Excellent">Excellent</option>
                     <option value="Tres Bon Etat">Très Bon État</option>
@@ -178,38 +178,38 @@ export const TradeInModal: React.FC<TradeInModalProps> = ({
 
             {/* Client Inputs */}
             <div>
-              <label className="block text-slate-400 mb-1 font-medium">Votre nom complet *</label>
+              <label className="block text-slate-700 mb-1 font-medium">Votre nom complet *</label>
               <input
                 type="text"
                 value={nomClient}
                 onChange={(e) => setNomClient(e.target.value)}
                 placeholder="Ex: Sophie Martin"
-                className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500"
+                className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500 shadow-xs"
                 required
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-slate-400 mb-1 font-medium">Adresse email *</label>
+                <label className="block text-slate-700 mb-1 font-medium">Adresse email *</label>
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="nom@exemple.com"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500"
+                  className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500 shadow-xs"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-slate-400 mb-1 font-medium">Téléphone *</label>
+                <label className="block text-slate-700 mb-1 font-medium">Téléphone *</label>
                 <input
                   type="tel"
                   value={telephone}
                   onChange={(e) => setTelephone(e.target.value)}
                   placeholder="06 12 34 56 78"
-                  className="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:outline-none focus:border-amber-500"
+                  className="w-full bg-white border border-slate-300 rounded-xl p-2.5 text-slate-900 focus:outline-none focus:border-amber-500 shadow-xs"
                   required
                 />
               </div>
@@ -217,14 +217,14 @@ export const TradeInModal: React.FC<TradeInModalProps> = ({
 
             <button
               type="submit"
-              className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg"
+              className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition text-xs uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-md"
             >
               <Send className="w-4 h-4" />
               Demander mon offre de reprise
             </button>
 
-            <div className="flex items-center gap-1.5 text-[10px] text-slate-400 justify-center">
-              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+            <div className="flex items-center gap-1.5 text-[10px] text-slate-500 justify-center">
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
               <span>Estimation gratuite sans engagement</span>
             </div>
           </form>

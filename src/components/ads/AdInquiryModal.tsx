@@ -70,22 +70,22 @@ export const AdInquiryModal: React.FC<AdInquiryModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-      <div className="bg-slate-900 border border-slate-800 text-slate-100 max-w-xl w-full rounded-2xl shadow-2xl overflow-hidden my-auto">
+    <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-3 sm:p-6 overflow-y-auto font-sans">
+      <div className="bg-white border border-slate-200 text-slate-900 max-w-xl w-full rounded-3xl shadow-2xl overflow-hidden my-auto">
         {/* Header */}
-        <div className="bg-slate-950 p-5 border-b border-slate-800 flex items-center justify-between">
+        <div className="bg-slate-50 p-5 border-b border-slate-200 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-amber-500/20 text-amber-400 rounded-xl">
+            <div className="p-2.5 bg-amber-500/15 text-amber-600 rounded-xl">
               <Megaphone className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">Régie Publicitaire AutoConcession</h3>
-              <p className="text-xs text-slate-400">Touchez des milliers d’automobilistes et acheteurs qualifiés à Kinshasa</p>
+              <h3 className="text-lg font-bold text-slate-900">Régie Publicitaire AutoConcession</h3>
+              <p className="text-xs text-slate-500">Touchez des milliers d’automobilistes et acheteurs qualifiés à Kinshasa</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition cursor-pointer"
+            className="p-2 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-200/60 transition cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
@@ -93,12 +93,12 @@ export const AdInquiryModal: React.FC<AdInquiryModalProps> = ({
 
         {isSubmitted ? (
           <div className="p-8 text-center space-y-4">
-            <div className="w-16 h-16 bg-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto">
+            <div className="w-16 h-16 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
               <CheckCircle2 className="w-10 h-10" />
             </div>
-            <h4 className="text-xl font-bold text-white">Demande reçue avec succès !</h4>
-            <p className="text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
-              Merci <span className="font-semibold text-white">{contactNom}</span>. Notre régie commerciale ({nomEntreprise}) traitera votre demande sous 24 heures ouvrées et vous contactera au <span className="font-mono text-amber-400">{telephone}</span>.
+            <h4 className="text-xl font-bold text-slate-900">Demande reçue avec succès !</h4>
+            <p className="text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+              Merci <span className="font-semibold text-slate-900">{contactNom}</span>. Notre régie commerciale ({nomEntreprise}) traitera votre demande sous 24 heures ouvrées et vous contactera au <span className="font-mono text-amber-600 font-bold">{telephone}</span>.
             </p>
             <div className="pt-4">
               <button
@@ -112,14 +112,14 @@ export const AdInquiryModal: React.FC<AdInquiryModalProps> = ({
         ) : (
           <form onSubmit={handleSubmit} className="p-6 space-y-4 text-xs sm:text-sm">
             {errorMessage && (
-              <div className="p-3 bg-rose-500/20 border border-rose-500 text-rose-300 rounded-xl text-xs font-semibold">
+              <div className="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs font-semibold">
                 {errorMessage}
               </div>
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
                   Nom de l’Entreprise / Marque *
                 </label>
                 <div className="relative">
@@ -130,13 +130,13 @@ export const AdInquiryModal: React.FC<AdInquiryModalProps> = ({
                     placeholder="Ex: Banque Rawbank, Assurance..."
                     value={nomEntreprise}
                     onChange={(e) => setNomEntreprise(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder:text-slate-500 focus:border-blue-500 outline-hidden"
+                    className="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:border-amber-500 outline-hidden"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
                   Personne de Contact *
                 </label>
                 <input
@@ -145,14 +145,14 @@ export const AdInquiryModal: React.FC<AdInquiryModalProps> = ({
                   placeholder="Nom et Prénom"
                   value={contactNom}
                   onChange={(e) => setContactNom(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder:text-slate-500 focus:border-blue-500 outline-hidden"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:border-amber-500 outline-hidden"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
                   Téléphone / WhatsApp *
                 </label>
                 <div className="relative">
@@ -163,13 +163,13 @@ export const AdInquiryModal: React.FC<AdInquiryModalProps> = ({
                     placeholder="+243 81 000 0000"
                     value={telephone}
                     onChange={(e) => setTelephone(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder:text-slate-500 focus:border-blue-500 outline-hidden font-mono"
+                    className="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:border-amber-500 outline-hidden font-mono"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
                   Adresse Email
                 </label>
                 <div className="relative">
@@ -179,7 +179,7 @@ export const AdInquiryModal: React.FC<AdInquiryModalProps> = ({
                     placeholder="contact@entreprise.cd"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder:text-slate-500 focus:border-blue-500 outline-hidden"
+                    className="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:border-amber-500 outline-hidden"
                   />
                 </div>
               </div>
@@ -187,13 +187,13 @@ export const AdInquiryModal: React.FC<AdInquiryModalProps> = ({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
                   Format d’Encart Souhaité
                 </label>
                 <select
                   value={formatSouhaite}
                   onChange={(e) => setFormatSouhaite(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white focus:border-blue-500 outline-hidden"
+                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-amber-500 outline-hidden"
                 >
                   <option value="banner_inline">Bannière Native In-Feed (120 $/mois)</option>
                   <option value="banner_leaderboard">Bannière Haut de Page Leaderboard (150 $/mois)</option>
@@ -204,7 +204,7 @@ export const AdInquiryModal: React.FC<AdInquiryModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-300 mb-1.5">
+                <label className="block text-xs font-bold text-slate-700 mb-1.5">
                   Durée de Diffusion
                 </label>
                 <div className="relative">
@@ -212,7 +212,7 @@ export const AdInquiryModal: React.FC<AdInquiryModalProps> = ({
                   <select
                     value={dureeMois}
                     onChange={(e) => setDureeMois(e.target.value)}
-                    className="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-white focus:border-blue-500 outline-hidden"
+                    className="w-full pl-9 pr-3 py-2 bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-amber-500 outline-hidden"
                   >
                     <option value="1">1 mois</option>
                     <option value="3">3 mois (-10% remise)</option>
@@ -224,7 +224,7 @@ export const AdInquiryModal: React.FC<AdInquiryModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1.5">
+              <label className="block text-xs font-bold text-slate-700 mb-1.5">
                 Message / Précisions sur votre campagne
               </label>
               <textarea
@@ -232,12 +232,12 @@ export const AdInquiryModal: React.FC<AdInquiryModalProps> = ({
                 placeholder="Décrivez vos objectifs : lancement de produit, offre de crédit, promotion spéciale, visuels déjà prêts..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-white placeholder:text-slate-500 focus:border-blue-500 outline-hidden resize-none"
+                className="w-full p-3 bg-white border border-slate-300 rounded-xl text-slate-900 placeholder:text-slate-400 focus:border-amber-500 outline-hidden resize-none"
               />
             </div>
 
-            <div className="p-3 bg-slate-950/70 rounded-xl border border-slate-800 text-xs text-slate-400 flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-amber-400 font-semibold">
+            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-600 flex items-center justify-between">
+              <span className="flex items-center gap-1.5 text-amber-600 font-semibold">
                 <Sparkles className="w-3.5 h-3.5" /> Audience ciblée Kinshasa
               </span>
               <span>+60 000 vues mensuelles certifiées</span>
@@ -247,14 +247,14 @@ export const AdInquiryModal: React.FC<AdInquiryModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 text-slate-400 hover:text-white rounded-xl text-xs font-bold transition cursor-pointer"
+                className="px-4 py-2 text-slate-500 hover:text-slate-800 rounded-xl text-xs font-bold transition cursor-pointer"
               >
                 Annuler
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs sm:text-sm transition flex items-center gap-2 shadow-lg disabled:opacity-50 cursor-pointer"
+                className="px-6 py-2.5 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black rounded-xl text-xs sm:text-sm transition flex items-center gap-2 shadow-sm disabled:opacity-50 cursor-pointer"
               >
                 {isSubmitting ? 'Transmission en cours...' : 'Envoyer ma demande'}
               </button>

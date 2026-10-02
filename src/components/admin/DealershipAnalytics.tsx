@@ -43,7 +43,7 @@ export const DealershipAnalytics: React.FC<DealershipAnalyticsProps> = ({
     <div className="space-y-6 animate-fadeIn font-sans pb-12">
       
       {/* Top Header Banner */}
-      <div className="bg-gradient-to-r from-slate-900 via-indigo-950/70 to-slate-900 p-6 sm:p-8 rounded-3xl border border-indigo-500/20 shadow-2xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-indigo-50 via-blue-50 to-white p-6 sm:p-8 rounded-3xl border border-blue-200 shadow-xs relative overflow-hidden text-slate-900">
         <div className="relative z-10 flex flex-wrap items-center justify-between gap-6">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
@@ -59,21 +59,21 @@ export const DealershipAnalytics: React.FC<DealershipAnalyticsProps> = ({
               <span className="p-2 bg-indigo-600 text-white rounded-xl font-black text-xs flex items-center gap-1.5 shadow-md">
                 <BarChart3 className="w-4 h-4" /> Statistiques Concession
               </span>
-              <span className="text-xs text-slate-400 font-mono bg-slate-950/80 px-2.5 py-0.5 rounded-md border border-slate-800">
+              <span className="text-xs text-slate-700 font-mono bg-white px-2.5 py-0.5 rounded-md border border-slate-200 shadow-2xs font-bold">
                 {dealership.nom}
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight flex items-center gap-3">
+            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
               Tableau de Bord des Performances & Ventes
             </h1>
-            <p className="text-xs text-slate-300 max-w-2xl leading-relaxed">
+            <p className="text-xs text-slate-600 max-w-2xl leading-relaxed">
               Consultez les indicateurs d'audience, l'intérêt généré par vos annonces, les demandes d'essais routiers et les conversions de votre concession.
             </p>
           </div>
 
           {/* Time Range Filter Controls */}
-          <div className="flex items-center gap-1.5 bg-slate-950/90 border border-slate-800 p-1 rounded-2xl">
+          <div className="flex items-center gap-1.5 bg-white border border-slate-200 p-1 rounded-2xl shadow-xs">
             {[
               { id: '7d', label: '7 jours' },
               { id: '30d', label: '30 jours' },
@@ -86,7 +86,7 @@ export const DealershipAnalytics: React.FC<DealershipAnalyticsProps> = ({
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${
                   timeRange === t.id
                     ? 'bg-amber-500 text-slate-950 shadow-md font-black'
-                    : 'text-slate-400 hover:text-white'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {t.label}
@@ -100,16 +100,16 @@ export const DealershipAnalytics: React.FC<DealershipAnalyticsProps> = ({
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         
         {/* Total Page Views */}
-        <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-2 relative overflow-hidden">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Visites Totales</span>
-            <div className="w-8 h-8 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Visites Totales</span>
+            <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 border border-blue-200 flex items-center justify-center">
               <Eye className="w-4 h-4" />
             </div>
           </div>
           <div>
-            <p className="text-2xl sm:text-3xl font-black text-white">{report.totalPageViews.toLocaleString('fr-FR')}</p>
-            <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-bold mt-1">
+            <p className="text-2xl sm:text-3xl font-black text-slate-900">{report.totalPageViews.toLocaleString('fr-FR')}</p>
+            <div className="flex items-center gap-1.5 text-[11px] text-emerald-700 font-bold mt-1">
               <ArrowUpRight className="w-3.5 h-3.5" />
               <span>+18.4% vs période préc.</span>
             </div>
@@ -120,16 +120,16 @@ export const DealershipAnalytics: React.FC<DealershipAnalyticsProps> = ({
         </div>
 
         {/* Vehicle Views */}
-        <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-2 relative overflow-hidden">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Fiches Consultées</span>
-            <div className="w-8 h-8 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Fiches Consultées</span>
+            <div className="w-8 h-8 rounded-xl bg-sky-50 text-sky-600 border border-sky-200 flex items-center justify-center">
               <Car className="w-4 h-4" />
             </div>
           </div>
           <div>
-            <p className="text-2xl sm:text-3xl font-black text-sky-400">{report.vehicleViews.toLocaleString('fr-FR')}</p>
-            <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-bold mt-1">
+            <p className="text-2xl sm:text-3xl font-black text-sky-600">{report.vehicleViews.toLocaleString('fr-FR')}</p>
+            <div className="flex items-center gap-1.5 text-[11px] text-emerald-700 font-bold mt-1">
               <ArrowUpRight className="w-3.5 h-3.5" />
               <span>+24.1% d'intérêt stock</span>
             </div>
@@ -140,16 +140,16 @@ export const DealershipAnalytics: React.FC<DealershipAnalyticsProps> = ({
         </div>
 
         {/* Test Drives Booked */}
-        <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-2 relative overflow-hidden">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Essais Réservés</span>
-            <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Essais Réservés</span>
+            <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center">
               <Calendar className="w-4 h-4" />
             </div>
           </div>
           <div>
-            <p className="text-2xl sm:text-3xl font-black text-amber-400">{testDriveLeads || report.testDriveBookings}</p>
-            <div className="flex items-center gap-1.5 text-[11px] text-amber-400 font-bold mt-1">
+            <p className="text-2xl sm:text-3xl font-black text-amber-600">{testDriveLeads || report.testDriveBookings}</p>
+            <div className="flex items-center gap-1.5 text-[11px] text-amber-700 font-bold mt-1">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Intention d'achat élevée</span>
             </div>
@@ -160,16 +160,16 @@ export const DealershipAnalytics: React.FC<DealershipAnalyticsProps> = ({
         </div>
 
         {/* Global Conversion Rate */}
-        <div className="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-2 relative overflow-hidden">
+        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs space-y-2 relative overflow-hidden">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Taux de Conversion</span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Taux de Conversion</span>
+            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center">
               <TrendingUp className="w-4 h-4" />
             </div>
           </div>
           <div>
-            <p className="text-2xl sm:text-3xl font-black text-emerald-400">{report.conversionRate}%</p>
-            <div className="flex items-center gap-1.5 text-[11px] text-emerald-400 font-bold mt-1">
+            <p className="text-2xl sm:text-3xl font-black text-emerald-600">{report.conversionRate}%</p>
+            <div className="flex items-center gap-1.5 text-[11px] text-emerald-700 font-bold mt-1">
               <Award className="w-3.5 h-3.5" />
               <span>{totalLeads} contacts générés</span>
             </div>
@@ -185,18 +185,18 @@ export const DealershipAnalytics: React.FC<DealershipAnalyticsProps> = ({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* Left Column: Top Consulted Vehicles */}
-        <div className="lg:col-span-7 bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div className="lg:col-span-7 bg-white p-6 rounded-3xl border border-slate-200 shadow-xs space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
-              <h3 className="text-sm font-black text-white flex items-center gap-2">
-                <Car className="w-4 h-4 text-amber-400" />
+              <h3 className="text-sm font-black text-slate-900 flex items-center gap-2">
+                <Car className="w-4 h-4 text-amber-600" />
                 Véhicules les Plus Consultés de la Concession
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Classement par nombre de vues de fiche et demandes clients.
               </p>
             </div>
-            <span className="text-[11px] font-bold text-slate-400 bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800">
+            <span className="text-[11px] font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
               {vehicles.length} véhicules
             </span>
           </div>
@@ -205,7 +205,7 @@ export const DealershipAnalytics: React.FC<DealershipAnalyticsProps> = ({
             {report.topVehicles.slice(0, 5).map((v, idx) => (
               <div
                 key={v.id || idx}
-                className="bg-slate-950 p-4 rounded-xl border border-slate-800/80 hover:border-slate-700 transition flex items-center justify-between gap-4"
+                className="bg-slate-50 p-4 rounded-2xl border border-slate-200 hover:border-slate-300 transition flex items-center justify-between gap-4"
               >
                 <div className="flex items-center gap-3.5 min-w-0">
                   <span className={`w-7 h-7 rounded-xl font-black text-xs flex items-center justify-center shrink-0 ${
@@ -214,15 +214,15 @@ export const DealershipAnalytics: React.FC<DealershipAnalyticsProps> = ({
                       : idx === 1
                       ? 'bg-slate-300 text-slate-950'
                       : idx === 2
-                      ? 'bg-amber-800 text-white'
-                      : 'bg-slate-800 text-slate-400'
+                      ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                      : 'bg-white border border-slate-200 text-slate-600'
                   }`}>
                     #{idx + 1}
                   </span>
 
                   <div className="min-w-0">
-                    <h4 className="text-xs font-bold text-white truncate">{v.title}</h4>
-                    <span className="text-[10px] text-slate-400 font-mono">
+                    <h4 className="text-xs font-bold text-slate-900 truncate">{v.title}</h4>
+                    <span className="text-[10px] text-slate-500 font-mono">
                       ID : {v.id}
                     </span>
                   </div>
@@ -230,11 +230,11 @@ export const DealershipAnalytics: React.FC<DealershipAnalyticsProps> = ({
 
                 <div className="flex items-center gap-6 shrink-0 text-right">
                   <div>
-                    <span className="text-xs font-black text-sky-400 block">{v.views} vues</span>
+                    <span className="text-xs font-black text-sky-700 block">{v.views} vues</span>
                     <span className="text-[10px] text-slate-500">Visites fiche</span>
                   </div>
                   <div>
-                    <span className="text-xs font-black text-emerald-400 block">{v.leads} leads</span>
+                    <span className="text-xs font-black text-emerald-700 block">{v.leads} leads</span>
                     <span className="text-[10px] text-slate-500">Demandes</span>
                   </div>
                 </div>
@@ -244,81 +244,81 @@ export const DealershipAnalytics: React.FC<DealershipAnalyticsProps> = ({
         </div>
 
         {/* Right Column: Leads & Demand Breakdown */}
-        <div className="lg:col-span-5 bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-4 flex flex-col justify-between">
+        <div className="lg:col-span-5 bg-white p-6 rounded-3xl border border-slate-200 shadow-xs space-y-4 flex flex-col justify-between">
           <div>
-            <div className="border-b border-slate-800 pb-3">
-              <h3 className="text-sm font-black text-white flex items-center gap-2">
-                <PhoneCall className="w-4 h-4 text-emerald-400" />
+            <div className="border-b border-slate-100 pb-3">
+              <h3 className="text-sm font-black text-slate-900 flex items-center gap-2">
+                <PhoneCall className="w-4 h-4 text-emerald-600" />
                 Répartition des Demandes Clients
               </h3>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500">
                 Types de contacts générés par vos annonces en ligne.
               </p>
             </div>
 
             <div className="space-y-3 mt-4">
               {/* Test Drives */}
-              <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 flex items-center justify-between">
+              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center">
+                  <div className="w-7 h-7 rounded-lg bg-amber-100 text-amber-700 border border-amber-300 flex items-center justify-center">
                     <Calendar className="w-3.5 h-3.5" />
                   </div>
                   <div>
-                    <span className="text-xs font-bold text-white block">Demandes d'Essais Routiers</span>
-                    <span className="text-[10px] text-slate-400">Rendez-vous programmés</span>
+                    <span className="text-xs font-bold text-slate-900 block">Demandes d'Essais Routiers</span>
+                    <span className="text-[10px] text-slate-500">Rendez-vous programmés</span>
                   </div>
                 </div>
-                <span className="text-sm font-black text-amber-400">{testDriveLeads}</span>
+                <span className="text-sm font-black text-amber-700">{testDriveLeads}</span>
               </div>
 
               {/* Quotes / Financing */}
-              <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 flex items-center justify-between">
+              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center">
+                  <div className="w-7 h-7 rounded-lg bg-indigo-100 text-indigo-700 border border-indigo-300 flex items-center justify-center">
                     <Euro className="w-3.5 h-3.5" />
                   </div>
                   <div>
-                    <span className="text-xs font-bold text-white block">Devis & Financements</span>
-                    <span className="text-[10px] text-slate-400">Simulations de crédit / LOA</span>
+                    <span className="text-xs font-bold text-slate-900 block">Devis & Financements</span>
+                    <span className="text-[10px] text-slate-500">Simulations de crédit / LOA</span>
                   </div>
                 </div>
-                <span className="text-sm font-black text-indigo-400">{quoteLeads}</span>
+                <span className="text-sm font-black text-indigo-700">{quoteLeads}</span>
               </div>
 
               {/* Trade-in Offers */}
-              <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 flex items-center justify-between">
+              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-lg bg-sky-500/20 text-sky-400 flex items-center justify-center">
+                  <div className="w-7 h-7 rounded-lg bg-sky-100 text-sky-700 border border-sky-300 flex items-center justify-center">
                     <Car className="w-3.5 h-3.5" />
                   </div>
                   <div>
-                    <span className="text-xs font-bold text-white block">Demandes de Reprise</span>
-                    <span className="text-[10px] text-slate-400">Estimations ancien véhicule</span>
+                    <span className="text-xs font-bold text-slate-900 block">Demandes de Reprise</span>
+                    <span className="text-[10px] text-slate-500">Estimations ancien véhicule</span>
                   </div>
                 </div>
-                <span className="text-sm font-black text-sky-400">{tradeInLeads}</span>
+                <span className="text-sm font-black text-sky-700">{tradeInLeads}</span>
               </div>
 
               {/* Online Price Offers */}
-              <div className="bg-slate-950 p-3.5 rounded-xl border border-slate-800 flex items-center justify-between">
+              <div className="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                  <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 border border-emerald-300 flex items-center justify-center">
                     <Award className="w-3.5 h-3.5" />
                   </div>
                   <div>
-                    <span className="text-xs font-bold text-white block">Offres de Prix Négociées</span>
-                    <span className="text-[10px] text-slate-400">Propositions d'acheteurs</span>
+                    <span className="text-xs font-bold text-slate-900 block">Offres de Prix Négociées</span>
+                    <span className="text-[10px] text-slate-500">Propositions d'acheteurs</span>
                   </div>
                 </div>
-                <span className="text-sm font-black text-emerald-400">{priceOfferLeads}</span>
+                <span className="text-sm font-black text-emerald-700">{priceOfferLeads}</span>
               </div>
             </div>
           </div>
 
           {/* Centralized Admin Notice */}
-          <div className="mt-4 p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 flex items-center gap-3">
-            <ShieldCheck className="w-5 h-5 text-indigo-400 shrink-0" />
-            <p className="text-[11px] text-slate-400 leading-relaxed">
+          <div className="mt-4 p-3.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-3">
+            <ShieldCheck className="w-5 h-5 text-indigo-600 shrink-0" />
+            <p className="text-[11px] text-slate-600 leading-relaxed">
               Les balises techniques de tracking publicitaire (Google Tag Manager, Meta Pixel, TikTok, Google Ads) sont supervisées et optimisées par la direction centrale de la plateforme SaaS.
             </p>
           </div>
@@ -327,28 +327,28 @@ export const DealershipAnalytics: React.FC<DealershipAnalyticsProps> = ({
       </div>
 
       {/* Stock Value & Overview Summary */}
-      <div className="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xl">
-        <h3 className="text-sm font-black text-white mb-4 flex items-center gap-2">
-          <Award className="w-4 h-4 text-amber-400" />
+      <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xs">
+        <h3 className="text-sm font-black text-slate-900 mb-4 flex items-center gap-2">
+          <Award className="w-4 h-4 text-amber-600" />
           Synthèse Commerciale du Parc
         </h3>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1">
-            <span className="text-slate-400 font-bold block">Valeur Totale du Stock</span>
-            <p className="text-xl font-black text-white font-mono">{totalStockValue.toLocaleString('fr-FR')} €</p>
+          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-1">
+            <span className="text-slate-600 font-bold block">Valeur Totale du Stock</span>
+            <p className="text-xl font-black text-slate-900 font-mono">{totalStockValue.toLocaleString('fr-FR')} €</p>
             <span className="text-[10px] text-slate-500">Prix affichés catalogue</span>
           </div>
 
-          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1">
-            <span className="text-slate-400 font-bold block">Prix Moyen d'un Véhicule</span>
-            <p className="text-xl font-black text-amber-400 font-mono">{avgVehiclePrice.toLocaleString('fr-FR')} €</p>
+          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-1">
+            <span className="text-slate-600 font-bold block">Prix Moyen d'un Véhicule</span>
+            <p className="text-xl font-black text-amber-700 font-mono">{avgVehiclePrice.toLocaleString('fr-FR')} €</p>
             <span className="text-[10px] text-slate-500">Moyenne du catalogue actif</span>
           </div>
 
-          <div className="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-1">
-            <span className="text-slate-400 font-bold block">Délai Moyen de Contact</span>
-            <p className="text-xl font-black text-emerald-400 font-mono">&lt; 2 Heures</p>
+          <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-1">
+            <span className="text-slate-600 font-bold block">Délai Moyen de Contact</span>
+            <p className="text-xl font-black text-emerald-700 font-mono">&lt; 2 Heures</p>
             <span className="text-[10px] text-slate-500">Recommandé pour maximiser les ventes</span>
           </div>
         </div>
