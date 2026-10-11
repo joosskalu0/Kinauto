@@ -115,6 +115,17 @@ const getAllGarages = async (req, res, next) => {
         specialtiesList = g.specialties;
       }
 
+      let parsedTarifs = [];
+      if (g.tarifsIndicatifs && Array.isArray(g.tarifsIndicatifs)) {
+        parsedTarifs = g.tarifsIndicatifs;
+      } else if (g.tarifs_indicatifs) {
+        try {
+          parsedTarifs = typeof g.tarifs_indicatifs === 'string' ? JSON.parse(g.tarifs_indicatifs) : g.tarifs_indicatifs;
+        } catch (_) {
+          parsedTarifs = [];
+        }
+      }
+
       return {
         ...g,
         name: g.nom || g.name,
@@ -123,6 +134,7 @@ const getAllGarages = async (req, res, next) => {
         opening_hours: g.horaires || g.opening_hours,
         whatsapp_url: buildWhatsAppUrl(g.whatsapp || g.telephone, g.nom),
         specialties: specialtiesList,
+        tarifsIndicatifs: parsedTarifs,
         is_open_24h: Boolean(g.is_open_24h),
         has_towing_truck: Boolean(g.has_towing_truck),
         has_mobile_mechanic: Boolean(g.has_mobile_mechanic),
