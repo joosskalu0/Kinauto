@@ -3370,9 +3370,18 @@ export const SuperAdminDashboard: React.FC<SuperAdminDashboardProps> = ({
         onClose={() => setGarageForTarifs(null)}
         garage={garageForTarifs}
         garagesList={garages}
-        onSaveTarifs={(updatedGarage) => {
+        isLoggedIn={true}
+        currentUser={{ role: 'admin', name: 'Super Admin' }}
+        onSaveTarifs={(firstArg: any, secondArg?: any) => {
           if (onSaveGarage) {
-            onSaveGarage(updatedGarage);
+            if (typeof firstArg === 'object' && firstArg !== null && 'id' in firstArg) {
+              onSaveGarage(firstArg as GarageProfile);
+            } else if (typeof firstArg === 'string' && Array.isArray(secondArg)) {
+              const matched = garages.find(g => g.id === firstArg);
+              if (matched) {
+                onSaveGarage({ ...matched, tarifsIndicatifs: secondArg });
+              }
+            }
           }
           setGarageForTarifs(null);
         }}

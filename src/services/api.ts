@@ -391,6 +391,18 @@ export const garagesApi = {
       body: JSON.stringify(garageData)
     }),
 
+  updateTarifs: (garageId: string | number, tarifs: any[]) =>
+    request<{ success: boolean; message: string; data: any }>(`/garages/${garageId}/tarifs`, {
+      method: 'PUT',
+      body: JSON.stringify({ tarifs })
+    }),
+
+  updateMyTarifs: (tarifs: any[]) =>
+    request<{ success: boolean; message: string; data: any }>('/garages/me/tarifs', {
+      method: 'PUT',
+      body: JSON.stringify({ tarifs })
+    }),
+
   validate: (id: string | number, validationData: { statut: 'valide' | 'rejete' | 'en_attente'; motif_rejet?: string }) =>
     request<{ success: boolean; message: string; data: any }>(`/garages/${id}/validate`, {
       method: 'PATCH',

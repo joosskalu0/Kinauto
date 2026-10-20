@@ -1,7 +1,7 @@
 const { query } = require('../config/database');
 
 /**
- * Helper: Résout l'ID du garage (soit un ID numérique, soit 'me' pour l'utilisateur connecté)
+ * Helper: Résout l'ID du garage (soit un ID numérique, soit 'me' pour l'utilisateur connecté, soit préfixe string)
  */
 const resolveGarageId = async (idParam, userId) => {
   if (!idParam || idParam === 'me' || idParam === 'profile') {
@@ -12,7 +12,21 @@ const resolveGarageId = async (idParam, userId) => {
     return null;
   }
   const numericId = Number(idParam);
-  return isNaN(numericId) ? null : numericId;
+  if (!isNaN(numericId) && numericId > 0) {
+    return numericId;
+  }
+  // Si l'ID contient un motif comme 'garage-kin-01' ou 'garage-1', extraire le nombre
+  const match = String(idParam).match(/(\d+)/);
+  if (match) {
+    const extractedNum = Number(match[1]);
+    const foundById = await query('SELECT id FROM garages WHERE id = ? LIMIT 1', [extractedNum]);
+    if (foundById.length > 0) return foundById[0].id;
+  }
+  // Tenter par slug ou nom
+  const foundByNameOrSlug = await query('SELECT id FROM garages WHERE slug = ? OR nom LIKE ? LIMIT 1', [String(idParam), `%${String(idParam)}%`]);
+  if (foundByNameOrSlug.length > 0) return foundByNameOrSlug[0].id;
+
+  return null;
 };
 
 /**
@@ -530,6 +544,20 @@ const updateGarage = async (req, res, next) => {
       resolvedId
     ]);
 
+    // Prise en charge des tarifs indicatifs si fournis dans la mise à jour générale
+    const rawTarifs = req.body.tarifs !== undefined
+      ? req.body.tarifs
+      : (req.body.tarifsIndicatifs !== undefined ? req.body.tarifsIndicatifs : req.body.tarifs_indicatifs);
+
+    if (rawTarifs !== undefined && Array.isArray(rawTarifs)) {
+      const cleaned = rawTarifs.map(t => ({
+        prestation: (t.prestation || t.nom || t.name || '').trim(),
+        prixEstime: (t.prixEstime || t.prix_indicatif || t.price || '').toString().trim(),
+        description: (t.description || '').trim() || undefined
+      })).filter(t => t.prestation && t.prixEstime);
+      await query('UPDATE garages SET tarifs_indicatifs = ? WHERE id = ?', [JSON.stringify(cleaned), resolvedId]);
+    }
+
     const updatedRows = await query('SELECT * FROM garages WHERE id = ? LIMIT 1', [resolvedId]);
     const updatedGarage = updatedRows[0];
 
@@ -538,6 +566,134 @@ const updateGarage = async (req, res, next) => {
       message: 'Profil du garage mis à jour avec succès.',
       data: {
         ...updatedGarage,
+        whatsapp_url: buildWhatsAppUrl(updatedGarage.whatsapp || updatedGarage.telephone, updatedGarage.nom)
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @route   PUT /api/garages/:id/tarifs & PUT /api/garages/me/tarifs
+ * @desc    Modifier les prix et la grille tarifaire d'un garage
+ * @access  Privé : Un garagiste doit être connecté pour modifier ses prix (ou admin)
+ */
+const updateGarageTarifs = async (req, res, next) => {
+  try {
+    // 1. Contrôle d'authentification impératif (Le garagiste doit être connecté)
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({
+        success: false,
+        message: 'Accès non autorisé : vous devez être connecté avec votre compte garagiste pour modifier ces prix.'
+      });
+    }
+
+    const { id } = req.params;
+    const resolvedId = await resolveGarageId(id, req.user.id);
+
+    if (!resolvedId) {
+      return res.status(404).json({
+        success: false,
+        message: 'Garage introuvable. Veuillez spécifier un atelier existant.'
+      });
+    }
+
+    // 2. Vérification de l'existence du garage
+    const currentRows = await query('SELECT * FROM garages WHERE id = ? LIMIT 1', [resolvedId]);
+    if (currentRows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Garage introuvable en base de données.'
+      });
+    }
+
+    const currentGarage = currentRows[0];
+
+    // 3. Contrôle des droits : seul le propriétaire attitré (user_id) ou un Administrateur peut modifier
+    const isOwner = Number(currentGarage.user_id) === Number(req.user.id);
+    const isAdmin = req.user.role === 'admin';
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: `Accès refusé : vous êtes connecté sous "${req.user.name}", mais vous n'êtes pas le propriétaire gestionnaire de l'atelier "${currentGarage.nom}". Seul le garagiste titulaire de ce compte ou un administrateur peut modifier ces tarifs.`
+      });
+    }
+
+    // 4. Extraction et validation de la grille des prix
+    const rawTarifs = req.body.tarifs !== undefined
+      ? req.body.tarifs
+      : (req.body.tarifsIndicatifs !== undefined ? req.body.tarifsIndicatifs : req.body);
+
+    if (!Array.isArray(rawTarifs)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Format invalide : les tarifs doivent être transmis sous forme de liste (tableau).'
+      });
+    }
+
+    // Nettoyage et sécurisation des prestations & prix
+    const cleanedTarifs = rawTarifs.map((t) => {
+      const prestation = (t.prestation || t.nom || t.name || '').trim();
+      const prixEstime = (t.prixEstime || t.prix_indicatif || t.price || '').toString().trim();
+      const desc = (t.description || '').trim();
+      return {
+        prestation,
+        prixEstime,
+        description: desc || undefined
+      };
+    }).filter((t) => t.prestation.length > 0 && t.prixEstime.length > 0);
+
+    const serializedTarifs = JSON.stringify(cleanedTarifs);
+
+    // 5. Mise à jour de la table garages
+    await query(`
+      UPDATE garages SET
+        tarifs_indicatifs = ?,
+        updated_at = NOW()
+      WHERE id = ?
+    `, [serializedTarifs, resolvedId]);
+
+    // 6. Synchronisation dans la table garage_services pour les devis automatiques
+    try {
+      for (const t of cleanedTarifs) {
+        const numMatch = t.prixEstime.match(/(\d+[\.,]?\d*)/);
+        const parsedPrice = numMatch ? parseFloat(numMatch[1].replace(',', '.')) : 0;
+
+        const existingS = await query(
+          'SELECT id FROM garage_services WHERE garage_id = ? AND LOWER(nom) = LOWER(?) LIMIT 1',
+          [resolvedId, t.prestation]
+        );
+
+        if (existingS.length > 0) {
+          await query(
+            'UPDATE garage_services SET prix_indicatif = ?, description = ?, updated_at = NOW() WHERE id = ?',
+            [parsedPrice, t.description || '', existingS[0].id]
+          );
+        } else {
+          await query(`
+            INSERT INTO garage_services 
+              (garage_id, nom, description, prix_indicatif, duree_estimee, is_disponible, icone, created_at, updated_at)
+            VALUES (?, ?, ?, ?, '1 heure', 1, 'tool', NOW(), NOW())
+          `, [resolvedId, t.prestation, t.description || '', parsedPrice]);
+        }
+      }
+    } catch (syncErr) {
+      console.warn('[Sync garage_services Warning]:', syncErr.message);
+    }
+
+    // 7. Retourner la fiche mise à jour
+    const updatedRows = await query('SELECT * FROM garages WHERE id = ? LIMIT 1', [resolvedId]);
+    const updatedGarage = updatedRows[0] || {};
+
+    return res.json({
+      success: true,
+      message: `Tarifs de l'atelier "${currentGarage.nom}" mis à jour avec succès par ${req.user.name}.`,
+      data: {
+        ...updatedGarage,
+        tarifsIndicatifs: cleanedTarifs,
+        tarifs_indicatifs: cleanedTarifs,
         whatsapp_url: buildWhatsAppUrl(updatedGarage.whatsapp || updatedGarage.telephone, updatedGarage.nom)
       }
     });
@@ -917,6 +1073,7 @@ module.exports = {
   createGarage,
   registerGarage: createGarage,
   updateGarage,
+  updateGarageTarifs,
   validateGarage,
   getGarageServices,
   addGarageService,

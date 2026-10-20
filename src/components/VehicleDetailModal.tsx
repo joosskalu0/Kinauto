@@ -890,24 +890,5 @@ export const VehicleDetailModal: React.FC<VehicleDetailModalProps> = ({
       )}
     </div>
   );
-      </div>
-
-      {/* Sub-modals */}
-      {showMakeOfferModal && (
-        <MakeOfferModal
-          vehicle={vehicle}
-          onClose={() => setShowMakeOfferModal(false)}
-          onSubmitLead={onSubmitLead || (() => {})}
-        />
-      )}
-
-      {showTradeInModal && (
-        <TradeInModal
-          targetVehicle={vehicle}
-          onClose={() => setShowTradeInModal(false)}
-          onSubmitLead={onSubmitLead || (() => {})}
-        />
-      )}
-    </div>
-  );
 };
+

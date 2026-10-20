@@ -19,6 +19,9 @@ interface GarageDirectoryProps {
   onUpdateGarage?: (garage: GarageProfile) => void;
   onSubmitBreakdownRequest: (request: BreakdownRequest) => void;
   onNavigateHome?: () => void;
+  isLoggedIn?: boolean;
+  currentUser?: any;
+  onOpenAuth?: () => void;
 }
 
 export const GarageDirectory: React.FC<GarageDirectoryProps> = ({
@@ -26,7 +29,10 @@ export const GarageDirectory: React.FC<GarageDirectoryProps> = ({
   onAddGarage,
   onUpdateGarage,
   onSubmitBreakdownRequest,
-  onNavigateHome
+  onNavigateHome,
+  isLoggedIn = false,
+  currentUser = null,
+  onOpenAuth
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCommune, setSelectedCommune] = useState<string>('ALL');
@@ -643,6 +649,9 @@ export const GarageDirectory: React.FC<GarageDirectoryProps> = ({
         onRequestBreakdown={(g) => handleOpenSOS(g)}
         onUpdateGarage={handleGarageUpdated}
         initialOpenTarifsEditor={openTarifsEditorInitially}
+        isLoggedIn={isLoggedIn}
+        currentUser={currentUser}
+        onOpenLogin={onOpenAuth}
       />
 
       <BreakdownRequestModal
@@ -674,6 +683,9 @@ export const GarageDirectory: React.FC<GarageDirectoryProps> = ({
         garages={garages}
         selectedGarageId={tarifsModalGarageId}
         onSaveTarifs={handleSaveTarifsDirectly}
+        isLoggedIn={isLoggedIn}
+        currentUser={currentUser}
+        onOpenLogin={onOpenAuth}
       />
 
     </div>

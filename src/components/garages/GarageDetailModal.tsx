@@ -4,10 +4,11 @@ import {
   Star, Wrench, Award, CheckCircle2, ChevronRight, AlertTriangle, 
   Truck, DollarSign, Calendar, Navigation, Share2, Sparkles, User,
   Mail, Check, ExternalLink, HelpCircle, Shield, Copy, Camera,
-  PlusCircle, Trash2, Edit3, Save
+  PlusCircle, Trash2, Edit3, Save, Lock
 } from 'lucide-react';
 import { GarageProfile, GarageTarifIndicatif } from '../../types';
 import { GARAGE_SPECIALTY_LABELS } from '../../data/mockGarages';
+import { garagesApi } from '../../services/api';
 
 interface GarageDetailModalProps {
   garage: GarageProfile | null;
@@ -16,6 +17,9 @@ interface GarageDetailModalProps {
   onRequestBreakdown: (garage: GarageProfile) => void;
   onUpdateGarage?: (garage: GarageProfile) => void;
   initialOpenTarifsEditor?: boolean;
+  isLoggedIn?: boolean;
+  currentUser?: any;
+  onOpenLogin?: () => void;
 }
 
 const POPULAR_KINSHASA_PRESETS = [
@@ -35,7 +39,10 @@ export const GarageDetailModal: React.FC<GarageDetailModalProps> = ({
   onClose,
   onRequestBreakdown,
   onUpdateGarage,
-  initialOpenTarifsEditor = false
+  initialOpenTarifsEditor = false,
+  isLoggedIn = false,
+  currentUser = null,
+  onOpenLogin
 }) => {
   const [selectedPhotoIndex, setSelectedPhotoIndex] = useState(0);
   const [copiedPhone, setCopiedPhone] = useState(false);
@@ -48,6 +55,7 @@ export const GarageDetailModal: React.FC<GarageDetailModalProps> = ({
   const [prixInput, setPrixInput] = useState('');
   const [descriptionInput, setDescriptionInput] = useState('');
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (garage) {
@@ -58,6 +66,15 @@ export const GarageDetailModal: React.FC<GarageDetailModalProps> = ({
   }, [garage, isOpen, initialOpenTarifsEditor]);
 
   if (!isOpen || !garage) return null;
+
+  const handleStartEditTarifs = () => {
+    if (!isLoggedIn) {
+      alert("Connexion requise : vous devez être connecté avec votre compte garagiste pour modifier ou ajouter les prix de cet atelier.");
+      onOpenLogin?.();
+      return;
+    }
+    setIsEditingTarifs(true);
+  };
 
   const handleAddTarif = () => {
     if (!prestationInput.trim()) {
@@ -97,18 +114,34 @@ export const GarageDetailModal: React.FC<GarageDetailModalProps> = ({
     setLocalTarifs(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSaveTarifs = () => {
+  const handleSaveTarifs = async () => {
     if (!garage) return;
-    const updatedGarage: GarageProfile = {
-      ...garage,
-      tarifsIndicatifs: localTarifs
-    };
-    onUpdateGarage?.(updatedGarage);
-    setSaveSuccess(true);
-    setTimeout(() => {
-      setSaveSuccess(false);
-      setIsEditingTarifs(false);
-    }, 1200);
+
+    if (!isLoggedIn) {
+      alert("Authentification requise : vous devez être connecté avec votre compte garagiste pour enregistrer ces tarifs sur le serveur.");
+      onOpenLogin?.();
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      await garagesApi.updateTarifs(garage.id, localTarifs);
+
+      const updatedGarage: GarageProfile = {
+        ...garage,
+        tarifsIndicatifs: localTarifs
+      };
+      onUpdateGarage?.(updatedGarage);
+      setSaveSuccess(true);
+      setTimeout(() => {
+        setSaveSuccess(false);
+        setIsEditingTarifs(false);
+      }, 1200);
+    } catch (err: any) {
+      alert(err.message || "Erreur : seul le garagiste gestionnaire de cet atelier ou un administrateur peut modifier ces tarifs.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleCopyPhone = (phoneNum: string) => {
@@ -684,7 +717,7 @@ export const GarageDetailModal: React.FC<GarageDetailModalProps> = ({
                       </div>
                       <button
                         type="button"
-                        onClick={() => setIsEditingTarifs(true)}
+                        onClick={handleStartEditTarifs}
                         className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs px-4 py-2 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer shadow-xs active:scale-95 shrink-0"
                       >
                         <Edit3 className="w-3.5 h-3.5" />
@@ -699,7 +732,7 @@ export const GarageDetailModal: React.FC<GarageDetailModalProps> = ({
                     </p>
                     <button
                       type="button"
-                      onClick={() => setIsEditingTarifs(true)}
+                      onClick={handleStartEditTarifs}
                       className="bg-emerald-600 hover:bg-emerald-500 text-white font-black text-xs px-4 py-2 rounded-xl inline-flex items-center gap-2 transition shadow-sm shadow-emerald-600/20 cursor-pointer"
                     >
                       <PlusCircle className="w-3.5 h-3.5" />

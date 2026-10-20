@@ -177,6 +177,11 @@ export interface DealershipAccount {
   estMasque?: boolean;
   invoices: Invoice[];
   vehicles?: Vehicle[];
+  role?: string;
+  planAbonnement?: string;
+  dateExpiration?: string;
+  dateCreation?: string;
+  nbLeadsRecus?: number;
 }
 
 export interface FinancingParams {

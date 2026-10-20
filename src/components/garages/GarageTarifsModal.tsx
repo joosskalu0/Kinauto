@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { 
   X, DollarSign, Wrench, Plus, Trash2, CheckCircle2, Sparkles, 
-  Tag, Info, Building2, MapPin, Check, Save, ArrowRight
+  Tag, Info, Building2, MapPin, Check, Save, ArrowRight, Lock, AlertCircle, Loader2
 } from 'lucide-react';
 import { GarageProfile, GarageTarifIndicatif } from '../../types';
+import { garagesApi } from '../../services/api';
 
 interface GarageTarifsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  garages: GarageProfile[];
+  garages?: GarageProfile[];
+  garagesList?: GarageProfile[];
+  garage?: GarageProfile | null;
   selectedGarageId?: string | null;
-  onSaveTarifs: (garageId: string, tarifs: GarageTarifIndicatif[]) => void;
+  onSaveTarifs: ((garageId: string, tarifs: GarageTarifIndicatif[]) => void) | ((updatedGarage: any) => void) | any;
+  isLoggedIn?: boolean;
+  currentUser?: any;
+  onOpenLogin?: () => void;
 }
 
 const KINSHASA_SERVICE_PRESETS = [
@@ -29,10 +35,19 @@ const KINSHASA_SERVICE_PRESETS = [
 export const GarageTarifsModal: React.FC<GarageTarifsModalProps> = ({
   isOpen,
   onClose,
-  garages,
+  garages = [],
+  garagesList,
+  garage,
   selectedGarageId,
-  onSaveTarifs
+  onSaveTarifs,
+  isLoggedIn = false,
+  currentUser = null,
+  onOpenLogin
 }) => {
+  const allGarages: GarageProfile[] = garages.length > 0 
+    ? garages 
+    : (garagesList && garagesList.length > 0 ? garagesList : (garage ? [garage] : []));
+
   const [activeGarageId, setActiveGarageId] = useState<string>('');
   const [tarifs, setTarifs] = useState<GarageTarifIndicatif[]>([]);
   const [prestation, setPrestation] = useState('');
@@ -40,28 +55,32 @@ export const GarageTarifsModal: React.FC<GarageTarifsModalProps> = ({
   const [description, setDescription] = useState('');
   const [currencyUnit, setCurrencyUnit] = useState<'$' | 'FC'>('$');
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   // Initialize selected garage
   useEffect(() => {
-    if (selectedGarageId && garages.some(g => g.id === selectedGarageId)) {
-      setActiveGarageId(selectedGarageId);
-    } else if (garages.length > 0 && !activeGarageId) {
-      setActiveGarageId(garages[0].id);
+    const targetId = selectedGarageId || garage?.id;
+    if (targetId && allGarages.some(g => g.id === targetId)) {
+      setActiveGarageId(targetId);
+    } else if (allGarages.length > 0 && !activeGarageId) {
+      setActiveGarageId(allGarages[0].id);
     }
-  }, [selectedGarageId, garages, isOpen]);
+  }, [selectedGarageId, garage, allGarages, isOpen]);
 
   // Load tariffs when active garage changes
   useEffect(() => {
-    const found = garages.find(g => g.id === activeGarageId);
+    const found = allGarages.find(g => g.id === activeGarageId);
     if (found) {
       setTarifs(found.tarifsIndicatifs || []);
       setSavedSuccess(false);
+      setErrorMessage('');
     }
-  }, [activeGarageId, garages]);
+  }, [activeGarageId, allGarages]);
 
   if (!isOpen) return null;
 
-  const currentGarage = garages.find(g => g.id === activeGarageId);
+  const currentGarage = allGarages.find(g => g.id === activeGarageId);
 
   const handleAddTarif = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -106,14 +125,52 @@ export const GarageTarifsModal: React.FC<GarageTarifsModalProps> = ({
     setTarifs(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!activeGarageId) return;
-    onSaveTarifs(activeGarageId, tarifs);
-    setSavedSuccess(true);
-    setTimeout(() => {
-      setSavedSuccess(false);
-      onClose();
-    }, 1200);
+
+    // 1. Contrôle de connexion obligatoire
+    if (!isLoggedIn) {
+      setErrorMessage("Authentification requise : vous devez impérativement être connecté avec votre compte garagiste pour modifier ou publier les tarifs sur le backend.");
+      return;
+    }
+
+    setIsSaving(true);
+    setErrorMessage('');
+
+    try {
+      // 2. Sauvegarde sécurisée sur le backend Node.js / MySQL via Bearer token
+      await garagesApi.updateTarifs(activeGarageId, tarifs);
+
+      const targetGarage = allGarages.find(g => g.id === activeGarageId);
+      const updatedGarageObj: GarageProfile = {
+        ...(targetGarage || ({} as GarageProfile)),
+        id: activeGarageId,
+        tarifsIndicatifs: tarifs
+      };
+
+      if (typeof onSaveTarifs === 'function') {
+        try {
+          onSaveTarifs(activeGarageId, tarifs);
+        } catch (_) {}
+        try {
+          onSaveTarifs(updatedGarageObj);
+        } catch (_) {}
+      }
+
+      setSavedSuccess(true);
+      setTimeout(() => {
+        setSavedSuccess(false);
+        onClose();
+      }, 1200);
+    } catch (err: any) {
+      console.error('Erreur API sauvegarde tarifs:', err);
+      setErrorMessage(
+        err.message || 
+        "Échec de l'enregistrement : seul le garagiste gestionnaire titulaire de cet atelier ou un administrateur peut modifier ces tarifs."
+      );
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -153,6 +210,57 @@ export const GarageTarifsModal: React.FC<GarageTarifsModalProps> = ({
         {/* Body */}
         <div className="p-5 sm:p-6 max-h-[75vh] overflow-y-auto space-y-6">
           
+          {/* Auth State Banner */}
+          {!isLoggedIn ? (
+            <div className="p-4 bg-amber-50 border border-amber-300 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs animate-fadeIn">
+              <div className="flex items-center gap-3 text-xs text-amber-950">
+                <div className="w-9 h-9 rounded-xl bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-700 shrink-0">
+                  <Lock className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="font-black text-amber-900 block text-sm">Connexion Garagiste Obligatoire</span>
+                  <span className="text-amber-800 text-[11px]">
+                    Un garagiste doit être connecté pour modifier ou ajouter ses tarifs. Si vous n'êtes pas connecté, l'enregistrement sera bloqué par le serveur.
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onOpenLogin?.();
+                }}
+                className="w-full sm:w-auto bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs px-4 py-2.5 rounded-xl flex items-center justify-center gap-1.5 shrink-0 shadow-md shadow-amber-500/20 transition cursor-pointer active:scale-95"
+              >
+                <Wrench className="w-4 h-4" />
+                <span>Se connecter en Garagiste</span>
+              </button>
+            </div>
+          ) : (
+            <div className="p-3 bg-emerald-50 border border-emerald-300 rounded-2xl flex items-center justify-between text-xs text-emerald-950 shadow-xs animate-fadeIn">
+              <div className="flex items-center gap-2.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>
+                  Connecté : <strong>{currentUser?.name || 'Garagiste Certifié'}</strong> ({currentUser?.role === 'admin' ? 'Administrateur' : 'Atelier Agréé'})
+                </span>
+              </div>
+              <span className="bg-emerald-600 text-white font-black text-[10px] px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                Compte Actif
+              </span>
+            </div>
+          )}
+
+          {/* Error Alert */}
+          {errorMessage && (
+            <div className="p-4 bg-rose-50 border border-rose-300 rounded-2xl text-rose-900 font-bold text-xs flex items-center gap-3 shadow-xs animate-fadeIn">
+              <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
+              <div className="space-y-0.5">
+                <span className="font-black block">Échec de l'opération :</span>
+                <span className="text-rose-700 text-[11px] font-normal">{errorMessage}</span>
+              </div>
+            </div>
+          )}
+
           {/* Success Alert */}
           {savedSuccess && (
             <div className="p-4 bg-emerald-50 border border-emerald-300 rounded-2xl text-emerald-900 font-bold text-xs flex items-center gap-3 shadow-xs animate-fadeIn">
@@ -176,7 +284,7 @@ export const GarageTarifsModal: React.FC<GarageTarifsModalProps> = ({
                 onChange={(e) => setActiveGarageId(e.target.value)}
                 className="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-emerald-500 shadow-xs"
               >
-                {garages.map((g) => (
+                {allGarages.map((g) => (
                   <option key={g.id} value={g.id}>
                     {g.nom} ({g.commune}) - {g.responsable}
                   </option>
@@ -367,10 +475,31 @@ export const GarageTarifsModal: React.FC<GarageTarifsModalProps> = ({
           <button
             type="button"
             onClick={handleSave}
-            className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-black py-2.5 px-6 rounded-xl text-xs flex items-center gap-2 shadow-md shadow-emerald-500/20 transition cursor-pointer active:scale-95"
+            disabled={isSaving}
+            className={`font-black py-2.5 px-6 rounded-xl text-xs flex items-center gap-2 shadow-md transition cursor-pointer active:scale-95 ${
+              isSaving
+                ? 'bg-slate-300 text-slate-600 cursor-not-allowed'
+                : !isLoggedIn
+                  ? 'bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-amber-500/20'
+                  : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-emerald-500/20'
+            }`}
           >
-            <Save className="w-4 h-4" />
-            <span>Enregistrer et Publier mes Tarifs</span>
+            {isSaving ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Enregistrement en cours...</span>
+              </>
+            ) : !isLoggedIn ? (
+              <>
+                <Lock className="w-4 h-4" />
+                <span>Connexion Requise pour Enregistrer</span>
+              </>
+            ) : (
+              <>
+                <Save className="w-4 h-4" />
+                <span>Enregistrer et Publier mes Tarifs</span>
+              </>
+            )}
           </button>
         </div>
 

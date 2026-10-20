@@ -24,6 +24,9 @@ router.get('/me', authenticateJWT, garageController.getMyGarageProfile);
 // Modifier le profil du garage connecté
 router.put('/me', authenticateJWT, garageController.updateGarage);
 
+// Modifier les tarifs indicatifs / prix des services du garage connecté (Garagiste connecté)
+router.put('/me/tarifs', authenticateJWT, garageController.updateGarageTarifs);
+
 // Ajouter un service à son garage connecté
 router.post('/me/services', authenticateJWT, garageController.addGarageService);
 
@@ -45,6 +48,9 @@ router.get('/:id', garageController.getGarageById);
 
 // Modifier les informations d'un garage (gérant ou admin)
 router.put('/:id', authenticateJWT, garageController.updateGarage);
+
+// Modifier spécifiquement les tarifs / prix d'un garage (propriétaire connecté ou admin)
+router.put('/:id/tarifs', authenticateJWT, garageController.updateGarageTarifs);
 
 // ====================================================================
 // 5. VALIDATION ADMINISTRATIVE D'UN GARAGE (RÉSERVÉ ADMIN)

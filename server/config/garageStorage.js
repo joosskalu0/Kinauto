@@ -542,8 +542,26 @@ const handleGarageQuery = (normalizedSql, rawSql, params, memoryStore) => {
       const services = memoryStore.garage_services.filter(s => Number(s.garage_id) === gId);
       const photos = memoryStore.garage_images.filter(i => Number(i.garage_id) === gId);
 
+      let parsedTarifs = garage.tarifsIndicatifs || [];
+      if ((!parsedTarifs || parsedTarifs.length === 0) && garage.tarifs_indicatifs) {
+        try {
+          parsedTarifs = typeof garage.tarifs_indicatifs === 'string' ? JSON.parse(garage.tarifs_indicatifs) : garage.tarifs_indicatifs;
+        } catch (_) {
+          parsedTarifs = [];
+        }
+      }
+      if (!parsedTarifs || parsedTarifs.length === 0) {
+        parsedTarifs = services.map(s => ({
+          prestation: s.nom,
+          prixEstime: `${s.prix_indicatif} $ (${Math.round(s.prix_indicatif * 2600).toLocaleString('fr-FR')} FC)`,
+          description: s.description
+        }));
+      }
+
       return [{
         ...garage,
+        tarifsIndicatifs: parsedTarifs,
+        tarifs_indicatifs: parsedTarifs,
         owner_name: owner.name || null,
         owner_email: owner.email || garage.email,
         services_count: services.length,
@@ -643,8 +661,26 @@ const handleGarageQuery = (normalizedSql, rawSql, params, memoryStore) => {
         const cleanWa = (g.whatsapp || g.telephone || '').replace(/[^0-9]/g, '');
         const waUrl = cleanWa ? `https://wa.me/${cleanWa}?text=Bonjour%20${encodeURIComponent(g.nom)},%20je%20vous%20contacte%20via%20CONGOCAR` : null;
 
+        let parsedTarifs = g.tarifsIndicatifs || [];
+        if ((!parsedTarifs || parsedTarifs.length === 0) && g.tarifs_indicatifs) {
+          try {
+            parsedTarifs = typeof g.tarifs_indicatifs === 'string' ? JSON.parse(g.tarifs_indicatifs) : g.tarifs_indicatifs;
+          } catch (_) {
+            parsedTarifs = [];
+          }
+        }
+        if (!parsedTarifs || parsedTarifs.length === 0) {
+          parsedTarifs = services.map(s => ({
+            prestation: s.nom,
+            prixEstime: `${s.prix_indicatif} $ (${Math.round(s.prix_indicatif * 2600).toLocaleString('fr-FR')} FC)`,
+            description: s.description
+          }));
+        }
+
         return {
           ...g,
+          tarifsIndicatifs: parsedTarifs,
+          tarifs_indicatifs: parsedTarifs,
           services_count: services.length,
           photos_count: photos.length,
           whatsapp_url: waUrl
@@ -758,12 +794,24 @@ const handleGarageQuery = (normalizedSql, rawSql, params, memoryStore) => {
           target.motif_rejet = params[params.length - 2] || null;
         }
 
+        // Détection et mise à jour des tarifs indicatifs (JSON string ou objet)
+        if (normalizedSql.includes('TARIFS_INDICATIFS = ?')) {
+          const tIdx = params.findIndex(p => typeof p === 'string' && (p.startsWith('[') || p.startsWith('{')));
+          const tVal = tIdx !== -1 ? params[tIdx] : params[0];
+          target.tarifs_indicatifs = tVal;
+          try {
+            target.tarifsIndicatifs = typeof tVal === 'string' ? JSON.parse(tVal) : tVal;
+          } catch (_) {
+            target.tarifsIndicatifs = [];
+          }
+        }
+
         // Mettre à jour les champs dynamiques de profil transmis
         const dynamicFields = [
           'nom', 'description', 'commune', 'adresse', 'ville', 'province',
           'telephone', 'telephone_urgence', 'whatsapp', 'email', 'latitude', 'longitude',
           'horaires', 'is_open_24h', 'has_towing_truck', 'has_mobile_mechanic',
-          'photo_url', 'banner_url'
+          'photo_url', 'banner_url', 'tarifs_indicatifs'
         ];
 
         dynamicFields.forEach(f => {

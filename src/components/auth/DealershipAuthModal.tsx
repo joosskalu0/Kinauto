@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Building2, Lock, Mail, KeyRound, Eye, EyeOff, AlertCircle, CheckCircle2, ArrowRight, X, UserCheck, Sparkles, Home } from 'lucide-react';
+import { Building2, Lock, Mail, KeyRound, Eye, EyeOff, AlertCircle, CheckCircle2, ArrowRight, X, UserCheck, Sparkles, Home, Wrench, Shield } from 'lucide-react';
 import { DealershipAccount } from '../../types';
+import { authApi } from '../../services/api';
 
 interface DealershipAuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   dealershipAccounts: DealershipAccount[];
-  onLoginSuccess: (account: DealershipAccount) => void;
+  onLoginSuccess: (account: DealershipAccount, userProfile?: any) => void;
   onOpenRegisterModal: () => void;
   currentAccountId?: string;
   isLoggedIn: boolean;
@@ -26,36 +27,119 @@ export const DealershipAuthModal: React.FC<DealershipAuthModalProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg('');
     setSuccessMsg('');
+    setIsLoading(true);
 
-    const targetAccount = dealershipAccounts.find(
-      (acc) => acc.emailLogin.toLowerCase().trim() === emailInput.toLowerCase().trim()
-    );
+    try {
+      // 1. Tenter la connexion auprès du backend Node.js / MySQL
+      const res = await authApi.login({
+        email: emailInput.trim(),
+        password: passwordInput
+      });
 
-    if (!targetAccount) {
-      setErrorMsg('Aucun compte concessionnaire trouvé avec cet email.');
-      return;
+      if (res.success && res.data) {
+        const { user, token } = res.data;
+        if (token) {
+          localStorage.setItem('congocar_token', token);
+          localStorage.setItem('autoconcession_token', token);
+        }
+        if (user) {
+          localStorage.setItem('congocar_user', JSON.stringify(user));
+        }
+
+        // Trouver un compte existant ou créer un compte proxy
+        let matchedAccount = dealershipAccounts.find(
+          (acc) => acc.emailLogin.toLowerCase().trim() === emailInput.toLowerCase().trim()
+        );
+
+        if (!matchedAccount) {
+          matchedAccount = {
+            id: user.garage?.id ? `garage-${user.garage.id}` : (user.dealership?.id ? `account-${user.dealership.id}` : `user-${user.id}`),
+            responsableNom: user.name,
+            emailLogin: user.email,
+            motDePasse: '***',
+            role: user.role,
+            planId: 'pro',
+            dateInscription: '2025-01-01',
+            finEssaiGratuit: '2027-12-31',
+            prochaineFacturation: '2027-12-31',
+            prixFactureMensuel: 0,
+            invoices: [],
+            info: {
+              id: user.garage?.id ? `garage-${user.garage.id}` : `acc-${user.id}`,
+              nom: user.garage?.nom || user.dealership?.nom || user.name,
+              slogan: 'Service Automobile & Entretien Certifié',
+              ville: user.city || 'Kinshasa',
+              adresse: user.garage?.adresse || 'Kinshasa',
+              codePostal: '00243',
+              telephone: user.phone || '+243 99 888 0303',
+              email: user.email,
+              horaires: '08h00 - 18h00',
+              siteWeb: 'https://congocar.cd',
+              logoUrl: user.avatar || 'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&q=80&w=200',
+              bannerUrl: 'https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&q=80&w=1600',
+              sippCode: 'CD001',
+              siret: 'CD-KIN-2025'
+            },
+            statutAbonnement: 'actif',
+            planAbonnement: 'concessionnaire_pro',
+            dateExpiration: '2027-12-31',
+            nbVehiculesActifs: 0,
+            nbLeadsRecus: 0,
+            dateCreation: '2025-01-01'
+          };
+        }
+
+        const roleLabel = user.role === 'garage' 
+          ? 'Garagiste & Atelier Mécanique' 
+          : (user.role === 'admin' ? 'Super Administrateur' : 'Concessionnaire');
+
+        setSuccessMsg(`Connexion réussie ! Bienvenue ${user.name} (${roleLabel}).`);
+        setTimeout(() => {
+          onLoginSuccess(matchedAccount!, user);
+          onClose();
+          setSuccessMsg('');
+          setEmailInput('');
+          setPasswordInput('');
+          setIsLoading(false);
+        }, 800);
+        return;
+      }
+    } catch (apiErr: any) {
+      // 2. Repli local sur les comptes démonstrations si backend indisponible
+      const targetAccount = dealershipAccounts.find(
+        (acc) => acc.emailLogin.toLowerCase().trim() === emailInput.toLowerCase().trim()
+      );
+
+      if (targetAccount) {
+        if (targetAccount.motDePasse && targetAccount.motDePasse !== passwordInput) {
+          setIsLoading(false);
+          setErrorMsg('Mot de passe incorrect.');
+          return;
+        }
+
+        setSuccessMsg(`Connexion réussie ! Bienvenue ${targetAccount.responsableNom} (${targetAccount.info.nom}).`);
+        setTimeout(() => {
+          onLoginSuccess(targetAccount);
+          onClose();
+          setSuccessMsg('');
+          setEmailInput('');
+          setPasswordInput('');
+          setIsLoading(false);
+        }, 800);
+        return;
+      }
+
+      setIsLoading(false);
+      setErrorMsg(apiErr?.message || 'Identifiants invalides : adresse e-mail ou mot de passe incorrect.');
     }
-
-    if (targetAccount.motDePasse && targetAccount.motDePasse !== passwordInput) {
-      setErrorMsg('Mot de passe incorrect.');
-      return;
-    }
-
-    setSuccessMsg(`Connexion réussie ! Bienvenue ${targetAccount.responsableNom} (${targetAccount.info.nom}).`);
-    setTimeout(() => {
-      onLoginSuccess(targetAccount);
-      onClose();
-      setSuccessMsg('');
-      setEmailInput('');
-      setPasswordInput('');
-    }, 1200);
   };
 
   const handleSelectQuickAccount = (acc: DealershipAccount) => {
@@ -181,7 +265,35 @@ export const DealershipAuthModal: React.FC<DealershipAuthModalProps> = ({
             <span className="text-[10px] text-slate-400">Cliquez pour pré-remplir</span>
           </div>
 
-          <div className="space-y-1.5 max-h-36 overflow-y-auto pr-1">
+          <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+            {/* Compte Garagiste Certifié */}
+            <button
+              type="button"
+              onClick={() => {
+                setEmailInput('garage@congocar.cd');
+                setPasswordInput('password123');
+              }}
+              className={`w-full text-left p-2 rounded-xl text-xs flex items-center justify-between border transition cursor-pointer ${
+                emailInput === 'garage@congocar.cd' 
+                  ? 'bg-emerald-50 border-emerald-400 text-emerald-900 font-bold' 
+                  : 'bg-white hover:bg-slate-100 border-slate-200 text-slate-700'
+              }`}
+            >
+              <div>
+                <div className="font-bold flex items-center gap-1.5 text-emerald-800">
+                  <Wrench className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>🔧 Atelier SOS Dépannage Kin Mécanique (Garagiste)</span>
+                  <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded-full font-bold">Atelier</span>
+                </div>
+                <div className="text-[10px] text-slate-500 font-mono flex items-center gap-1.5">
+                  <span>garage@congocar.cd</span>
+                  <span>•</span>
+                  <span>password123</span>
+                </div>
+              </div>
+              {emailInput === 'garage@congocar.cd' && <UserCheck className="w-4 h-4 text-emerald-600" />}
+            </button>
+
             {dealershipAccounts.map((acc) => (
               <button
                 key={acc.id}
