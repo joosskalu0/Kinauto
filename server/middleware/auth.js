@@ -94,5 +94,6 @@ module.exports = {
   authenticateJWT,
   verifyToken: authenticateJWT,
   optionalJWT,
+  optionalAuth: optionalJWT,
   requireRole
 };
