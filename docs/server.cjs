@@ -27,22 +27,104 @@ var import_path = __toESM(require("path"), 1);
 var import_vite = require("vite");
 var import_genai = require("@google/genai");
 var import_dotenv = __toESM(require("dotenv"), 1);
+var import_module = require("module");
+var import_meta = {};
+var require2 = (0, import_module.createRequire)(import_meta.url);
+var authRoutes = require2("./server/routes/auth.js");
+var userRoutes = require2("./server/routes/users.js");
+var dealershipRoutes = require2("./server/routes/dealerships.js");
+var vehicleRoutes = require2("./server/routes/vehicles.js");
+var leadRoutes = require2("./server/routes/leads.js");
+var favoriteRoutes = require2("./server/routes/favorites.js");
+var garageRoutes = require2("./server/routes/garages.js");
+var adminRoutes = require2("./server/routes/admin.js");
+var monetizationRoutes = require2("./server/routes/monetization.js");
+var { pool } = require2("./server/config/database.js");
 import_dotenv.default.config();
 async function startServer() {
   const app = (0, import_express.default)();
   const PORT = 3e3;
-  app.use(import_express.default.json());
-  const ai = new import_genai.GoogleGenAI({
-    apiKey: process.env.GEMINI_API_KEY,
-    httpOptions: {
-      headers: {
-        "User-Agent": "aistudio-build"
+  app.use(import_express.default.json({ limit: "25mb" }));
+  app.use(import_express.default.urlencoded({ limit: "25mb", extended: true }));
+  let aiClient = null;
+  const getAi = () => {
+    if (!aiClient) {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        throw new Error("GEMINI_API_KEY non configur\xE9e.");
       }
+      aiClient = new import_genai.GoogleGenAI({
+        apiKey,
+        httpOptions: {
+          headers: {
+            "User-Agent": "aistudio-build"
+          }
+        }
+      });
     }
-  });
+    return aiClient;
+  };
   app.get("/api/health", (req, res) => {
     res.json({ status: "ok", timestamp: (/* @__PURE__ */ new Date()).toISOString() });
   });
+  app.get("/api/test-db", async (req, res) => {
+    const startTime = Date.now();
+    try {
+      if (!pool) {
+        console.warn("[DB Test] \u26A0\uFE0F Pool MySQL non initialis\xE9.");
+        return res.status(503).json({
+          success: false,
+          connected: false,
+          message: "Pool de connexion MySQL non initialis\xE9.",
+          timestamp: (/* @__PURE__ */ new Date()).toISOString()
+        });
+      }
+      const connection = await pool.getConnection();
+      const [rows] = await connection.query("SELECT 1 AS connected, NOW() AS server_time, VERSION() AS mysql_version");
+      connection.release();
+      const latencyMs = Date.now() - startTime;
+      console.log(`[DB Test] \u2705 Test de connexion MySQL R\xC9USSI (${latencyMs}ms) - Base: "${process.env.DB_NAME || "congocar_db"}" :`, rows);
+      return res.json({
+        success: true,
+        connected: true,
+        message: "Connexion active \xE0 la base de donn\xE9es MySQL v\xE9rifi\xE9e avec succ\xE8s.",
+        latency_ms: latencyMs,
+        database: process.env.DB_NAME || "congocar_db",
+        host: process.env.DB_HOST || "localhost",
+        port: Number(process.env.DB_PORT) || 3306,
+        server_info: rows,
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    } catch (error) {
+      const latencyMs = Date.now() - startTime;
+      console.error(`[DB Test] \u274C R\xE9sultat du test de connexion MySQL (${latencyMs}ms) : ${error.message}`);
+      return res.status(500).json({
+        success: false,
+        connected: false,
+        message: "\xC9chec de la connexion active \xE0 la base de donn\xE9es MySQL.",
+        error: error.message,
+        code: error.code || null,
+        latency_ms: latencyMs,
+        config: {
+          host: process.env.DB_HOST || "localhost",
+          port: Number(process.env.DB_PORT) || 3306,
+          database: process.env.DB_NAME || "congocar_db",
+          user: process.env.DB_USER || "root"
+        },
+        timestamp: (/* @__PURE__ */ new Date()).toISOString()
+      });
+    }
+  });
+  app.use("/api/auth", authRoutes);
+  app.use("/api/users", userRoutes);
+  app.use("/api/dealerships", dealershipRoutes);
+  app.use("/api/dealers", dealershipRoutes);
+  app.use("/api/vehicles", vehicleRoutes);
+  app.use("/api/leads", leadRoutes);
+  app.use("/api/favorites", favoriteRoutes);
+  app.use("/api/garages", garageRoutes);
+  app.use("/api/admin", adminRoutes);
+  app.use("/api/monetization", monetizationRoutes);
   app.post("/api/ai/generate-description", async (req, res) => {
     try {
       const {
@@ -85,7 +167,7 @@ Structure de l'annonce :
 5. Appel \xE0 l'action courtois invitant \xE0 r\xE9server un essai ou contacter la concession.
 
 Formate le r\xE9sultat en texte clair avec des paragraphes a\xE9r\xE9s et des puces \xE9l\xE9gantes. Garde un ton professionnel, rassurant et dynamique.`;
-      const response = await ai.models.generateContent({
+      const response = await getAi().models.generateContent({
         model: "gemini-3.6-flash",
         contents: prompt,
         config: {
@@ -149,7 +231,7 @@ G\xE9n\xE8re une r\xE9ponse au format JSON strict avec ce sch\xE9ma :
   "seoScore": 95,
   "seoAdvice": "Conseil d'optimisation SEO compl\xE9mentaire (ex: ajouter 3 photos de l'int\xE9rieur, mentionner le contr\xF4le technique)"
 }`;
-      const response = await ai.models.generateContent({
+      const response = await getAi().models.generateContent({
         model: "gemini-3.6-flash",
         contents: prompt,
         config: {
@@ -181,7 +263,7 @@ R\xE9ponds au format JSON strict avec ce sch\xE9ma :
   "argumentaireAchat": ["point 1", "point 2"],
   "conseilsVente": ["conseil 1", "conseil 2"]
 }`;
-      const response = await ai.models.generateContent({
+      const response = await getAi().models.generateContent({
         model: "gemini-3.6-flash",
         contents: prompt,
         config: {
@@ -211,6 +293,18 @@ R\xE9ponds au format JSON strict avec ce sch\xE9ma :
   }
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server AutoConcession running on http://0.0.0.0:${PORT}`);
+    try {
+      const monetizationController = require2("./server/controllers/monetizationController.js");
+      monetizationController.cleanupExpiredMonetization(null, null).then((report) => {
+        if (report) console.log("[AutoKin Monetization Cron] Initialisation :", report.message);
+      }).catch((e) => console.warn("[AutoKin Monetization Cron] Warning:", e.message));
+      setInterval(() => {
+        monetizationController.cleanupExpiredMonetization(null, null).catch(() => {
+        });
+      }, 15 * 60 * 1e3);
+    } catch (e) {
+      console.warn("[AutoKin Monetization Cron] Non d\xE9marr\xE9:", e.message);
+    }
   });
 }
 startServer();

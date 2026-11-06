@@ -73,19 +73,17 @@ export const PromoteVehicleModal: React.FC<PromoteVehicleModalProps> = ({
   currency = 'USD',
   usdToFcRate = 2850
 }) => {
-  if (!isOpen) return null;
-
   // STEP 1: Vérification de connexion
   // STEP 2: Vérification de propriété
   const isAdmin = currentUser?.role === 'admin' || currentUser?.role === 'superadmin';
   const isVehicleOwner = 
     isAdmin ||
-    (currentUser?.id && vehicle.userId && String(currentUser.id) === String(vehicle.userId)) ||
-    (vehicle.dealershipId && (
+    (currentUser?.id && vehicle?.userId && String(currentUser.id) === String(vehicle.userId)) ||
+    (vehicle?.dealershipId && (
       String(vehicle.dealershipId) === String(currentUser?.dealershipId) ||
       String(vehicle.dealershipId) === String(currentAccountId)
     )) ||
-    (currentUser?.id && (vehicle as any).vendeurId && String(currentUser.id) === String((vehicle as any).vendeurId));
+    (currentUser?.id && (vehicle as any)?.vendeurId && String(currentUser.id) === String((vehicle as any)?.vendeurId));
 
   // STEP 3 & 4: Options et tarifs provenant du backend
   const [durationTiers, setDurationTiers] = useState<DurationTier[]>(DEFAULT_TIERS);
@@ -122,6 +120,7 @@ export const PromoteVehicleModal: React.FC<PromoteVehicleModalProps> = ({
 
   // 1. Récupération des prix et des comptes de paiement provenant du backend
   useEffect(() => {
+    if (!isOpen) return;
     let isMounted = true;
     const fetchBackendPricing = async () => {
       setLoadingConfig(true);
@@ -151,11 +150,11 @@ export const PromoteVehicleModal: React.FC<PromoteVehicleModalProps> = ({
 
     fetchBackendPricing();
     return () => { isMounted = false; };
-  }, [usdToFcRate]);
+  }, [isOpen, usdToFcRate]);
 
   // Polling automatique en arrière-plan : détecte la validation par l'administrateur
   useEffect(() => {
-    if (!activePayment || promotionConfirmed) return;
+    if (!isOpen || !activePayment || promotionConfirmed) return;
 
     const interval = setInterval(async () => {
       try {
@@ -170,7 +169,7 @@ export const PromoteVehicleModal: React.FC<PromoteVehicleModalProps> = ({
     }, 3500);
 
     return () => clearInterval(interval);
-  }, [activePayment, promotionConfirmed]);
+  }, [isOpen, activePayment, promotionConfirmed]);
 
   const selectedTier = durationTiers.find(t => t.jours === selectedDuration) || durationTiers[1];
 
@@ -309,6 +308,8 @@ export const PromoteVehicleModal: React.FC<PromoteVehicleModalProps> = ({
     );
     return `https://wa.me/${cleanNum}?text=${text}`;
   };
+
+  if (!isOpen || !vehicle) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-xs animate-in fade-in duration-200">

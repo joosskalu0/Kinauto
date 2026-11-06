@@ -766,25 +766,27 @@ export const MotorsDetailModal: React.FC<MotorsDetailModalProps> = ({
       )}
 
       {/* Monetization Promote Vehicle Modal */}
-      <PromoteVehicleModal
-        isOpen={isPromoteModalOpen}
-        vehicle={currentVehicle}
-        onClose={() => setIsPromoteModalOpen(false)}
-        isLoggedIn={isLoggedIn}
-        currentUser={currentUser}
-        currentAccountId={currentAccountId}
-        onOpenAuth={() => {
-          if (onOpenAuth) onOpenAuth();
-        }}
-        onPromotionSuccess={(updatedVehicle) => {
-          setCurrentVehicle(updatedVehicle);
-          if (onVehicleUpdated) {
-            onVehicleUpdated(updatedVehicle);
-          }
-        }}
-        currency={currency}
-        usdToFcRate={usdToFcRate}
-      />
+      {isPromoteModalOpen && (
+        <PromoteVehicleModal
+          isOpen={isPromoteModalOpen}
+          vehicle={currentVehicle}
+          onClose={() => setIsPromoteModalOpen(false)}
+          isLoggedIn={isLoggedIn}
+          currentUser={currentUser}
+          currentAccountId={currentAccountId}
+          onOpenAuth={() => {
+            if (onOpenAuth) onOpenAuth();
+          }}
+          onPromotionSuccess={(updatedVehicle) => {
+            setCurrentVehicle(updatedVehicle);
+            if (onVehicleUpdated) {
+              onVehicleUpdated(updatedVehicle);
+            }
+          }}
+          currency={currency}
+          usdToFcRate={usdToFcRate}
+        />
+      )}
     </div>
   );
 };
